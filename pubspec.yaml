@@ -1,0 +1,168 @@
+name: munturai
+description: Mobile App Muntur AI, an AI assistance on all car problems and topics
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 2.0.1+1
+
+environment:
+  sdk: ^3.6.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.19.0
+  flutter_image_slideshow: any
+  flutter_svg: ^1.1.6
+  cached_network_image: ^3.2.1
+  country_pickers: ^2.0.0
+  connectivity_plus: ^4.0.1
+  image_picker: ^0.8.1
+  email_validator: ^2.0.1
+  fluttertoast: ^8.0.8
+  calendar_date_picker2: ^0.5.3
+  swipable_stack: ^2.0.0
+  swipeable_card_stack: ^0.0.5
+  flutter_card_swiper: ^6.1.0
+  cupertino_rounded_corners: ^2.1.1
+#  twemoji: ^1.1.0
+  fl_chart: ^0.71.0
+  swiping_card_deck: ^1.3.0
+  blurrycontainer: ^1.0.2
+  vector_math: ^2.1.4
+  geocoding: ^2.2.0
+  geolocator: ^11.0.0
+  swipe_to: 1.0.5
+  shared_preferences: ^2.0.15
+  http: ^1.3.0
+  reflectable: any
+  scroll_to_index: ^3.0.1
+  flutter_easyloading: ^3.0.5
+  select_form_field: ^2.2.0
+  getwidget: ^6.0.0
+  permission_handler: ^11.3.0
+  flutter_local_notifications: ^19.2.0
+  open_file:  ^3.3.2
+  cupertino_icons: ^1.0.2
+  share_plus: ^10.1.4
+  sqflite: ^2.2.8+4
+#  dio: ^5.4.0
+  positioned_scroll_observer: ^2.2.2
+  path: ^1.8.2
+  url_launcher: ^6.1.11
+  flutter_staggered_grid_view: ^0.7.0
+  flutter_launcher_icons: ^0.13.1
+  numberpicker: ^2.1.2
+  palette_generator: ^0.3.3+3
+  scrollable_positioned_list: ^0.3.8
+  camera: ^0.10.5+5
+  path_provider: ^2.1.1
+  webview_flutter: ^4.4.1
+  file_picker: ^10.1.9
+  package_info_plus: ^4.0.1
+  google_places_autocomplete_text_field: ^0.1.3
+  video_player: ^2.7.0
+  eva_icons_flutter: ^3.1.0
+  simple_gesture_detector: ^0.2.1
+  dynamic_color: ^1.7.0
+  material_color_utilities: ^0.11.1
+  flutter_bloc: ^9.1.1
+  google_fonts: ^4.0.4
+  freezed_annotation: ^3.0.0
+  go_router: ^15.1.2
+  infinite_carousel: ^1.1.1
+  flutter_logs: ^2.2.1
+  device_info_plus: ^10.1.2
+  country_code_picker: ^3.3.0
+  skeletonizer: ^1.4.3
+  web_socket_channel: ^2.4.0
+  flutter_map: ^8.1.0
+  latlong2: ^0.9.1
+#  flutter_lints: ^3.0.2
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo_muntur2_200.png"
+  web:
+    generate: true
+    image_path: "assets/images/logo_muntur2_200.png"
+    background_color: "#fff"
+    theme_color: "#fff"
+  windows:
+    generate: true
+    image_path: "assets/images/logo_muntur2_200.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/images/logo_muntur2_200.png"
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/
+    - assets/images/
+  fonts:
+    - family: Aclonica
+      fonts:
+        - asset: assets/fonts/Aclonica-Regular.ttf
+          weight: 400
+
+    - family:  Findlove
+      fonts:
+        - asset: assets/fonts/Findlove.ttf
+
+    - family: Arimo Hebrew Subset
+      fonts:
+        - asset: assets/fonts/ArimoHebrewSubsetRegular.ttf
+          weight: 400
+        - asset: assets/fonts/ArimoHebrewSubsetBold.ttf
+          weight: 700
+
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+
+    - family: Sk-Modernist
+      fonts:
+        - asset: assets/fonts/Sk-Modernist-Regular.otf
+          weight: 400
+        - asset: assets/fonts/Sk-Modernist-Bold.otf
+          weight: 700
+
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/stolzl_regular.otf
+          weight: 400
+
+localizations:
+  arb-dir: lib/l10n
+  template-arb-file: app_en.arb
+  output-localization-file: app_localizations.dart
+
+flutter_gen:
+  output: lib/generated/
+  line_length: 120
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_gen_runner:
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^3.0.2
+
