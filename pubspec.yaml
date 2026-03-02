@@ -69,7 +69,7 @@ dependencies:
   material_color_utilities: ^0.11.1
   flutter_bloc: ^9.1.1
   google_fonts: ^4.0.4
-  freezed_annotation: ^3.0.0
+  freezed_annotation: ^2.4.4
   go_router: ^15.1.2
   infinite_carousel: ^1.1.1
   flutter_logs: ^2.2.1
@@ -77,8 +77,14 @@ dependencies:
   country_code_picker: ^3.3.0
   skeletonizer: ^1.4.3
   web_socket_channel: ^2.4.0
-  flutter_map: ^8.1.0
+  flutter_map: ^8.2.2
   latlong2: ^0.9.1
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  dio: ^5.9.2
+  json_annotation: ^4.9.0
 #  flutter_lints: ^3.0.2
 
 flutter_launcher_icons:
@@ -158,6 +164,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_gen_runner:
+  isar_generator: ^3.1.0+1
+  riverpod_generator: ^2.3.5
+  build_runner: ^2.4.13
+  freezed: ^2.4.7
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

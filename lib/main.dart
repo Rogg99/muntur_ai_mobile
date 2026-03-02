@@ -10,24 +10,33 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:munturai/screens/splashscreen.dart';
 import 'package:munturai/services/api/cert_override.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:munturai/core/database/isar_db.dart';
+
+import 'package:munturai/features/auth/data/models/user_model.dart';
+import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
+import 'package:munturai/features/chatbot/data/models/message_model.dart';
 
 import 'core/fonctions.dart';
 import 'core/theming/theme.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await IsarDb.init(
+      [UserModelSchema, DiscussionModelSchema, MessageModelSchema]);
+
   final savedLocale = await LocaleManager.loadLocale();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
 
-  HttpOverrides.global = MyHttpOverrides();  // DEV ONLY
+  HttpOverrides.global = MyHttpOverrides(); // DEV ONLY
 
-  runApp(MyApp(savedLocale));
+  runApp(ProviderScope(child: MyApp(savedLocale)));
 }
 
 class MyApp extends StatefulWidget {
@@ -39,13 +48,14 @@ class MyApp extends StatefulWidget {
     state?.setLocale(newLocale);
   }
 
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp>  with WidgetsBindingObserver{
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late final ValueNotifier<ThemeSettings> settings = ValueNotifier(
     ThemeSettings(
       sourceColor: const Color(0xFFF9A8D4),
@@ -112,11 +122,14 @@ class _MyAppState extends State<MyApp>  with WidgetsBindingObserver{
       if (kDebugMode) {
         print("App was not properly closed — restore state here.");
       }
-      if( lastPage == 'home' ) {
-        setState(() { startingWiget = HomeScreen(); });
-      }
-      else if( lastPage == 'settings' ) {
-        setState(() { startingWiget = Settings(); });
+      if (lastPage == 'home') {
+        setState(() {
+          startingWiget = HomeScreen();
+        });
+      } else if (lastPage == 'settings') {
+        setState(() {
+          startingWiget = Settings();
+        });
       }
       // Show dialog / restore form / go to last screens, etc.
       await prefs.setBool("wasRunning", false); // Reset after handling
@@ -154,7 +167,7 @@ class _MyAppState extends State<MyApp>  with WidgetsBindingObserver{
                   themeMode: theme.themeMode(),
                   theme: theme.light(value.sourceColor),
                   darkTheme: theme.dark(value.sourceColor),
-                  home: const SplashscreenScreen()  , // Start screens
+                  home: const SplashscreenScreen(), // Start screens
                   navigatorKey: MyApp.navigatorKey,
                 );
               },

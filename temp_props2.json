@@ -1,0 +1,49 @@
+{
+  "id": {
+    "title": "Id",
+    "type": "string",
+    "format": "uuid",
+    "readOnly": true
+  },
+  "unread_messages_count": {
+    "title": "Unread messages count",
+    "type": "string",
+    "readOnly": true
+  },
+  "last_message": {
+    "title": "Last message",
+    "type": "string",
+    "readOnly": true
+  },
+  "date_creation": {
+    "title": "Date de cr\u00e9ation",
+    "type": "string",
+    "format": "date-time",
+    "readOnly": true
+  },
+  "date_modification": {
+    "title": "Date de modification",
+    "type": "string",
+    "format": "date-time",
+    "readOnly": true
+  },
+  "archived": {
+    "title": "Archiv\u00e9",
+    "type": "boolean"
+  },
+  "users": {
+    "type": "array",
+    "items": {
+      "title": "Utilsateurs Concern\u00e9s",
+      "type": "string"
+    },
+    "uniqueItems": true
+  },
+  "messages": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "uniqueItems": true
+  }
+}

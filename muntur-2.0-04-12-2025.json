@@ -1,0 +1,3634 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Muntur API v2.0",
+    "description": "Comprehensive API documentation for the Muntur backend system. Includes endpoints for users, garages, discussions, messages, forums, ratings, and notifications.",
+    "termsOfService": "https://www.muntur.com/terms/",
+    "contact": {
+      "email": "support@muntur.com"
+    },
+    "license": {
+      "name": "MIT License"
+    },
+    "version": "v2.0"
+  },
+  "host": "195.26.244.215:447",
+  "schemes": [
+    "https"
+  ],
+  "basePath": "/m/muntur",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "securityDefinitions": {
+    "Basic": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "Basic": []
+    }
+  ],
+  "paths": {
+    "/ask-question": {
+      "post": {
+        "operationId": "ask-question_create",
+        "summary": "Send a message and get AI response",
+        "description": "Sends a message in a discussion. If the discussion does not exist, it creates one. Then automatically generates an AI response and returns it.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AskQuestion"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AI response created successfully",
+            "examples": {
+              "application/json": {
+                "error": false,
+                "code": 0,
+                "data": {
+                  "id": "UUID:timestamp",
+                  "disc_id": "UUID",
+                  "emetteur": "UUID",
+                  "contenu": "AI response content",
+                  "media": [],
+                  "date_envoi": "2025-10-06T16:00:00Z",
+                  "creation_date": "2025-10-06T16:00:01Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request or invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "ask-question"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/countries/": {
+      "get": {
+        "operationId": "auth_countries_list",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Country"
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "post": {
+        "operationId": "auth_countries_create",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Country"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Country"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/countries/{id}/": {
+      "get": {
+        "operationId": "auth_countries_read",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Country"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "put": {
+        "operationId": "auth_countries_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Country"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Country"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "patch": {
+        "operationId": "auth_countries_partial_update",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Country"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Country"
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "delete": {
+        "operationId": "auth_countries_delete",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A unique integer value identifying this country.",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    },
+    "/auth/get-user-profile/": {
+      "get": {
+        "operationId": "auth_get-user-profile_list",
+        "summary": "Récupérer son propre profil utilisateur",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Profil utilisateur"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/get_user/{id}/": {
+      "get": {
+        "operationId": "auth_get_user_read",
+        "summary": "Obtenir le profil d'un utilisateur par ID",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Profil utilisateur"
+          },
+          "404": {
+            "description": "Utilisateur non trouvé"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/auth/login/": {
+      "post": {
+        "operationId": "auth_login_create",
+        "summary": "login",
+        "description": "Permet à un utilisateur de se connecter avec ses identifiants classiques.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "description": "Nom d'utilisateur ou email",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "Mot de passe",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connexion réussie",
+            "examples": {
+              "application/json": {
+                "token": "jwt_token",
+                "msg": "Login Success"
+              }
+            }
+          },
+          "401": {
+            "description": "Identifiants invalides"
+          },
+          "400": {
+            "description": "Requête mal formée"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/logout/": {
+      "post": {
+        "operationId": "auth_logout_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/register/": {
+      "post": {
+        "operationId": "auth_register_create",
+        "summary": "register",
+        "description": "Permet à un nouvel utilisateur de s'inscrire. Crée également un profil et un pocket par défaut.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserRegistration"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès.",
+            "examples": {
+              "application/json": {
+                "token": "jwt_token",
+                "msg": "Registration Successful"
+              }
+            }
+          },
+          "400": {
+            "description": "Erreur de validation"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/reset_password/": {
+      "post": {
+        "operationId": "auth_reset_password_create",
+        "summary": "reset_password",
+        "description": "Permet à l'utilisateur authentifié de changer son mot de passe en fournissant l'ancien et le nouveau.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ChangePassword"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mot de passe changé avec succès"
+          },
+          "400": {
+            "description": "Erreur de validation"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/send_otp/": {
+      "post": {
+        "operationId": "auth_send_otp_create",
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/update-profile/": {
+      "put": {
+        "operationId": "auth_update-profile_update",
+        "summary": "Mettre à jour son propre profil utilisateur",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserProfileUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Profil mis à jour"
+          },
+          "400": {
+            "description": "Erreur de validation"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": []
+    },
+    "/auth/update_user/{id}/": {
+      "put": {
+        "operationId": "auth_update_user_update",
+        "summary": "Mettre à jour un utilisateur par ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUpdate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Utilisateur mis à jour"
+          },
+          "400": {
+            "description": "Erreur de validation"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/comments/{id}/delete/": {
+      "delete": {
+        "operationId": "comments_delete_delete",
+        "summary": "Delete a comment",
+        "description": "Deletes the specified comment if it belongs to the authenticated user.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Comment deleted successfully",
+            "examples": {
+              "application/json": {
+                "message": "Comment deleted successfully",
+                "comment_id": "UUID"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request or invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Comment not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "comments"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/discussions/": {
+      "get": {
+        "operationId": "discussions_list",
+        "summary": "API endpoint for managing discussions between users.",
+        "description": "- `list`: Retrieve all discussions (admin/global access)\n- `retrieve`: Get a single discussion by ID\n- `create`: Create a new discussion\n- `update` / `partial_update`: Modify an existing discussion\n- `delete`: Delete a discussion\n- `my_discussions`: Custom endpoint returning discussions involving the current user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Discussion"
+              }
+            }
+          }
+        },
+        "tags": [
+          "discussions"
+        ]
+      },
+      "post": {
+        "operationId": "discussions_create",
+        "summary": "API endpoint for managing discussions between users.",
+        "description": "- `list`: Retrieve all discussions (admin/global access)\n- `retrieve`: Get a single discussion by ID\n- `create`: Create a new discussion\n- `update` / `partial_update`: Modify an existing discussion\n- `delete`: Delete a discussion\n- `my_discussions`: Custom endpoint returning discussions involving the current user",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Discussion"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Discussion"
+            }
+          }
+        },
+        "tags": [
+          "discussions"
+        ]
+      },
+      "parameters": []
+    },
+    "/discussions/my-discussions/": {
+      "get": {
+        "operationId": "discussions_my_discussions",
+        "summary": "List user's discussions",
+        "description": "Returns all discussions that include the authenticated user's profile. Each discussion includes the number of unread messages.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer authentication token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of discussions where the authenticated user participates",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DiscussionRead"
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication credentials were not provided"
+          }
+        },
+        "tags": [
+          "discussions"
+        ]
+      },
+      "parameters": []
+    },
+    "/discussions/{id}/": {
+      "get": {
+        "operationId": "discussions_read",
+        "summary": "API endpoint for managing discussions between users.",
+        "description": "- `list`: Retrieve all discussions (admin/global access)\n- `retrieve`: Get a single discussion by ID\n- `create`: Create a new discussion\n- `update` / `partial_update`: Modify an existing discussion\n- `delete`: Delete a discussion\n- `my_discussions`: Custom endpoint returning discussions involving the current user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Discussion"
+            }
+          }
+        },
+        "tags": [
+          "discussions"
+        ]
+      },
+      "put": {
+        "operationId": "discussions_update",
+        "summary": "API endpoint for managing discussions between users.",
+        "description": "- `list`: Retrieve all discussions (admin/global access)\n- `retrieve`: Get a single discussion by ID\n- `create`: Create a new discussion\n- `update` / `partial_update`: Modify an existing discussion\n- `delete`: Delete a discussion\n- `my_discussions`: Custom endpoint returning discussions involving the current user",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Discussion"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Discussion"
+            }
+          }
+        },
+        "tags": [
+          "discussions"
+        ]
+      },
+      "patch": {
+        "operationId": "discussions_partial_update",
+        "summary": "API endpoint for managing discussions between users.",
+        "description": "- `list`: Retrieve all discussions (admin/global access)\n- `retrieve`: Get a single discussion by ID\n- `create`: Create a new discussion\n- `update` / `partial_update`: Modify an existing discussion\n- `delete`: Delete a discussion\n- `my_discussions`: Custom endpoint returning discussions involving the current user",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Discussion"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Discussion"
+            }
+          }
+        },
+        "tags": [
+          "discussions"
+        ]
+      },
+      "delete": {
+        "operationId": "discussions_delete",
+        "summary": "API endpoint for managing discussions between users.",
+        "description": "- `list`: Retrieve all discussions (admin/global access)\n- `retrieve`: Get a single discussion by ID\n- `create`: Create a new discussion\n- `update` / `partial_update`: Modify an existing discussion\n- `delete`: Delete a discussion\n- `my_discussions`: Custom endpoint returning discussions involving the current user",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "discussions"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this discussion.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/faqs/": {
+      "get": {
+        "operationId": "faqs_list",
+        "description": "API endpoint for managing FAQs.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FAQ"
+              }
+            }
+          }
+        },
+        "tags": [
+          "faqs"
+        ]
+      },
+      "post": {
+        "operationId": "faqs_create",
+        "description": "API endpoint for managing FAQs.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FAQ"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FAQ"
+            }
+          }
+        },
+        "tags": [
+          "faqs"
+        ]
+      },
+      "parameters": []
+    },
+    "/faqs/{id}/": {
+      "get": {
+        "operationId": "faqs_read",
+        "description": "API endpoint for managing FAQs.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FAQ"
+            }
+          }
+        },
+        "tags": [
+          "faqs"
+        ]
+      },
+      "put": {
+        "operationId": "faqs_update",
+        "description": "API endpoint for managing FAQs.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FAQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FAQ"
+            }
+          }
+        },
+        "tags": [
+          "faqs"
+        ]
+      },
+      "patch": {
+        "operationId": "faqs_partial_update",
+        "description": "API endpoint for managing FAQs.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FAQ"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/FAQ"
+            }
+          }
+        },
+        "tags": [
+          "faqs"
+        ]
+      },
+      "delete": {
+        "operationId": "faqs_delete",
+        "description": "API endpoint for managing FAQs.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "faqs"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this faq.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/forums/": {
+      "get": {
+        "operationId": "forums_list",
+        "description": "API endpoint for managing Forums.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Forum"
+              }
+            }
+          }
+        },
+        "tags": [
+          "forums"
+        ]
+      },
+      "post": {
+        "operationId": "forums_create",
+        "description": "API endpoint for managing Forums.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Forum"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Forum"
+            }
+          }
+        },
+        "tags": [
+          "forums"
+        ]
+      },
+      "parameters": []
+    },
+    "/forums/{id}/": {
+      "get": {
+        "operationId": "forums_read",
+        "description": "API endpoint for managing Forums.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Forum"
+            }
+          }
+        },
+        "tags": [
+          "forums"
+        ]
+      },
+      "put": {
+        "operationId": "forums_update",
+        "description": "API endpoint for managing Forums.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Forum"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Forum"
+            }
+          }
+        },
+        "tags": [
+          "forums"
+        ]
+      },
+      "patch": {
+        "operationId": "forums_partial_update",
+        "description": "API endpoint for managing Forums.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Forum"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Forum"
+            }
+          }
+        },
+        "tags": [
+          "forums"
+        ]
+      },
+      "delete": {
+        "operationId": "forums_delete",
+        "description": "API endpoint for managing Forums.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "forums"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this forum.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/forums/{id}/messages/": {
+      "get": {
+        "operationId": "forums_forum_messages",
+        "summary": "Get messages in a forum",
+        "description": "Returns all messages associated with a specific forum, with pagination support.",
+        "parameters": [
+          {
+            "name": "forum_id",
+            "in": "path",
+            "description": "ID of the forum to retrieve messages for",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of messages for the specified forum",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Message"
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Forum not found"
+          }
+        },
+        "tags": [
+          "forums"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this forum.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/garages/": {
+      "get": {
+        "operationId": "garages_list",
+        "description": "API endpoint for managing garages.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Garage"
+              }
+            }
+          }
+        },
+        "tags": [
+          "garages"
+        ]
+      },
+      "post": {
+        "operationId": "garages_create",
+        "description": "API endpoint for managing garages.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Garage"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Garage"
+            }
+          }
+        },
+        "tags": [
+          "garages"
+        ]
+      },
+      "parameters": []
+    },
+    "/garages/around/": {
+      "post": {
+        "operationId": "garages_garages_around",
+        "summary": "Get nearby garages",
+        "description": "Returns garages near a given latitude/longitude, optionally filtered by a keyword or maximum distance in km. Results are sorted by distance.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GaragesAround"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of nearby garages",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Garage"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "garages"
+        ]
+      },
+      "parameters": []
+    },
+    "/garages/{id}/": {
+      "get": {
+        "operationId": "garages_read",
+        "description": "API endpoint for managing garages.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Garage"
+            }
+          }
+        },
+        "tags": [
+          "garages"
+        ]
+      },
+      "put": {
+        "operationId": "garages_update",
+        "description": "API endpoint for managing garages.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Garage"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Garage"
+            }
+          }
+        },
+        "tags": [
+          "garages"
+        ]
+      },
+      "patch": {
+        "operationId": "garages_partial_update",
+        "description": "API endpoint for managing garages.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Garage"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Garage"
+            }
+          }
+        },
+        "tags": [
+          "garages"
+        ]
+      },
+      "delete": {
+        "operationId": "garages_delete",
+        "description": "API endpoint for managing garages.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "garages"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this garage.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/garages/{id}/add-medias/": {
+      "post": {
+        "operationId": "garages_add_medias",
+        "summary": "Add media to a garage",
+        "description": "Attach one or multiple media files to a specific garage.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "medias"
+              ],
+              "type": "object",
+              "properties": {
+                "medias": {
+                  "description": "List of media files to attach",
+                  "type": "array",
+                  "items": {
+                    "type": "file"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "garage_id",
+            "in": "path",
+            "description": "ID of the garage to attach media to",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Medias added successfully",
+            "schema": {
+              "$ref": "#/definitions/Garage"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Garage not found"
+          }
+        },
+        "tags": [
+          "garages"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this garage.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/garages/{id}/rate/": {
+      "post": {
+        "operationId": "garages_rate_garage",
+        "summary": "Rate a garage",
+        "description": "Allows an authenticated user to rate a specific garage. If the user has already rated this garage, the previous rating will be updated.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "rate"
+              ],
+              "type": "object",
+              "properties": {
+                "rate": {
+                  "description": "Rating value (e.g., 1-5)",
+                  "type": "integer"
+                },
+                "comment": {
+                  "description": "Optional comment for the rating",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "garage_id",
+            "in": "path",
+            "description": "ID of the garage to rate",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Garage rating updated",
+            "schema": {
+              "$ref": "#/definitions/Rate"
+            }
+          },
+          "201": {
+            "description": "New garage rating created",
+            "schema": {
+              "$ref": "#/definitions/Rate"
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Garage not found"
+          }
+        },
+        "tags": [
+          "garages"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this garage.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/infos/": {
+      "get": {
+        "operationId": "infos_list",
+        "description": "API endpoint for managing Infos.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/InfoRead"
+              }
+            }
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "post": {
+        "operationId": "infos_create",
+        "description": "API endpoint for managing Infos.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Info"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Info"
+            }
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "parameters": []
+    },
+    "/infos/my-feed/": {
+      "get": {
+        "operationId": "infos_my_infos",
+        "summary": "List my infos",
+        "description": "Returns all infos available to the authenticated user. with pagination in the url.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer authentication token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of infos for the authenticated user",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/InfoRead"
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "parameters": []
+    },
+    "/infos/{id}/": {
+      "get": {
+        "operationId": "infos_read",
+        "description": "API endpoint for managing Infos.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/InfoRead"
+            }
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "put": {
+        "operationId": "infos_update",
+        "description": "API endpoint for managing Infos.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Info"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Info"
+            }
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "patch": {
+        "operationId": "infos_partial_update",
+        "description": "API endpoint for managing Infos.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Info"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Info"
+            }
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "delete": {
+        "operationId": "infos_delete",
+        "description": "API endpoint for managing Infos.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this info.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/infos/{id}/add-comment/": {
+      "post": {
+        "operationId": "infos_add_comment",
+        "summary": "Add comment to an info",
+        "description": "Adds a new comment to the specified info.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          {
+            "name": "info_id",
+            "in": "path",
+            "description": "ID of the info to add the comment to",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Comment created and added to info",
+            "schema": {
+              "$ref": "#/definitions/Comment"
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "404": {
+            "description": "Info not found"
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this info.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/infos/{id}/add-reaction/": {
+      "post": {
+        "operationId": "infos_add_reaction",
+        "summary": "Add reaction to an info",
+        "description": "Adds or updates a reaction to the specified info.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "type"
+              ],
+              "type": "object",
+              "properties": {
+                "type": {
+                  "description": "Type of reaction (e.g., like, love, etc.)",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "info_id",
+            "in": "path",
+            "description": "ID of the info to add the reaction to",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reaction added/updated successfully",
+            "schema": {
+              "$ref": "#/definitions/InfoRead"
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "404": {
+            "description": "Info not found"
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this info.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/infos/{id}/comments/": {
+      "get": {
+        "operationId": "infos_info_comments",
+        "summary": "List comments for an info",
+        "description": "Returns all comments associated with a specific info, with pagination support.",
+        "parameters": [
+          {
+            "name": "info_id",
+            "in": "path",
+            "description": "ID of the info to retrieve comments for",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of comments for the specified info",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Comment"
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Info not found"
+          }
+        },
+        "tags": [
+          "infos"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this info.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/medias/": {
+      "get": {
+        "operationId": "medias_list",
+        "description": "API endpoint for managing Medias.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Media"
+              }
+            }
+          }
+        },
+        "tags": [
+          "medias"
+        ]
+      },
+      "post": {
+        "operationId": "medias_create",
+        "description": "API endpoint for managing Medias.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Media"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Media"
+            }
+          }
+        },
+        "tags": [
+          "medias"
+        ]
+      },
+      "parameters": []
+    },
+    "/medias/{id}/": {
+      "get": {
+        "operationId": "medias_read",
+        "description": "API endpoint for managing Medias.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Media"
+            }
+          }
+        },
+        "tags": [
+          "medias"
+        ]
+      },
+      "put": {
+        "operationId": "medias_update",
+        "description": "API endpoint for managing Medias.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Media"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Media"
+            }
+          }
+        },
+        "tags": [
+          "medias"
+        ]
+      },
+      "patch": {
+        "operationId": "medias_partial_update",
+        "description": "API endpoint for managing Medias.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Media"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Media"
+            }
+          }
+        },
+        "tags": [
+          "medias"
+        ]
+      },
+      "delete": {
+        "operationId": "medias_delete",
+        "description": "API endpoint for managing Medias.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "medias"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this media.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/messages/": {
+      "get": {
+        "operationId": "messages_list",
+        "description": "API endpoint for managing messages.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Message"
+              }
+            }
+          }
+        },
+        "tags": [
+          "messages"
+        ]
+      },
+      "post": {
+        "operationId": "messages_create",
+        "description": "API endpoint for managing messages.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        },
+        "tags": [
+          "messages"
+        ]
+      },
+      "parameters": []
+    },
+    "/messages/archive/{message_id}/": {
+      "post": {
+        "operationId": "messages_archive_message",
+        "summary": "Archive a message",
+        "description": "Marks a message as archived. Archived messages are hidden from standard queries.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          {
+            "name": "message_id",
+            "in": "path",
+            "description": "ID of the message to archive",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message archived successfully"
+          },
+          "404": {
+            "description": "Message not found"
+          }
+        },
+        "tags": [
+          "messages"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "message_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/messages/discussion/{discussion_id}/": {
+      "post": {
+        "operationId": "messages_add_to_discussion",
+        "summary": "Add message to a discussion",
+        "description": "Adds a new message to the specified discussion.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          {
+            "name": "discussion_id",
+            "in": "path",
+            "description": "ID of the discussion to add the message to",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Message created and added to discussion",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "404": {
+            "description": "Discussion not found"
+          }
+        },
+        "tags": [
+          "messages"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "discussion_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/messages/forum/{forum_id}/": {
+      "post": {
+        "operationId": "messages_add_to_forum",
+        "summary": "Add message to a forum",
+        "description": "Adds a new message to the specified forum.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          {
+            "name": "forum_id",
+            "in": "path",
+            "description": "ID of the forum to add the message to",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Message created and added to forum",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          },
+          "400": {
+            "description": "Invalid data"
+          },
+          "404": {
+            "description": "Forum not found"
+          }
+        },
+        "tags": [
+          "messages"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "forum_id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/messages/{id}/": {
+      "get": {
+        "operationId": "messages_read",
+        "description": "API endpoint for managing messages.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        },
+        "tags": [
+          "messages"
+        ]
+      },
+      "put": {
+        "operationId": "messages_update",
+        "description": "API endpoint for managing messages.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        },
+        "tags": [
+          "messages"
+        ]
+      },
+      "patch": {
+        "operationId": "messages_partial_update",
+        "description": "API endpoint for managing messages.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Message"
+            }
+          }
+        },
+        "tags": [
+          "messages"
+        ]
+      },
+      "delete": {
+        "operationId": "messages_delete",
+        "description": "API endpoint for managing messages.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "messages"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this message.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/notifications/": {
+      "get": {
+        "operationId": "notifications_list",
+        "description": "API endpoint for managing notifications.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notification"
+              }
+            }
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      },
+      "post": {
+        "operationId": "notifications_create",
+        "description": "API endpoint for managing notifications.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      },
+      "parameters": []
+    },
+    "/notifications/my-notifications/": {
+      "get": {
+        "operationId": "notifications_my_notifications",
+        "summary": "List my notifications",
+        "description": "Returns all notifications that concern the authenticated user. These notifications are those linked directly to their profile or targeted by a filter (city, country, gender, etc.).",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Bearer authentication token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of notifications for the authenticated user",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Notification"
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      },
+      "parameters": []
+    },
+    "/notifications/{id}/": {
+      "get": {
+        "operationId": "notifications_read",
+        "description": "API endpoint for managing notifications.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      },
+      "put": {
+        "operationId": "notifications_update",
+        "description": "API endpoint for managing notifications.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      },
+      "patch": {
+        "operationId": "notifications_partial_update",
+        "description": "API endpoint for managing notifications.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Notification"
+            }
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      },
+      "delete": {
+        "operationId": "notifications_delete",
+        "description": "API endpoint for managing notifications.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "notifications"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this notification.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/profiles/": {
+      "post": {
+        "operationId": "profiles_create",
+        "summary": "ViewSet for managing user profiles.",
+        "description": "Available actions:\n  - create: Create a new profile\n  - retrieve: Retrieve a profile by ID\n  - update/partial_update: Modify an existing profile\n  - my_profile: Retrieve the authenticated user's profile\n  - update_photo: Update the authenticated user's profile photo",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          }
+        },
+        "tags": [
+          "profiles"
+        ]
+      },
+      "parameters": []
+    },
+    "/profiles/my-profile/": {
+      "get": {
+        "operationId": "profiles_my_profile",
+        "summary": "Get my profile",
+        "description": "Retrieve the profile of the currently authenticated user.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          },
+          "404": {
+            "description": "Profile not found for the authenticated user"
+          },
+          "401": {
+            "description": "Authentication required"
+          }
+        },
+        "tags": [
+          "profiles"
+        ]
+      },
+      "parameters": []
+    },
+    "/profiles/{id}/": {
+      "get": {
+        "operationId": "profiles_read",
+        "summary": "ViewSet for managing user profiles.",
+        "description": "Available actions:\n  - create: Create a new profile\n  - retrieve: Retrieve a profile by ID\n  - update/partial_update: Modify an existing profile\n  - my_profile: Retrieve the authenticated user's profile\n  - update_photo: Update the authenticated user's profile photo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          }
+        },
+        "tags": [
+          "profiles"
+        ]
+      },
+      "put": {
+        "operationId": "profiles_update",
+        "summary": "ViewSet for managing user profiles.",
+        "description": "Available actions:\n  - create: Create a new profile\n  - retrieve: Retrieve a profile by ID\n  - update/partial_update: Modify an existing profile\n  - my_profile: Retrieve the authenticated user's profile\n  - update_photo: Update the authenticated user's profile photo",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          }
+        },
+        "tags": [
+          "profiles"
+        ]
+      },
+      "patch": {
+        "operationId": "profiles_partial_update",
+        "summary": "ViewSet for managing user profiles.",
+        "description": "Available actions:\n  - create: Create a new profile\n  - retrieve: Retrieve a profile by ID\n  - update/partial_update: Modify an existing profile\n  - my_profile: Retrieve the authenticated user's profile\n  - update_photo: Update the authenticated user's profile photo",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Profile"
+            }
+          }
+        },
+        "tags": [
+          "profiles"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this profile.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/rates/": {
+      "get": {
+        "operationId": "rates_list",
+        "description": "API endpoint for managing Ratings.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Rate"
+              }
+            }
+          }
+        },
+        "tags": [
+          "rates"
+        ]
+      },
+      "post": {
+        "operationId": "rates_create",
+        "description": "API endpoint for managing Ratings.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Rate"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Rate"
+            }
+          }
+        },
+        "tags": [
+          "rates"
+        ]
+      },
+      "parameters": []
+    },
+    "/rates/{id}/": {
+      "get": {
+        "operationId": "rates_read",
+        "description": "API endpoint for managing Ratings.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Rate"
+            }
+          }
+        },
+        "tags": [
+          "rates"
+        ]
+      },
+      "put": {
+        "operationId": "rates_update",
+        "description": "API endpoint for managing Ratings.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Rate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Rate"
+            }
+          }
+        },
+        "tags": [
+          "rates"
+        ]
+      },
+      "patch": {
+        "operationId": "rates_partial_update",
+        "description": "API endpoint for managing Ratings.",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Rate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/Rate"
+            }
+          }
+        },
+        "tags": [
+          "rates"
+        ]
+      },
+      "delete": {
+        "operationId": "rates_delete",
+        "description": "API endpoint for managing Ratings.",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "rates"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "A UUID string identifying this rate.",
+          "required": true,
+          "type": "string",
+          "format": "uuid"
+        }
+      ]
+    },
+    "/reactions/comment/{id}/delete/": {
+      "delete": {
+        "operationId": "reactions_comment_delete_delete",
+        "summary": "Delete a reaction to a comment",
+        "description": "Deletes the reaction of the authenticated user to the specified comment.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Reaction deleted successfully",
+            "examples": {
+              "application/json": {
+                "message": "Reaction deleted successfully",
+                "comment_id": "UUID"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request or invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Reaction not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "reactions"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    },
+    "/reactions/info/{id}/delete/": {
+      "delete": {
+        "operationId": "reactions_info_delete_delete",
+        "summary": "Delete a reaction to an info",
+        "description": "Deletes the reaction of the authenticated user to the specified info.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Reaction deleted successfully",
+            "examples": {
+              "application/json": {
+                "message": "Reaction deleted successfully",
+                "info_id": "UUID"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request or invalid data"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Reaction not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "tags": [
+          "reactions"
+        ]
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "definitions": {
+    "AskQuestion": {
+      "required": [
+        "discussion",
+        "emetteur",
+        "contenu",
+        "date_envoi"
+      ],
+      "type": "object",
+      "properties": {
+        "discussion": {
+          "title": "Discussion",
+          "description": "ID of the discussion",
+          "type": "string",
+          "format": "uuid"
+        },
+        "emetteur": {
+          "title": "Emetteur",
+          "description": "ID of the sending user",
+          "type": "string",
+          "format": "uuid"
+        },
+        "media": {
+          "description": "List of media IDs",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "contenu": {
+          "title": "Contenu",
+          "description": "Message content",
+          "type": "string",
+          "maxLength": 10000,
+          "minLength": 1
+        },
+        "date_envoi": {
+          "title": "Date envoi",
+          "description": "Message send date",
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "Country": {
+      "required": [
+        "name"
+      ],
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Nom",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "id": {
+          "title": "ID",
+          "type": "integer",
+          "readOnly": true
+        }
+      }
+    },
+    "UserRegistration": {
+      "required": [
+        "email",
+        "username",
+        "last_name",
+        "password"
+      ],
+      "type": "object",
+      "properties": {
+        "email": {
+          "title": "Email",
+          "type": "string",
+          "format": "email",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "username": {
+          "title": "Nom d’utilisateur",
+          "description": "Requis. 150 caractères maximum. Uniquement des lettres, nombres et les caractères « @ », « . », « + », « - » et « _ ».",
+          "type": "string",
+          "pattern": "^[\\w.@+-]+$",
+          "maxLength": 150,
+          "minLength": 1
+        },
+        "last_name": {
+          "title": "Last name",
+          "type": "string",
+          "maxLength": 50,
+          "minLength": 1
+        },
+        "password": {
+          "title": "Mot de passe",
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        }
+      }
+    },
+    "ChangePassword": {
+      "required": [
+        "new_password",
+        "confirm_new_password"
+      ],
+      "type": "object",
+      "properties": {
+        "new_password": {
+          "title": "New password",
+          "type": "string",
+          "minLength": 1
+        },
+        "confirm_new_password": {
+          "title": "Confirm new password",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "UserProfileUpdate": {
+      "required": [
+        "last_name",
+        "phone_number",
+        "email"
+      ],
+      "type": "object",
+      "properties": {
+        "last_name": {
+          "title": "Last name",
+          "type": "string",
+          "maxLength": 50,
+          "minLength": 1
+        },
+        "first_name": {
+          "title": "First name",
+          "type": "string",
+          "maxLength": 50,
+          "x-nullable": true
+        },
+        "phone_number": {
+          "title": "Phone number",
+          "type": "string",
+          "maxLength": 18,
+          "minLength": 1
+        },
+        "email": {
+          "title": "Email",
+          "type": "string",
+          "format": "email",
+          "maxLength": 255,
+          "minLength": 1
+        }
+      }
+    },
+    "UserUpdate": {
+      "required": [
+        "last_name",
+        "phone_number",
+        "email"
+      ],
+      "type": "object",
+      "properties": {
+        "last_name": {
+          "title": "Last name",
+          "type": "string",
+          "maxLength": 50,
+          "minLength": 1
+        },
+        "first_name": {
+          "title": "First name",
+          "type": "string",
+          "maxLength": 50,
+          "x-nullable": true
+        },
+        "phone_number": {
+          "title": "Phone number",
+          "type": "string",
+          "maxLength": 18,
+          "minLength": 1
+        },
+        "email": {
+          "title": "Email",
+          "type": "string",
+          "format": "email",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "groups": {
+          "description": "Les groupes dont fait partie cet utilisateur. Celui-ci obtient tous les droits de tous les groupes auxquels il appartient.",
+          "type": "array",
+          "items": {
+            "title": "Groupes",
+            "description": "Les groupes dont fait partie cet utilisateur. Celui-ci obtient tous les droits de tous les groupes auxquels il appartient.",
+            "type": "integer"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "Discussion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "title": "Utilsateurs Concernés",
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "DiscussionRead": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "unread_messages_count": {
+          "title": "Unread messages count",
+          "type": "string",
+          "readOnly": true
+        },
+        "last_message": {
+          "title": "Last message",
+          "type": "string",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "title": "Utilsateurs Concernés",
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "FAQ": {
+      "required": [
+        "question",
+        "reponse"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "question": {
+          "title": "Question",
+          "type": "string",
+          "maxLength": 500,
+          "minLength": 1
+        },
+        "reponse": {
+          "title": "Reponse",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "Forum": {
+      "required": [
+        "titre",
+        "auteur"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "titre": {
+          "title": "Titre",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "description": {
+          "title": "Description",
+          "type": "string",
+          "maxLength": 1000,
+          "minLength": 1
+        },
+        "auteur": {
+          "title": "Auteur",
+          "type": "string"
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "title": "Utilsateurs Concernés",
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "Message": {
+      "required": [
+        "contenu",
+        "emetteur"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "contenu": {
+          "title": "Contenu",
+          "type": "string",
+          "maxLength": 10000,
+          "minLength": 1
+        },
+        "is_read": {
+          "title": "Is read",
+          "type": "boolean"
+        },
+        "emetteur": {
+          "title": "Emetteur",
+          "type": "string"
+        },
+        "answerTo": {
+          "title": "AnswerTo",
+          "type": "string",
+          "x-nullable": true
+        },
+        "medias": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "Garage": {
+      "required": [
+        "nom",
+        "telephone1",
+        "telephone2",
+        "photo",
+        "ville",
+        "longitude",
+        "latitude"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "nom": {
+          "title": "Nom",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "description": {
+          "title": "Description",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "email": {
+          "title": "Email",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1,
+          "x-nullable": true
+        },
+        "telephone1": {
+          "title": "Telephone1",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "telephone2": {
+          "title": "Telephone2",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "photo": {
+          "title": "Photo",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "ville": {
+          "title": "Ville",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "pays": {
+          "title": "Pays",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "longitude": {
+          "title": "Longitude",
+          "type": "number"
+        },
+        "latitude": {
+          "title": "Latitude",
+          "type": "number"
+        },
+        "heure_ouverture": {
+          "title": "Heure ouverture",
+          "type": "string",
+          "x-nullable": true
+        },
+        "heure_fermeture": {
+          "title": "Heure fermeture",
+          "type": "string",
+          "x-nullable": true
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "medias": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "GaragesAround": {
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "title": "Latitude",
+          "type": "number"
+        },
+        "longitude": {
+          "title": "Longitude",
+          "type": "number"
+        },
+        "key": {
+          "title": "Key",
+          "type": "string",
+          "default": ""
+        },
+        "max_distance": {
+          "title": "Max distance",
+          "description": "Maximum distance in km",
+          "type": "number",
+          "x-nullable": true
+        }
+      }
+    },
+    "Rate": {
+      "required": [
+        "user",
+        "garage_fk"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": -2147483648
+        },
+        "comment_text": {
+          "title": "Comment text",
+          "type": "string",
+          "maxLength": 100,
+          "x-nullable": true
+        },
+        "user": {
+          "title": "User",
+          "type": "string"
+        },
+        "garage_fk": {
+          "title": "Garage fk",
+          "type": "string"
+        }
+      }
+    },
+    "InfoRead": {
+      "required": [
+        "title",
+        "text"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "maxLength": 500,
+          "minLength": 1
+        },
+        "text": {
+          "title": "Text",
+          "type": "string",
+          "minLength": 1
+        },
+        "media": {
+          "title": "Media",
+          "type": "string",
+          "readOnly": true
+        },
+        "link": {
+          "title": "Link",
+          "type": "string",
+          "maxLength": 500,
+          "x-nullable": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "reactions_count": {
+          "title": "Reactions count",
+          "type": "string",
+          "readOnly": true
+        },
+        "user_reaction": {
+          "title": "User reaction",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "Info": {
+      "required": [
+        "title",
+        "text"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string",
+          "maxLength": 500,
+          "minLength": 1
+        },
+        "text": {
+          "title": "Text",
+          "type": "string",
+          "minLength": 1
+        },
+        "link": {
+          "title": "Link",
+          "type": "string",
+          "maxLength": 500,
+          "x-nullable": true
+        },
+        "shares": {
+          "title": "Shares",
+          "type": "integer",
+          "maximum": 2147483647,
+          "minimum": -2147483648
+        },
+        "media_file": {
+          "title": "Media file",
+          "type": "string",
+          "x-nullable": true
+        }
+      }
+    },
+    "Comment": {
+      "required": [
+        "profile_user",
+        "info_item",
+        "content"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "profile_user": {
+          "title": "Profile user",
+          "type": "string"
+        },
+        "info_item": {
+          "title": "Info item",
+          "type": "string"
+        },
+        "reply_to": {
+          "title": "Reply to",
+          "type": "string",
+          "x-nullable": true
+        },
+        "content": {
+          "title": "Content",
+          "type": "string",
+          "minLength": 1
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        }
+      }
+    },
+    "Media": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "file": {
+          "title": "Fichier",
+          "type": "string",
+          "readOnly": true,
+          "format": "uri"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string",
+          "enum": [
+            "CREATED",
+            "PROCESSED"
+          ]
+        },
+        "external_link": {
+          "title": "External link",
+          "type": "string",
+          "maxLength": 500,
+          "x-nullable": true
+        },
+        "creator": {
+          "title": "Compte",
+          "type": "string",
+          "format": "uuid",
+          "x-nullable": true
+        }
+      }
+    },
+    "Notification": {
+      "required": [
+        "text"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "date_creation": {
+          "title": "Date de création",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "date_modification": {
+          "title": "Date de modification",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "archived": {
+          "title": "Archivé",
+          "type": "boolean"
+        },
+        "filter": {
+          "title": "Filter",
+          "description": "Type de filtre pour la notification (ex: pays, ville, etc.)",
+          "type": "string",
+          "enum": [
+            "user",
+            "country",
+            "city",
+            "sexe",
+            "plan",
+            "all"
+          ]
+        },
+        "filter_value": {
+          "title": "Filter value",
+          "description": "Valeur du filtre pour la notification (ex: France, Paris, etc.)",
+          "type": "string",
+          "maxLength": 255,
+          "minLength": 1
+        },
+        "text": {
+          "title": "Text",
+          "type": "string",
+          "minLength": 1
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "title": "Utilsateurs Concernés",
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "medias": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "Profile": {
+      "required": [
+        "sexe",
+        "date_naissance",
+        "telephone",
+        "ville",
+        "user"
+      ],
+      "type": "object",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string",
+          "format": "uuid",
+          "readOnly": true
+        },
+        "age": {
+          "title": "Age",
+          "type": "string",
+          "readOnly": true
+        },
+        "nom": {
+          "title": "Nom",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "prenom": {
+          "title": "Prenom",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "photo": {
+          "title": "Photo",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "sexe": {
+          "title": "Sexe",
+          "type": "string",
+          "maxLength": 100,
+          "minLength": 1
+        },
+        "date_naissance": {
+          "title": "Date naissance",
+          "type": "string",
+          "format": "date"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "telephone": {
+          "title": "Telephone",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "ville": {
+          "title": "Ville",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "pays": {
+          "title": "Pays",
+          "type": "string",
+          "maxLength": 200,
+          "minLength": 1
+        },
+        "user": {
+          "title": "User",
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    }
+  }
+}

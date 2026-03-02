@@ -1,87 +1,46 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/screens/presentation.dart';
-import 'package:munturai/services/api/auth.dart';
-import 'package:munturai/model/token.dart';
-import 'package:munturai/services/api/databaseHelper.dart';
-import '../core/fonctions.dart';
-import 'package:munturai/screens/login.dart';
-import '../services/logging.dart';
-import 'home.dart';
+import 'package:munturai/screens/home.dart';
+import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 
-class SplashscreenScreen extends StatefulWidget {
+class SplashscreenScreen extends ConsumerStatefulWidget {
   const SplashscreenScreen({super.key});
+
   @override
-  State<SplashscreenScreen> createState() => Animated();
+  ConsumerState<SplashscreenScreen> createState() => Animated();
 }
 
-class Animated extends State<SplashscreenScreen> with TickerProviderStateMixin {
-  String uitheme='light';
-  late Animation<double> animation;
-  late AnimationController controller;
-  var results;
-
+class Animated extends ConsumerState<SplashscreenScreen>
+    with TickerProviderStateMixin {
   @override
   void initState() {
-    loadNext();
     super.initState();
+    loadNext();
   }
 
-  void loadNext(){
-    Timer(const Duration(seconds: 5), () {
-      if (true) {
-        Token? tokenFromAPI;
-        int lastLogin;
-        AuthApi().getToken().then((value) async {
-          if (value != null) {
-            tokenFromAPI = value as Token;
-            // lastLogin = tokenFromAPI!.time.toInt();
-            lastLogin = await getKey('last_login').then((value) => value!=''?double.parse(value).toInt():0);
-            log('Munturai DEBUG: local token time :  $lastLogin');
-            log('Munturai DEBUG: actual time :  ${DateTime.now().millisecondsSinceEpoch / 1000}');
+  void loadNext() {
+    Timer(const Duration(seconds: 3), () async {
+      try {
+        // Checking authentication state via Riverpod
+        final user = await ref.read(authStateProvider.future);
 
-            if (lastLogin > DateTime.now().millisecondsSinceEpoch / 1000) {
-              log('Munturai DEBUG: local token access not expired :  ${tokenFromAPI!.access}');
-              if (!mounted) return;
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-            } else {
-              log('Munturai DEBUG: local token access expired ');
-              log('Munturai DEBUG: refreshing token ');
-              AuthApi().login(tokenFromAPI!.email, tokenFromAPI!.password).then((response) async {
-                if (response.statusCode == 200) {
-                  results = json.decode(response.body);
-                  log("DEBUG Munturai : new token access ,  : ${results['token']['access']}");
-                  tokenFromAPI!.time = DateTime.now().millisecondsSinceEpoch / 1000 + (3600 * 24 * 7);
-                  tokenFromAPI!.access = results['token']['access'];
-                  tokenFromAPI!.refresh = results['token']['refresh'];
-                  lastLogin = tokenFromAPI!.time.toInt();
-                  await saveKey('last_login', lastLogin.toString());
-                  await saveKey('token', tokenFromAPI!.toJson().toString());
-                  if (!mounted) return;
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-                } else {
-                  log('Munturai DEBUG: auto login failed');
-                  if (!mounted) return;
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
-                }
-              }).onError((error, stackTrace) {
-                ThrowError(error!, stackTrace);
-                return null;
-              });
-            }
-          } else {
-            await DatabaseHelper().createTables();
-            Timer( const Duration(seconds: 1),
-              () {
-                if (!mounted) return;
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PresentationScreen()));
-              },
-            );
-          }
-        });
+        if (!mounted) return;
+
+        if (user != null) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        } else {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => PresentationScreen()));
+        }
+      } catch (e) {
+        // If profile fetch fails or there is no local token
+        if (!mounted) return;
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => PresentationScreen()));
       }
     });
   }
@@ -90,8 +49,7 @@ class Animated extends State<SplashscreenScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        body:
-        SizedBox(
+        body: SizedBox(
           width: double.maxFinite,
           height: double.maxFinite,
           child: Center(
@@ -101,8 +59,6 @@ class Animated extends State<SplashscreenScreen> with TickerProviderStateMixin {
               width: 250,
             ),
           ),
-        )
-    );
-
+        ));
   }
 }
