@@ -11,14 +11,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
+import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/presentation/providers/chatbot_provider.dart';
 import 'package:munturai/model/message.dart';
-import 'package:munturai/model/discussion.dart';
 import 'package:munturai/utils/sized_extension.dart';
 import 'package:munturai/widgets/widget_message2.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:video_player/video_player.dart';
 import 'package:positioned_scroll_observer/positioned_scroll_observer.dart';
 
 import '../core/colors/colors.dart';
@@ -28,13 +26,13 @@ import '../widgets/widget_message.dart';
 bool lightForum = false;
 
 class ForumChatView extends ConsumerStatefulWidget {
-  Discussion? disc;
-  ForumChatView({
+  final DiscussionModel? disc;
+  const ForumChatView({
     super.key,
     this.disc,
   });
   @override
-  ConsumerState<ForumChatView> createState() => ForumChatState(disc: disc);
+  ConsumerState<ForumChatView> createState() => ForumChatState();
 }
 
 class ForumChatState extends ConsumerState<ForumChatView>
@@ -58,19 +56,13 @@ class ForumChatState extends ConsumerState<ForumChatView>
   PageController pageController = PageController();
   AutoScrollController scrollcontroller = AutoScrollController();
   final messagecontroller = TextEditingController();
-  Discussion? disc;
+  DiscussionModel? get disc => widget.disc;
   String currentUserId = '';
   List<String> medias = [];
   int lastTime = 0;
   late Animation<double> animation;
   late AnimationController controller;
 
-  late VideoPlayerController _controller;
-
-  ForumChatState({
-    Key? key,
-    this.disc,
-  });
   Timer loopCheck = Timer(Duration.zero, () {});
 
   late final _observer = ScrollObserver.boxMulti(

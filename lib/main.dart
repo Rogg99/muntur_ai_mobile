@@ -17,6 +17,9 @@ import 'package:munturai/features/auth/data/models/user_model.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/data/models/message_model.dart';
 import 'package:munturai/features/garages/data/models/garage_model.dart';
+import 'package:munturai/features/news/data/models/news_model.dart';
+import 'package:munturai/features/notifications/data/models/notification_model.dart';
+import 'package:munturai/features/subscriptions/data/models/subscription_model.dart';
 import 'package:munturai/core/services/sync_service.dart';
 
 import 'core/fonctions.dart';
@@ -32,6 +35,10 @@ Future<void> main() async {
     DiscussionModelSchema,
     MessageModelSchema,
     GarageModelSchema,
+    NewsModelSchema,
+    NotificationModelSchema,
+    SubscriptionModelSchema,
+    SubscriptionPlanModelSchema,
   ]);
 
   // Sync any pending offline messages in background
