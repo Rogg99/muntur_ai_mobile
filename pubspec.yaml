@@ -85,6 +85,7 @@ dependencies:
   isar_flutter_libs: ^3.1.0+1
   dio: ^5.9.2
   json_annotation: ^4.9.0
+  flutter_secure_storage: ^9.2.4
 #  flutter_lints: ^3.0.2
 
 flutter_launcher_icons:

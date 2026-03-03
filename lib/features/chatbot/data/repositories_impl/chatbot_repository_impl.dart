@@ -138,6 +138,32 @@ class ChatbotRepositoryImpl {
     return null;
   }
 
+  Future<MessageModel?> sendForumMessage({
+    required String discId,
+    required String content,
+    String answerTo = 'none',
+  }) async {
+    try {
+      final response =
+          await _apiClient.post('/forums/$discId/messages/', data: {
+        'contenu': content,
+        if (answerTo != 'none') 'answer_to': answerTo,
+      });
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final msg =
+            MessageModel.fromJson(response.data['data'] ?? response.data);
+        final isar = IsarDb.instance;
+        await isar.writeTxn(() async {
+          await isar.messageModels.put(msg);
+        });
+        return msg;
+      }
+    } catch (e) {
+      // offline — keep pending
+    }
+    return null;
+  }
+
   Future<List<MessageModel>> getMessagesForDiscussion(String discId) async {
     try {
       final response = await _apiClient.get('/discussions/$discId/messages/');

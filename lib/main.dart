@@ -16,6 +16,7 @@ import 'package:munturai/core/database/isar_db.dart';
 import 'package:munturai/features/auth/data/models/user_model.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/data/models/message_model.dart';
+import 'package:munturai/core/services/sync_service.dart';
 
 import 'core/fonctions.dart';
 import 'core/theming/theme.dart';
@@ -27,6 +28,9 @@ Future<void> main() async {
 
   await IsarDb.init(
       [UserModelSchema, DiscussionModelSchema, MessageModelSchema]);
+
+  // Sync any pending offline messages in background
+  SyncService().syncPendingData();
 
   final savedLocale = await LocaleManager.loadLocale();
 

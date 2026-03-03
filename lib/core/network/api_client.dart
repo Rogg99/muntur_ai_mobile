@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../services/secure_storage_service.dart';
 
 class ApiClient {
   late final Dio _dio;
@@ -7,7 +7,7 @@ class ApiClient {
   ApiClient() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: 'http://195.26.244.215:447/m/muntur',
+        baseUrl: 'https://195.26.244.215:447/m/muntur',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -20,16 +20,18 @@ class ApiClient {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final prefs = await SharedPreferences.getInstance();
-          final token = prefs.getString('auth_token');
-          if (token != null) {
-            options.headers['Authorization'] =
-                'Bearer $token'; // Adjusted based on common JWT formats
+          // Inject JWT token from SecureStorageService
+          final token = await SecureStorageService().getToken();
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
           }
           return handler.next(options);
         },
         onError: (DioException e, handler) async {
-          // Add refresh token logic here if required
+          // 401 → clear token so authStateProvider redirects to login
+          if (e.response?.statusCode == 401) {
+            await SecureStorageService().deleteToken();
+          }
           return handler.next(e);
         },
       ),
@@ -48,6 +50,10 @@ class ApiClient {
 
   Future<Response> put(String path, {dynamic data}) {
     return _dio.put(path, data: data);
+  }
+
+  Future<Response> patch(String path, {dynamic data}) {
+    return _dio.patch(path, data: data);
   }
 
   Future<Response> delete(String path, {dynamic data}) {

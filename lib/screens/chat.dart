@@ -1,24 +1,19 @@
-// ignore_for_file: unnecessary_cast, unused_catch_clause, empty_catches
+﻿// ignore_for_file: unnecessary_cast, unused_catch_clause, empty_catches
 
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer' as dev;
 import 'dart:io';
 import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:munturai/features/chatbot/data/models/message_model.dart';
 import 'package:munturai/features/chatbot/presentation/providers/chatbot_provider.dart';
 import 'package:munturai/model/message.dart';
 import 'package:munturai/model/discussion.dart';
-import 'package:munturai/services/api/auth.dart';
-import 'package:munturai/services/api/databaseHelper.dart';
+import 'package:munturai/model/user.dart';
 import 'package:munturai/utils/sized_extension.dart';
 import 'package:munturai/widgets/widget_message2.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,8 +22,6 @@ import 'package:video_player/video_player.dart';
 import 'package:positioned_scroll_observer/positioned_scroll_observer.dart';
 
 import '../core/colors/colors.dart';
-import '../model/user.dart';
-import '../services/api/chat.dart';
 import '../widgets/CustomAppBar.dart';
 import '../widgets/widget_message.dart';
 
@@ -691,12 +684,24 @@ class Chat_ extends ConsumerState<ChatView> with TickerProviderStateMixin {
                                             .primary,
                                         size: 28,
                                       ),
-                                      onPressed: () {
+                                      onPressed: () async {
+                                        final text =
+                                            messagecontroller.text.trim();
+                                        if (text.isEmpty) return;
                                         setState(() {
                                           showAnswer = false;
                                           loadAnswer = true;
+                                          messagecontroller.clear();
                                         });
-                                        sendQuestion(context);
+                                        await ref
+                                            .read(chatMessagesProvider(
+                                                    disc?.id ?? 'new')
+                                                .notifier)
+                                            .askQuestion(text);
+                                        setState(() {
+                                          loadAnswer = false;
+                                        });
+                                        syncView();
                                       },
                                     ),
                                   ),
@@ -869,25 +874,12 @@ class Chat_ extends ConsumerState<ChatView> with TickerProviderStateMixin {
     return DateTime.fromMillisecondsSinceEpoch(time).format('mm:ss');
   }
 
-  load() async {
-    loading = true;
-    user = await AuthApi().getUser().then((value) => value as User?);
-    if (disc!.id != 'auto') {
-      messages = await DatabaseHelper().getMessagesFromDisc(disc!.id);
-    }
+  load() {
+    // Messages are now loaded by chatMessagesProvider (Isar + online-first).
+    // No legacy DatabaseHelper or AuthApi needed here.
     setState(() {
       loading = false;
     });
-    // await fetchMessages();
-    // if(mounted)
-    //   loopCheck = Timer.periodic(Duration(seconds: 2), (timer) async{
-    //     if(mounted){
-    //       await fetchMessages();
-    //     }
-    //   }
-    // );
-    // else
-    //   loopCheck = Timer(Duration.zero,(){});
   }
 
   takeImage(ImageSource imagesource) async {
@@ -973,258 +965,9 @@ class Chat_ extends ConsumerState<ChatView> with TickerProviderStateMixin {
     }
   }
 
-  sendMessage(UIMessage message, BuildContext context,
-      {bool start = true}) async {
-    UIMessage aiResp = UIMessage();
-    String timeFormat = DateTime.now().format('yyyy-MM-dd HH:mm');
-
-    if (start) {
-      ChatApi().startAIChat().then((startDiscResp) async => {
-            if (kDebugMode)
-              print(
-                  'Muntur DEBUG: starting discussion response ${startDiscResp.body.toString()}'),
-            if (startDiscResp.statusCode == 200)
-              {
-                disc!.id = json.decode(startDiscResp.body)['id'],
-                disc!.last_writer = message.emetteur,
-                disc!.last_message = message.contenu,
-                disc!.last_date = timeFormat,
-                setState(() {}),
-                message.disc_id = disc!.id,
-                messages.add(message),
-                syncView(),
-                // Save in local database
-                DatabaseHelper().insertDiscussion(disc!),
-                DatabaseHelper().insertMessage(message),
-              }
-            // else{
-            //   dev.log('Muntur DEBUG: failed to create discussion ${startDiscResp.body.toString()}'),
-            // },
-          });
-    }
-
-    await ChatApi().askAI(message).then((response) => {
-          if (response.statusCode == 200)
-            {
-              aiResp = UIMessage.fromJson(json.decode(response.body)['data']),
-              messages.add(aiResp),
-              disc!.last_writer = aiResp.emetteur,
-              disc!.last_message = aiResp.contenu,
-              disc!.last_date = aiResp.date_envoi,
-              syncView(),
-
-              // Save in local database
-              DatabaseHelper().updateDiscussion(disc!),
-              DatabaseHelper().insertMessage(aiResp),
-            }
-          else
-            {
-              if (kDebugMode)
-                print('Muntur DEBUG: failed to send message ${response.body}'),
-            },
-          setState(() {
-            loadAnswer = false;
-          }),
-        });
-    setState(() {
-      loadAnswer = false;
-    });
-    DatabaseHelper().insertDiscussion(disc!).then((value) async => {
-          await DatabaseHelper().insertMessage(message),
-        });
-  }
-
-  sendQuestion(BuildContext context) async {
-    user = await AuthApi().getUser().then((value) => value as User);
-    if (kDebugMode) {
-      print('Munturai DEBUG: Sending question ...');
-    }
-    if (messagecontroller.text.isNotEmpty || media.isNotEmpty) {
-      int time = (DateTime.now().millisecondsSinceEpoch / 1000).floor();
-      String timeFormat = DateTime.now().format('yyyy-MM-dd HH:mm');
-      if (media.isNotEmpty) {
-        String newName =
-            'muntur${time}_${user!.id.replaceAll(':', '').replaceAll('-', '')}.${media.split('.').last}';
-        File media_ = File(media);
-        Directory directory = await getApplicationDocumentsDirectory();
-        String path = directory.path;
-        File newFile = await media_.copy('$path/$newName');
-        media = newFile.path;
-      }
-      UIMessage message = UIMessage(
-        id: '',
-        temp_id: time.toString(),
-        emetteur: user!.id,
-        date_envoi: timeFormat,
-        state: 'pending',
-        // contenu: (messagecontroller.text.isEmpty && (isVideo(media.split('.').last) || isImage(media.split('.').last))) ? media.split('/').last : messagecontroller.text.isEmpty ? 'none' :messagecontroller.text,
-        contenu: messagecontroller.text,
-        disc_id: disc!.id,
-        media: media.isEmpty ? "[]" : media,
-        mediaName: media.isEmpty ? 'none' : media.split('.').last,
-        answerTo: answerTo.id == 'auto' ? 'none' : answerTo.id,
-      );
-      UIMessage aiResp = UIMessage();
-      if (disc!.title == 'New Discussion' || messages.isEmpty) {
-        disc!.title = messagecontroller.text.length > 30
-            ? messagecontroller.text.substring(0, 30)
-            : messagecontroller.text;
-      }
-      await ChatApi().askAI(message).then((response) => {
-            if (response.statusCode == 200)
-              {
-                aiResp = UIMessage.fromJson(json.decode(response.body)['data']),
-                messages.add(message),
-                messages.add(aiResp),
-                disc!.id = aiResp.disc_id,
-                disc!.last_writer = aiResp.emetteur,
-                disc!.last_message = aiResp.contenu,
-                disc!.last_date = aiResp.date_envoi,
-                setState(() {}),
-                syncView(),
-
-                // Save in local database
-                if (messages.length == 2)
-                  {
-                    DatabaseHelper().insertDiscussion(disc!),
-                  }
-                else
-                  {
-                    DatabaseHelper().updateDiscussion(disc!),
-                  },
-                DatabaseHelper().insertMessage(aiResp),
-              }
-            else
-              {
-                if (kDebugMode)
-                  print(
-                      'Muntur DEBUG: failed to send message ${response.body}'),
-              },
-            setState(() {
-              loadAnswer = false;
-            }),
-          });
-    }
-  }
-
-  bool first = false;
-
-  Future<void> fetchMessages() async {
-    var different = false;
-    var isIn = false;
-    var results;
-    var done;
-
-    List<UIMessage> messages1 = [];
-    bool isIn1 = false;
-    var idx = 0;
-    User selfUser = await AuthApi().getUser().then((value) => value);
-    List<UIMessage> updatedListMessages;
-    await ChatApi()
-        .getMessagesFromDisc(
-            disc_id: disc!.id,
-            time: (await ChatApi().getLastTimeDisc(disc!.id) + 12))
-        .then((response) async => {
-              if (response.statusCode == 200)
-                {
-                  results = json.decode(response.body),
-                  //print(results),
-                  done = results['data'],
-                  for (var i = 0; i < done.length; i++)
-                    {
-                      messages1.add(UIMessage(
-                        id: done[i]["id"],
-                        disc_id: done[i]["disc_id"],
-                        temp_id: done[i]["temp_id"],
-                        emetteur: done[i]["emetteur"],
-                        emetteurName: done[i]["emetteurName"],
-                        contenu: done[i]["contenu"],
-                        media: done[i]["media"],
-                        answerTo: done[i]["answerTo"],
-                        mediaName: done[i]["mediaName"],
-                        state: done[i]["state"],
-                        date_envoi: done[i]["creation_date"] ?? 0,
-                      )),
-                    },
-                  updatedListMessages = await DatabaseHelper()
-                      .getMessage()
-                      .then((value) => value),
-                  for (var i = 0; i < messages1.length; i++)
-                    {
-                      if (updatedListMessages.isEmpty)
-                        {
-                          await DatabaseHelper().insertMessage(messages1[i]),
-                        }
-                      else
-                        {
-                          isIn1 = false,
-                          idx = -1,
-                          for (var ie = 0;
-                              ie < updatedListMessages.length;
-                              ie++)
-                            {
-                              if (updatedListMessages[ie].id ==
-                                      messages1[i].id ||
-                                  updatedListMessages[ie].id ==
-                                      messages1[i].temp_id)
-                                {
-                                  isIn1 = true,
-                                  idx = ie,
-                                }
-                            },
-                          if (isIn1)
-                            {
-                              if (updatedListMessages[idx].id ==
-                                  messages1[i].temp_id)
-                                await DatabaseHelper().updateMessage(
-                                    messages1[i],
-                                    id: updatedListMessages[idx].id),
-                              if (messages1[i].emetteur != selfUser.id &&
-                                  updatedListMessages[idx].announced == 'no')
-                                {
-                                  messages1[i].announced = 'yes',
-                                  await DatabaseHelper()
-                                      .updateMessage(messages1[i])
-                                },
-                              if (updatedListMessages[idx].state != 'delete' &&
-                                  updatedListMessages[idx].state !=
-                                      messages1[i].state)
-                                await DatabaseHelper()
-                                    .updateMessage(messages1[i])
-                            }
-                          else
-                            {
-                              await DatabaseHelper()
-                                  .insertMessage(messages1[i]),
-                            }
-                        }
-                    },
-                }
-            });
-    await DatabaseHelper().getMessagesFromDisc(disc!.id).then((list) => {
-          if (messages.isNotEmpty)
-            {
-              different = true,
-              for (var i = 0; i < list.length; i++)
-                {
-                  if (DateTime.parse(list[i].date_envoi)
-                      .isAfter(DateTime.parse(messages.last.date_envoi)))
-                    {
-                      messages.add(list[i]),
-                      setState(() {}),
-                    }
-                },
-            }
-          else
-            {
-              messages = list,
-              setState(() {}),
-              scrollcontroller.scrollToIndex(messages.length - 1,
-                  preferPosition: AutoScrollPosition.end,
-                  duration: const Duration(milliseconds: 1000)),
-            },
-        });
-    disc!.last_check = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    await DatabaseHelper().updateDiscussion(disc!);
-  }
+  // Legacy sendMessage / fetchMessages removed.
+  // Message sending is handled by:
+  //   ref.read(chatMessagesProvider(discId).notifier).askQuestion(text)
+  // Message loading is handled by:
+  //   ref.watch(chatMessagesProvider(discId))
 }

@@ -6,7 +6,7 @@ part of 'chatbot_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$chatbotRepositoryHash() => r'068ee3551a317d443150abbdbefec241e3113922';
+String _$chatbotRepositoryHash() => r'b3f7d35eac322b560e396f72018767744300920c';
 
 /// See also [chatbotRepository].
 @ProviderFor(chatbotRepository)
@@ -22,7 +22,7 @@ final chatbotRepositoryProvider =
 );
 
 typedef ChatbotRepositoryRef = AutoDisposeProviderRef<ChatbotRepositoryImpl>;
-String _$discussionsHash() => r'5544a3988b5dd0a3595635be388950cf4f3d914a';
+String _$discussionsHash() => r'c095ec5e41a8b0b89b68c814fe4bc75e1e684b6f';
 
 /// See also [Discussions].
 @ProviderFor(Discussions)
@@ -37,7 +37,7 @@ final discussionsProvider = AutoDisposeAsyncNotifierProvider<Discussions,
 );
 
 typedef _$Discussions = AutoDisposeAsyncNotifier<List<DiscussionModel>>;
-String _$forumsHash() => r'be29452c5bee7deb9072e6931724632f8cf7c012';
+String _$forumsHash() => r'235e402af21fb2abc8e1fe9ba1ec711151d120f6';
 
 /// See also [Forums].
 @ProviderFor(Forums)
@@ -52,7 +52,7 @@ final forumsProvider =
 );
 
 typedef _$Forums = AutoDisposeAsyncNotifier<List<DiscussionModel>>;
-String _$chatMessagesHash() => r'a6e4c57cfa4928eb2e81e2de55922b84c08be829';
+String _$chatMessagesHash() => r'ed629f1905f966eae32ea17e9334af04b5956357';
 
 /// Copied from Dart SDK
 class _SystemHash {
