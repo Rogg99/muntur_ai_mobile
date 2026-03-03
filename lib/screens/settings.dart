@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,9 +12,8 @@ import 'package:munturai/screens/cgu.dart';
 import 'package:munturai/screens/help.dart';
 import 'package:munturai/screens/login.dart';
 
-import '../core/colors/colors.dart';
-import '../core/theming/theme.dart';
 import '../core/fonctions.dart';
+import '../core/theming/theme.dart';
 
 class Settings extends ConsumerWidget {
   const Settings({super.key});
@@ -29,7 +26,6 @@ class Settings extends ConsumerWidget {
     final themeProvider = ThemeProvider.of(context);
     final isDark = themeProvider.themeMode() == ThemeMode.dark;
 
-    // Watch user from Riverpod
     final userAsync = ref.watch(authStateProvider);
 
     return Scaffold(
@@ -70,7 +66,7 @@ class Settings extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
 
-            // ─── Badge plan actif ───
+            // ─── Badge plan ───
             Center(
               child: GestureDetector(
                 onTap: () => Navigator.push(
@@ -87,10 +83,8 @@ class Settings extends ConsumerWidget {
                     children: [
                       const Icon(Icons.workspace_premium, size: 18),
                       const SizedBox(width: 6),
-                      Text(
-                        translator.subscription_free,
-                        style: appStyle.H5(weight: 'b'),
-                      ),
+                      Text(translator.subscription_free,
+                          style: appStyle.H5(weight: 'b')),
                     ],
                   ),
                 ),
@@ -135,19 +129,19 @@ class Settings extends ConsumerWidget {
               icon: CupertinoIcons.money_dollar_circle,
               label: translator.coins,
               onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => CoinsView())),
+                  context, MaterialPageRoute(builder: (_) => Coins())),
             ),
             _SettingsTile(
               icon: CupertinoIcons.question,
               label: translator.help,
               onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => const Help())),
+                  context, MaterialPageRoute(builder: (_) => Help())),
             ),
             _SettingsTile(
               icon: CupertinoIcons.doc_text_search,
               label: translator.termsConditions,
               onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => const CGU())),
+                  context, MaterialPageRoute(builder: (_) => CGU())),
             ),
             _SettingsTile(
               icon: CupertinoIcons.arrowshape_turn_up_right,
@@ -159,7 +153,7 @@ class Settings extends ConsumerWidget {
               icon: CupertinoIcons.heart_circle_fill,
               label: translator.about,
               onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => const About())),
+                  context, MaterialPageRoute(builder: (_) => About())),
             ),
             const SizedBox(height: 30),
           ],
@@ -178,7 +172,7 @@ class Settings extends ConsumerWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(translator.cancel ?? 'Annuler')),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);

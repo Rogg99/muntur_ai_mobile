@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
-import 'package:munturai/core/colors/colors.dart';
 import 'package:munturai/features/auth/domain/entities/user_entity.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/widgets/custom_filter_card.dart';
@@ -47,7 +46,6 @@ class ProfileState extends ConsumerState<Profile>
     final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
-    // Watch auth state — user loaded from Isar (online-first in authStateProvider)
     final userAsync = ref.watch(authStateProvider);
 
     return userAsync.when(
@@ -65,7 +63,7 @@ class ProfileState extends ConsumerState<Profile>
         if (user == null) {
           return Scaffold(
             backgroundColor: colorScheme.surface,
-            body: Center(child: Text(translator.loading)),
+            body: const Center(child: Text('Chargement...')),
           );
         }
         return _buildBody(context, appStyle, translator, colorScheme, user);
@@ -113,10 +111,11 @@ class ProfileState extends ConsumerState<Profile>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(130),
                           image: DecorationImage(
-                            image: user.photo != null && user.photo!.isNotEmpty
-                                ? NetworkImage(user.photo!) as ImageProvider
-                                : const AssetImage(
-                                    'assets/images/placeholder_user.png'),
+                            image:
+                                (user.photo != null && user.photo!.isNotEmpty)
+                                    ? NetworkImage(user.photo!) as ImageProvider
+                                    : const AssetImage(
+                                        'assets/images/placeholder_user.png'),
                             fit: BoxFit.cover,
                           ),
                           border:
@@ -244,7 +243,7 @@ class ProfileState extends ConsumerState<Profile>
                       'nom': namecontroller.text,
                       'prenom': prenomcontroller.text,
                     });
-                    setState(() => setName = false);
+                    if (mounted) setState(() => setName = false);
                   },
                 ),
               ],
@@ -285,7 +284,7 @@ class ProfileState extends ConsumerState<Profile>
                     await ref
                         .read(authStateProvider.notifier)
                         .updateProfile({'date_naissance': birth});
-                    setState(() => setAge = false);
+                    if (mounted) setState(() => setAge = false);
                   },
                 ),
               ],
@@ -320,7 +319,7 @@ class ProfileState extends ConsumerState<Profile>
                     await ref
                         .read(authStateProvider.notifier)
                         .updateProfile({'ville': villecontroller.text});
-                    setState(() => setLocation = false);
+                    if (mounted) setState(() => setLocation = false);
                   },
                 ),
               ],
@@ -352,13 +351,15 @@ class ProfileState extends ConsumerState<Profile>
                   padding: 50,
                   radius: 50,
                   onPressed: () async {
+                    final pwd = pwdcontroller.text;
                     await ref
                         .read(authStateProvider.notifier)
-                        .resetPassword(pwdcontroller.text);
-                    setState(() => setPassword = false);
+                        .resetPassword(pwd);
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Mot de passe modifié')));
+                      setState(() => setPassword = false);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Mot de passe modifié')),
+                      );
                     }
                   },
                 ),
@@ -373,11 +374,10 @@ class ProfileState extends ConsumerState<Profile>
   Future<void> _takeImage() async {
     final picker = ImagePicker();
     final XFile? file = await picker.pickMedia();
-    if (file == null) return;
-    // TODO Phase 8: upload via MediaRepository, then call updateProfile({photo: url})
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Upload photo — Phase 8')));
-    }
+    if (file == null || !mounted) return;
+    // TODO Phase 8 : upload via MediaRepository puis updateProfile({photo: url})
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Upload photo — implémenté en Phase 8')),
+    );
   }
 }
