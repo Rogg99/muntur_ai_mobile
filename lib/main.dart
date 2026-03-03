@@ -16,6 +16,7 @@ import 'package:munturai/core/database/isar_db.dart';
 import 'package:munturai/features/auth/data/models/user_model.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/data/models/message_model.dart';
+import 'package:munturai/features/garages/data/models/garage_model.dart';
 import 'package:munturai/core/services/sync_service.dart';
 
 import 'core/fonctions.dart';
@@ -26,8 +27,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await IsarDb.init(
-      [UserModelSchema, DiscussionModelSchema, MessageModelSchema]);
+  await IsarDb.init([
+    UserModelSchema,
+    DiscussionModelSchema,
+    MessageModelSchema,
+    GarageModelSchema,
+  ]);
 
   // Sync any pending offline messages in background
   SyncService().syncPendingData();
@@ -132,7 +137,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         });
       } else if (lastPage == 'settings') {
         setState(() {
-          startingWiget = Settings();
+          startingWiget = const Settings();
         });
       }
       // Show dialog / restore form / go to last screens, etc.
