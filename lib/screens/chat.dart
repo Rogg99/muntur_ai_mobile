@@ -10,10 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
+import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/presentation/providers/chatbot_provider.dart';
 import 'package:munturai/model/message.dart';
-import 'package:munturai/model/discussion.dart';
-import 'package:munturai/model/user.dart';
 import 'package:munturai/utils/sized_extension.dart';
 import 'package:munturai/widgets/widget_message2.dart';
 import 'package:path_provider/path_provider.dart';
@@ -28,7 +28,7 @@ import '../widgets/widget_message.dart';
 bool light = false;
 
 class ChatView extends ConsumerStatefulWidget {
-  Discussion? disc;
+  DiscussionModel? disc;
   ChatView({
     super.key,
     this.disc,
@@ -57,25 +57,22 @@ class Chat_ extends ConsumerState<ChatView> with TickerProviderStateMixin {
   PageController pageController = PageController();
   AutoScrollController scrollcontroller = AutoScrollController();
   final messagecontroller = TextEditingController();
-  Discussion? disc;
-  User? user;
+  DiscussionModel? disc;
   List<String> medias = [];
   int lastTime = 0;
   late Animation<double> animation;
   late AnimationController controller;
-
   late VideoPlayerController videoController;
 
-  Chat_({
-    Key? key,
-    this.disc,
-  });
+  Chat_({Key? key, this.disc});
   Timer loopCheck = Timer(Duration.zero, () {});
 
   late final _observer = ScrollObserver.boxMulti(
     axis: Axis.vertical,
     itemCount: messages.length,
   );
+
+  String get _userId => ref.read(authStateProvider).valueOrNull?.id ?? 'user';
 
   @override
   void initState() {
@@ -158,13 +155,18 @@ class Chat_ extends ConsumerState<ChatView> with TickerProviderStateMixin {
           DateTime.parse(a.date_envoi).compareTo(DateTime.parse(b.date_envoi)));
     }
 
-    return WillPopScope(
-      onWillPop: _onBackPressed,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
+        final canLeave = await _onBackPressed();
+        if (canLeave && context.mounted) Navigator.of(context).pop();
+      },
       child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         resizeToAvoidBottomInset: true,
         appBar: CustomAppBar(
-          titleTxt: disc!.title,
+          titleTxt: disc?.title ?? 'Nouvelle discussion',
         ),
         body: Stack(
           children: [
@@ -404,7 +406,7 @@ class Chat_ extends ConsumerState<ChatView> with TickerProviderStateMixin {
                             itemBuilder: (context, index) {
                               return MessageWidget2(
                                 message: messages[index],
-                                sender: messages[index].emetteur == user!.id,
+                                sender: messages[index].emetteur == _userId,
                                 head: false,
                               );
                             },
@@ -529,7 +531,7 @@ class Chat_ extends ConsumerState<ChatView> with TickerProviderStateMixin {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(
-                                                answerTo.emetteur == user!.id
+                                                answerTo.emetteur == _userId
                                                     ? translator.you
                                                     : answerTo.emetteurName,
                                                 overflow: TextOverflow.ellipsis,

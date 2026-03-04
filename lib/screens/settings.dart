@@ -70,7 +70,9 @@ class Settings extends ConsumerWidget {
             Center(
               child: GestureDetector(
                 onTap: () => Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => Subscription())),
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const SubscriptionsScreen())),
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:isar/isar.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/database/isar_db.dart';
 import '../../domain/entities/garage_entity.dart';

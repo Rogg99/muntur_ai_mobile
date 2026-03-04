@@ -1,16 +1,10 @@
-import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/colors/colors.dart';
-import 'package:munturai/model/discussion.dart';
-import 'package:munturai/model/message.dart';
 import 'package:munturai/screens/chat.dart';
-import 'package:munturai/services/api/helper.dart';
-import '../model/user.dart';
 import 'loading_image.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
-import 'package:munturai/model/discussion.dart';
 
 class WidgetDiscussion extends StatefulWidget {
   DiscussionModel? disc;
@@ -24,7 +18,6 @@ class WidgetDiscussion extends StatefulWidget {
 }
 
 class WidgetDiscussionState extends State<WidgetDiscussion> {
-  User user = User();
   bool load = true;
 
   @override
@@ -55,20 +48,7 @@ class WidgetDiscussionState extends State<WidgetDiscussion> {
               context,
               MaterialPageRoute(
                   builder: (context) => ChatView(
-                        disc: widget.disc != null
-                            ? Discussion(
-                                id: widget.disc!.id,
-                                title: widget.disc!.title,
-                                initiateur: widget.disc!.initiateur,
-                                interlocuteur: widget.disc!.interlocuteur,
-                                last_message: widget.disc!.last_message,
-                                last_date: widget.disc!.last_date,
-                                last_writer: widget.disc!.last_writer,
-                                photo: widget.disc!.photo,
-                                type: widget.disc!.type,
-                                last_check: widget.disc!.last_check,
-                              )
-                            : null,
+                        disc: widget.disc,
                       )));
         },
         child: Container(

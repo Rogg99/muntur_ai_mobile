@@ -1,3 +1,5 @@
+import 'package:isar/isar.dart';
+
 import '../../../../core/network/api_client.dart';
 import '../../../../core/database/isar_db.dart';
 import '../../domain/entities/notification_entity.dart';

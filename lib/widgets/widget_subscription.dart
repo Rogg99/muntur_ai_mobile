@@ -1,140 +1,143 @@
-
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
-
-import 'package:munturai/model/abonnement.dart';
-import 'package:munturai/model/service.dart';
-import 'package:munturai/screens/abonnement.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/colors/colors.dart';
-import 'package:flutter/src/material/colors.dart' as Col;
-import '../core/theming/app_style.dart';
-import '../model/service.dart';
-import '../model/user.dart';
-import 'package:vector_math/vector_math.dart';
+import 'package:munturai/features/subscriptions/domain/entities/subscription_entity.dart';
 
-class SubscriptionWidget extends StatefulWidget{
-  double width,height;
-  bool popular;
-  String type;
-  int index;
-  Product? service;
-  SubscriptionState subscriptionState;
-  SubscriptionWidget({
-    Key? key,
-    required this.width,
-    required this.height,
-    required this.service,
-    required this.type,
-    required this.index,
-    required this.subscriptionState,
-    this.popular=false,
-  }) : super(
-    key: key,
-  );
+/// Carte de plan d'abonnement sélectionnable.
+///
+/// [plan]        – plan à afficher (SubscriptionPlanEntity)
+/// [isSelected]  – true si c'est le plan actuellement sélectionné
+/// [isPopular]   – affiche un badge "Populaire" en haut de la carte
+/// [onSelected]  – callback quand l'utilisateur tape la carte
+class SubscriptionWidget extends StatelessWidget {
+  final SubscriptionPlanEntity plan;
+  final bool isSelected;
+  final bool isPopular;
+  final VoidCallback? onSelected;
 
-  @override
-  State<SubscriptionWidget> createState() => SubscriptionWidget_();
-}
+  const SubscriptionWidget({
+    super.key,
+    required this.plan,
+    this.isSelected = false,
+    this.isPopular = false,
+    this.onSelected,
+  });
 
-class SubscriptionWidget_ extends State<SubscriptionWidget> {
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
-    AppLocalizations translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
+
+    final int months = (plan.days / 30).round();
+    final isGoldSelected = isSelected && plan.type == 'Gold';
 
     return GestureDetector(
-      onTap: (){
-        setState(() {
-          widget.subscriptionState.setState(() {
-            widget.subscriptionState.SubIndex = widget.index;
-            widget.subscriptionState.abonnement = Abonnement(type: widget.type,time: 30*widget.service!.months,price: widget.service!.price);
-          });
-
-        });
-      },
+      onTap: onSelected,
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Container(
-            height: widget.height,
-            width: widget.width,
+          // ── Carte principale ──────────────────────────────────────
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            width: 120,
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
             margin: const EdgeInsets.symmetric(horizontal: 5),
-            decoration:
-            (widget.subscriptionState.SubIndex==widget.index && widget.type=='Gold')?
-            BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                image: const DecorationImage(
-                    image: AssetImage('assets/images/fond_gold.jpg'),
-                    fit: BoxFit.cover,opacity: 0.8),
-                border: (widget.subscriptionState.SubIndex==widget.index)?Border.all(color: Col.Colors.transparent,width: 2)
-                    :Border.all(color: UIColors.txtInactive)
-            ):
-            BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: (widget.subscriptionState.SubIndex==widget.index)?colorScheme.primary:Col.Colors.transparent,
-              border: (widget.subscriptionState.SubIndex==widget.index)?Border.all(color: colorScheme.primary,width: 2)
-                  :Border.all(color: Col.Colors.white30)
-            ),
+            decoration: isGoldSelected
+                ? BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: const DecorationImage(
+                      image: AssetImage('assets/images/fond_gold.jpg'),
+                      fit: BoxFit.cover,
+                      opacity: 0.85,
+                    ),
+                    border: Border.all(color: Colors.amber, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.amber.withValues(alpha: 0.4),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  )
+                : BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: isSelected
+                        ? colorScheme.primary
+                        : colorScheme.surfaceContainerHighest,
+                    border: Border.all(
+                      color: isSelected
+                          ? colorScheme.primary
+                          : UIColors.txtInactive,
+                      width: isSelected ? 2 : 1,
+                    ),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: colorScheme.primary.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ]
+                        : null,
+                  ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
               children: [
+                // Nombre de mois
                 Text(
-                  widget.service!.months.toString(),
-                  style: appStyle.H4(weight: 'b'),
-                ),
-                Text(
-                  widget.service!.months>1?
-                  translator.months:translator.month,
-                  style: appStyle.H5(),
-                ),
-                Text(
-                  '${widget.service!.realPrice} ${widget.service!.currency}',
-                  style: appStyle.txtRoboto(size: 18,color: const Color(0xFFAFAFAF)).copyWith(
-                    decoration: TextDecoration.lineThrough,
-                    decorationThickness: 2,
-                    decorationColor: const Color(0xFFAFAFAF),
+                  months.toString(),
+                  style: appStyle.H4(
+                    weight: 'bold',
+                    color: isSelected ? Colors.white : null,
                   ),
                 ),
                 Text(
-                    '${widget.service!.price} ${widget.service!.currency}',
-                  style: appStyle.H4(weight: 'b')
+                  months > 1 ? translator.months : translator.month,
+                  style: appStyle.H6(
+                    color: isSelected
+                        ? Colors.white70
+                        : colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
                 ),
-                // Text(
-                //   (widget.price/widget.service!.months).toStringAsFixed(2)+widget.currency+'/mois',
-                //   style: appStyle.txtRoboto(size: 16,color: UIColors.txtInactive)
-                // ),
+                const SizedBox(height: 8),
+                // Prix barré (optionnel – ici on ne l'a pas dans l'entity)
+                Text(
+                  '${plan.price.toStringAsFixed(0)} ${plan.currency}',
+                  style: appStyle.H4(
+                    weight: 'bold',
+                    color: isSelected ? Colors.white : colorScheme.primary,
+                  ),
+                ),
               ],
             ),
-
           ),
-          if(widget.popular)
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                color: colorScheme.secondary
+
+          // ── Badge "Populaire" ─────────────────────────────────────
+          if (isPopular)
+            Positioned(
+              top: -10,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    translator.popular,
+                    style: appStyle.txtRoboto(
+                      size: 11,
+                      color: colorScheme.onSecondary,
+                    ),
+                  ),
+                ),
               ),
-              child: Text(translator.popular,style: appStyle.txtRoboto(color: UIColors.primaryAccent),),
             ),
-          )
         ],
       ),
     );
