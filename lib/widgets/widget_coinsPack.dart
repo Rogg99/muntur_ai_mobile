@@ -1,114 +1,96 @@
-
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
-
-import 'package:munturai/model/abonnement.dart';
-import 'package:munturai/model/service.dart';
-import 'package:munturai/screens/abonnement.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/colors/colors.dart';
-import 'package:flutter/src/material/colors.dart' as Col;
-import '../core/theming/app_style.dart';
-import '../model/user.dart';
-import 'package:vector_math/vector_math.dart';
+import 'package:munturai/features/subscriptions/domain/entities/subscription_entity.dart';
 
-class CoinsPackWidget extends StatefulWidget{
-  double width,height;
-  bool popular;
-  bool selected;
-  Function? onPressed;
-  Product? service;
-  CoinsPackWidget({
+/// Carte de pack de coins sélectionnable.
+/// [plan]       – plan d'abonnement à afficher (coins = nombre de coins inclus)
+/// [isSelected] – true si ce pack est actuellement sélectionné
+/// [isPopular]  – affiche un badge "Populaire"
+/// [onPressed]  – callback lors de la sélection
+class CoinsPackWidget extends StatelessWidget {
+  final SubscriptionPlanEntity plan;
+  final bool isSelected;
+  final bool isPopular;
+  final VoidCallback? onPressed;
+
+  const CoinsPackWidget({
     super.key,
-    required this.width,
-    required this.height,
-    required this.service,
-    required this.selected,
-    required this.onPressed,
-    this.popular=false,
+    required this.plan,
+    required this.isSelected,
+    this.isPopular = false,
+    this.onPressed,
   });
 
   @override
-  State<CoinsPackWidget> createState() => CoinsPackWidget_();
-}
-
-class CoinsPackWidget_ extends State<CoinsPackWidget> {
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-  @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
-    AppLocalizations translator = AppLocalizations.of(context)!;
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
-      onTap: widget.onPressed != null ? () => widget.onPressed!() : null,
+      onTap: onPressed,
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Container(
-            height: widget.height,
-            width: widget.width,
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 120,
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
             margin: const EdgeInsets.symmetric(horizontal: 5),
-            decoration:
-            BoxDecoration(
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Col.Colors.transparent,
-              border: (widget.selected)?Border.all(color: colorScheme.primary,width: 2)
-                  :Border.all(color: Col.Colors.white30)
+              color: Colors.transparent,
+              border: isSelected
+                  ? Border.all(color: colorScheme.primary, width: 2)
+                  : Border.all(color: Colors.white30),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
               children: [
                 Text(
-                  widget.service!.shortName.toString(),
+                  plan.description.isNotEmpty ? plan.description : plan.code,
                   style: appStyle.H4(weight: 'b'),
                   textAlign: TextAlign.center,
                 ),
+                // Prix barré fictif (10% de plus)
                 Text(
-                  '${widget.service!.realPrice} ${widget.service!.currency}',
-                  style: appStyle.txtRoboto(size: 18,color: const Color(0xFFAFAFAF)).copyWith(
-                    decoration: TextDecoration.lineThrough,
-                    decorationThickness: 2,
-                    decorationColor: const Color(0xFFAFAFAF),
-                  ),
+                  '${(plan.price * 1.1).toStringAsFixed(0)} ${plan.currency}',
+                  style: appStyle
+                      .txtRoboto(size: 16, color: const Color(0xFFAFAFAF))
+                      .copyWith(
+                        decoration: TextDecoration.lineThrough,
+                        decorationThickness: 2,
+                      ),
                 ),
                 Text(
-                    '${widget.service!.price} ${widget.service!.currency}',
-                  style: appStyle.H4(weight: 'b')
+                  '${plan.price.toStringAsFixed(0)} ${plan.currency}',
+                  style: appStyle.H4(weight: 'b'),
                 ),
-                // Text(
-                //   (widget.price/widget.service!.months).toStringAsFixed(2)+widget.currency+'/mois',
-                //   style: appStyle.txtRoboto(size: 16,color: UIColors.txtInactive)
-                // ),
               ],
             ),
-
           ),
-          if(widget.popular)
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                color: colorScheme.secondary
+          if (isPopular)
+            Positioned(
+              top: -10,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    translator.popular,
+                    style: appStyle.txtRoboto(
+                        size: 11, color: UIColors.primaryAccent),
+                  ),
+                ),
               ),
-              child: Text(translator.popular,style: appStyle.txtRoboto(color: UIColors.primaryAccent),),
             ),
-          )
         ],
       ),
     );
