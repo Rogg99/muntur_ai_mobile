@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "dev.munturai.stepsindustries.com.munturai"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

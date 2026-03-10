@@ -457,14 +457,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.8"
-  eva_icons_flutter:
-    dependency: "direct main"
-    description:
-      name: eva_icons_flutter
-      sha256: "6d48a10b93590ab83eb092bee5adacdeb14f3d83f527a4b9e4092c363d56e2a8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.0"
   fake_async:
     dependency: transitive
     description:
@@ -566,14 +558,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
-  flutter_card_swiper:
-    dependency: "direct main"
-    description:
-      name: flutter_card_swiper
-      sha256: "024ba0fbce670eb7f71fa5aaf137de32017f2503fa05260a8e0a872e075a88c6"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.1.0"
   flutter_easyloading:
     dependency: "direct main"
     description:
@@ -747,14 +731,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.2.2"
-  flutter_staggered_grid_view:
-    dependency: "direct main"
-    description:
-      name: flutter_staggered_grid_view
-      sha256: "19e7abb550c96fbfeb546b23f3ff356ee7c59a019a651f8f102a4ba9b7349395"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.0"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -1738,14 +1714,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
-  sprung:
-    dependency: transitive
-    description:
-      name: sprung
-      sha256: "54322638f5e393d2b808175f7eadbaa4836a4425456e98d93c3d676dc56ebdf1"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.1"
   sqflite:
     dependency: "direct main"
     description:
@@ -1826,14 +1794,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
-  swipable_stack:
-    dependency: "direct main"
-    description:
-      name: swipable_stack
-      sha256: b04eef070455e868b68fdd5ae98f6718e561c877348acd017c07805f1439ef19
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   swipe_to:
     dependency: "direct main"
     description:
@@ -1842,22 +1802,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  swipeable_card_stack:
-    dependency: "direct main"
-    description:
-      name: swipeable_card_stack
-      sha256: "4b21357d042094b460554d2660fcd1486554ddba6389854055b1188c8fa85168"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.5"
-  swiping_card_deck:
-    dependency: "direct main"
-    description:
-      name: swiping_card_deck
-      sha256: "51ded18e77cb42bd46ad3d09271adc2070d54dc4d5536fb29ac350110ca9e5e9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.0"
   synchronized:
     dependency: transitive
     description:

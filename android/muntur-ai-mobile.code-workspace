@@ -1,0 +1,36 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../api"
+		}
+	],
+	"settings": {
+		"marktree.additionalIgnores": [
+			".git",
+			".gitignore",
+			".vscode/",
+			".idea/",
+			".settings/",
+			".vs/",
+			".code-workspace",
+			"yarn.lock",
+			"pnpm-lock.yaml",
+			"package-lock.json",
+			"AGENTS.md",
+			"README.md",
+			"LICENSE",
+			"LICENSE.md",
+			"CHANGELOG.md",
+			"CODE_OF_CONDUCT.md",
+			"CONTRIBUTING.md",
+			"SECURITY.md",
+			".editorconfig",
+			".gitattributes",
+			".mailmap"
+		],
+		"java.configuration.updateBuildConfiguration": "disabled"
+	}
+}
