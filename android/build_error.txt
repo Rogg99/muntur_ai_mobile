@@ -1,0 +1,636 @@
+Configuration on demand is an incubating feature.
+> Task :gradle:compileJava NO-SOURCE
+> Task :gradle:compileGroovy UP-TO-DATE
+> Task :gradle:pluginDescriptors UP-TO-DATE
+> Task :gradle:processResources UP-TO-DATE
+> Task :gradle:classes UP-TO-DATE
+> Task :gradle:jar UP-TO-DATE
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 36
+
+This Android Gradle plugin (8.1.0) was tested up to compileSdk = 33 (and compileSdkPreview = "UpsideDownCakePrivacySandbox").
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 36.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 36 is available.
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=36
+to this project's gradle.properties.
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 34
+
+This Android Gradle plugin (8.1.0) was tested up to compileSdk = 33 (and compileSdkPreview = "UpsideDownCakePrivacySandbox").
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 34.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 34 is available.
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=34
+to this project's gradle.properties.
+WARNING: We recommend using a newer Android Gradle plugin to use compileSdk = 35
+
+This Android Gradle plugin (8.1.0) was tested up to compileSdk = 33 (and compileSdkPreview = "UpsideDownCakePrivacySandbox").
+
+You are strongly encouraged to update your project to use a newer
+Android Gradle plugin that has been tested with compileSdk = 35.
+
+If you are already using the latest version of the Android Gradle plugin,
+you may need to wait until a newer version with support for compileSdk = 35 is available.
+
+To suppress this warning, add/update
+    android.suppressUnsupportedCompileSdk=35
+to this project's gradle.properties.
+> Task :connectivity_plus:preBuild UP-TO-DATE
+> Task :flutter_local_notifications:preBuild UP-TO-DATE
+> Task :connectivity_plus:preDebugBuild UP-TO-DATE
+> Task :flutter_local_notifications:preDebugBuild UP-TO-DATE
+> Task :flutter_logs:preBuild UP-TO-DATE
+> Task :device_info_plus:preBuild UP-TO-DATE
+> Task :camera_android:preBuild UP-TO-DATE
+> Task :flutter_logs:preDebugBuild UP-TO-DATE
+> Task :device_info_plus:preDebugBuild UP-TO-DATE
+> Task :dynamic_color:preBuild UP-TO-DATE
+> Task :dynamic_color:preDebugBuild UP-TO-DATE
+> Task :connectivity_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_logs:writeDebugAarMetadata UP-TO-DATE
+> Task :dynamic_color:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_local_notifications:writeDebugAarMetadata UP-TO-DATE
+> Task :camera_android:preDebugBuild UP-TO-DATE
+> Task :device_info_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_secure_storage:preBuild UP-TO-DATE
+> Task :camera_android:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_secure_storage:preDebugBuild UP-TO-DATE
+> Task :fluttertoast:preBuild UP-TO-DATE
+> Task :fluttertoast:preDebugBuild UP-TO-DATE
+> Task :file_picker:preBuild UP-TO-DATE
+> Task :file_picker:preDebugBuild UP-TO-DATE
+> Task :fluttertoast:writeDebugAarMetadata UP-TO-DATE
+> Task :geocoding_android:preBuild UP-TO-DATE
+> Task :geolocator_android:preBuild UP-TO-DATE
+> Task :geolocator_android:preDebugBuild UP-TO-DATE
+> Task :geocoding_android:preDebugBuild UP-TO-DATE
+> Task :file_picker:writeDebugAarMetadata UP-TO-DATE
+> Task :geolocator_android:writeDebugAarMetadata UP-TO-DATE
+> Task :image_picker_android:preBuild UP-TO-DATE
+> Task :isar_flutter_libs:preBuild UP-TO-DATE
+> Task :flutter_secure_storage:writeDebugAarMetadata UP-TO-DATE
+> Task :open_file_android:preBuild UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:preBuild UP-TO-DATE
+> Task :open_file_android:preDebugBuild UP-TO-DATE
+> Task :package_info_plus:preBuild UP-TO-DATE
+> Task :package_info_plus:preDebugBuild UP-TO-DATE
+> Task :open_file_android:writeDebugAarMetadata UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:preDebugBuild UP-TO-DATE
+> Task :package_info_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :path_provider_android:preBuild UP-TO-DATE
+> Task :isar_flutter_libs:preDebugBuild UP-TO-DATE
+> Task :path_provider_android:preDebugBuild UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:writeDebugAarMetadata UP-TO-DATE
+> Task :image_picker_android:preDebugBuild UP-TO-DATE
+> Task :geocoding_android:writeDebugAarMetadata UP-TO-DATE
+> Task :isar_flutter_libs:writeDebugAarMetadata UP-TO-DATE
+> Task :path_provider_android:writeDebugAarMetadata UP-TO-DATE
+> Task :share_plus:preBuild UP-TO-DATE
+> Task :shared_preferences_android:preBuild UP-TO-DATE
+> Task :share_plus:preDebugBuild UP-TO-DATE
+> Task :sqflite_android:preBuild UP-TO-DATE
+> Task :shared_preferences_android:preDebugBuild UP-TO-DATE
+> Task :permission_handler_android:preBuild UP-TO-DATE
+> Task :permission_handler_android:preDebugBuild UP-TO-DATE
+> Task :image_picker_android:writeDebugAarMetadata UP-TO-DATE
+> Task :share_plus:writeDebugAarMetadata UP-TO-DATE
+> Task :url_launcher_android:preBuild UP-TO-DATE
+> Task :permission_handler_android:writeDebugAarMetadata UP-TO-DATE
+> Task :sqflite_android:preDebugBuild UP-TO-DATE
+> Task :shared_preferences_android:writeDebugAarMetadata UP-TO-DATE
+> Task :video_player_android:preBuild UP-TO-DATE
+> Task :url_launcher_android:preDebugBuild UP-TO-DATE
+> Task :video_player_android:preDebugBuild UP-TO-DATE
+> Task :sqflite_android:writeDebugAarMetadata UP-TO-DATE
+> Task :webview_flutter_android:preBuild UP-TO-DATE
+> Task :webview_flutter_android:preDebugBuild UP-TO-DATE
+> Task :video_player_android:writeDebugAarMetadata UP-TO-DATE
+> Task :webview_flutter_android:writeDebugAarMetadata UP-TO-DATE
+> Task :url_launcher_android:writeDebugAarMetadata UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
+> Task :camera_android:mergeDebugShaders UP-TO-DATE
+> Task :connectivity_plus:mergeDebugShaders UP-TO-DATE
+> Task :camera_android:compileDebugShaders NO-SOURCE
+> Task :device_info_plus:mergeDebugShaders UP-TO-DATE
+> Task :camera_android:generateDebugAssets UP-TO-DATE
+> Task :file_picker:mergeDebugShaders UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :device_info_plus:compileDebugShaders NO-SOURCE
+> Task :device_info_plus:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :dynamic_color:mergeDebugShaders UP-TO-DATE
+> Task :flutter_logs:mergeDebugShaders UP-TO-DATE
+> Task :device_info_plus:packageDebugAssets UP-TO-DATE
+> Task :dynamic_color:compileDebugShaders NO-SOURCE
+> Task :dynamic_color:generateDebugAssets UP-TO-DATE
+> Task :connectivity_plus:compileDebugShaders NO-SOURCE
+> Task :flutter_logs:compileDebugShaders NO-SOURCE
+> Task :flutter_local_notifications:mergeDebugShaders UP-TO-DATE
+> Task :connectivity_plus:generateDebugAssets UP-TO-DATE
+> Task :file_picker:compileDebugShaders NO-SOURCE
+> Task :file_picker:generateDebugAssets UP-TO-DATE
+> Task :flutter_logs:generateDebugAssets UP-TO-DATE
+> Task :flutter_local_notifications:compileDebugShaders NO-SOURCE
+> Task :flutter_local_notifications:generateDebugAssets UP-TO-DATE
+> Task :camera_android:packageDebugAssets UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:mergeDebugShaders UP-TO-DATE
+> Task :flutter_logs:packageDebugAssets UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:compileDebugShaders NO-SOURCE
+> Task :connectivity_plus:packageDebugAssets UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:generateDebugAssets UP-TO-DATE
+> Task :file_picker:packageDebugAssets UP-TO-DATE
+> Task :geocoding_android:mergeDebugShaders UP-TO-DATE
+> Task :flutter_secure_storage:mergeDebugShaders UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:packageDebugAssets UP-TO-DATE
+> Task :geocoding_android:compileDebugShaders NO-SOURCE
+> Task :fluttertoast:mergeDebugShaders UP-TO-DATE
+> Task :flutter_secure_storage:compileDebugShaders NO-SOURCE
+> Task :flutter_secure_storage:generateDebugAssets UP-TO-DATE
+> Task :geolocator_android:mergeDebugShaders UP-TO-DATE
+> Task :fluttertoast:compileDebugShaders NO-SOURCE
+> Task :geocoding_android:generateDebugAssets UP-TO-DATE
+> Task :flutter_secure_storage:packageDebugAssets UP-TO-DATE
+> Task :geolocator_android:compileDebugShaders NO-SOURCE
+> Task :isar_flutter_libs:mergeDebugShaders UP-TO-DATE
+> Task :fluttertoast:generateDebugAssets UP-TO-DATE
+> Task :dynamic_color:packageDebugAssets UP-TO-DATE
+> Task :isar_flutter_libs:compileDebugShaders NO-SOURCE
+> Task :isar_flutter_libs:generateDebugAssets UP-TO-DATE
+> Task :image_picker_android:mergeDebugShaders UP-TO-DATE
+> Task :isar_flutter_libs:packageDebugAssets UP-TO-DATE
+> Task :flutter_local_notifications:packageDebugAssets UP-TO-DATE
+> Task :image_picker_android:compileDebugShaders NO-SOURCE
+> Task :image_picker_android:generateDebugAssets UP-TO-DATE
+> Task :open_file_android:mergeDebugShaders UP-TO-DATE
+> Task :open_file_android:compileDebugShaders NO-SOURCE
+> Task :image_picker_android:packageDebugAssets UP-TO-DATE
+> Task :open_file_android:generateDebugAssets UP-TO-DATE
+> Task :fluttertoast:packageDebugAssets UP-TO-DATE
+> Task :geocoding_android:packageDebugAssets UP-TO-DATE
+> Task :open_file_android:packageDebugAssets UP-TO-DATE
+> Task :package_info_plus:mergeDebugShaders UP-TO-DATE
+> Task :path_provider_android:mergeDebugShaders UP-TO-DATE
+> Task :package_info_plus:compileDebugShaders NO-SOURCE
+> Task :share_plus:mergeDebugShaders UP-TO-DATE
+> Task :path_provider_android:compileDebugShaders NO-SOURCE
+> Task :path_provider_android:generateDebugAssets UP-TO-DATE
+> Task :share_plus:compileDebugShaders NO-SOURCE
+> Task :share_plus:generateDebugAssets UP-TO-DATE
+> Task :share_plus:packageDebugAssets UP-TO-DATE
+> Task :geolocator_android:generateDebugAssets UP-TO-DATE
+> Task :path_provider_android:packageDebugAssets UP-TO-DATE
+> Task :permission_handler_android:mergeDebugShaders UP-TO-DATE
+> Task :url_launcher_android:mergeDebugShaders UP-TO-DATE
+> Task :geolocator_android:packageDebugAssets UP-TO-DATE
+> Task :permission_handler_android:compileDebugShaders NO-SOURCE
+> Task :permission_handler_android:generateDebugAssets UP-TO-DATE
+> Task :sqflite_android:mergeDebugShaders UP-TO-DATE
+> Task :sqflite_android:compileDebugShaders NO-SOURCE
+> Task :permission_handler_android:packageDebugAssets UP-TO-DATE
+> Task :sqflite_android:generateDebugAssets UP-TO-DATE
+> Task :package_info_plus:generateDebugAssets UP-TO-DATE
+> Task :shared_preferences_android:mergeDebugShaders UP-TO-DATE
+> Task :webview_flutter_android:mergeDebugShaders UP-TO-DATE
+> Task :webview_flutter_android:compileDebugShaders NO-SOURCE
+> Task :webview_flutter_android:generateDebugAssets UP-TO-DATE
+> Task :url_launcher_android:compileDebugShaders NO-SOURCE
+> Task :shared_preferences_android:compileDebugShaders NO-SOURCE
+> Task :url_launcher_android:generateDebugAssets UP-TO-DATE
+> Task :shared_preferences_android:generateDebugAssets UP-TO-DATE
+> Task :video_player_android:mergeDebugShaders UP-TO-DATE
+> Task :camera_android:generateDebugResValues UP-TO-DATE
+> Task :video_player_android:compileDebugShaders NO-SOURCE
+> Task :webview_flutter_android:packageDebugAssets UP-TO-DATE
+> Task :camera_android:generateDebugResources UP-TO-DATE
+> Task :video_player_android:generateDebugAssets UP-TO-DATE
+> Task :package_info_plus:packageDebugAssets UP-TO-DATE
+> Task :url_launcher_android:packageDebugAssets UP-TO-DATE
+> Task :connectivity_plus:generateDebugResValues UP-TO-DATE
+> Task :sqflite_android:packageDebugAssets UP-TO-DATE
+> Task :connectivity_plus:generateDebugResources UP-TO-DATE
+> Task :dynamic_color:generateDebugResValues UP-TO-DATE
+> Task :video_player_android:packageDebugAssets UP-TO-DATE
+> Task :shared_preferences_android:packageDebugAssets UP-TO-DATE
+> Task :dynamic_color:generateDebugResources UP-TO-DATE
+> Task :device_info_plus:generateDebugResValues UP-TO-DATE
+> Task :file_picker:generateDebugResValues UP-TO-DATE
+> Task :device_info_plus:generateDebugResources UP-TO-DATE
+> Task :file_picker:generateDebugResources UP-TO-DATE
+> Task :camera_android:packageDebugResources UP-TO-DATE
+> Task :flutter_local_notifications:generateDebugResValues UP-TO-DATE
+> Task :flutter_local_notifications:generateDebugResources UP-TO-DATE
+> Task :device_info_plus:packageDebugResources UP-TO-DATE
+> Task :dynamic_color:packageDebugResources UP-TO-DATE
+> Task :flutter_secure_storage:generateDebugResValues UP-TO-DATE
+> Task :flutter_secure_storage:generateDebugResources UP-TO-DATE
+> Task :fluttertoast:generateDebugResValues UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:generateDebugResValues UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:generateDebugResources UP-TO-DATE
+> Task :file_picker:packageDebugResources UP-TO-DATE
+> Task :flutter_logs:generateDebugResValues UP-TO-DATE
+> Task :flutter_logs:generateDebugResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:packageDebugResources UP-TO-DATE
+> Task :fluttertoast:generateDebugResources UP-TO-DATE
+> Task :flutter_secure_storage:packageDebugResources UP-TO-DATE
+> Task :geolocator_android:generateDebugResValues UP-TO-DATE
+> Task :flutter_logs:packageDebugResources UP-TO-DATE
+> Task :geolocator_android:generateDebugResources UP-TO-DATE
+> Task :image_picker_android:generateDebugResValues UP-TO-DATE
+> Task :geocoding_android:generateDebugResValues UP-TO-DATE
+> Task :geocoding_android:generateDebugResources UP-TO-DATE
+> Task :geolocator_android:packageDebugResources UP-TO-DATE
+> Task :open_file_android:generateDebugResValues UP-TO-DATE
+> Task :open_file_android:generateDebugResources UP-TO-DATE
+> Task :image_picker_android:generateDebugResources UP-TO-DATE
+> Task :fluttertoast:packageDebugResources UP-TO-DATE
+> Task :isar_flutter_libs:generateDebugResValues UP-TO-DATE
+> Task :isar_flutter_libs:generateDebugResources UP-TO-DATE
+> Task :package_info_plus:generateDebugResValues UP-TO-DATE
+> Task :package_info_plus:generateDebugResources UP-TO-DATE
+> Task :isar_flutter_libs:packageDebugResources UP-TO-DATE
+> Task :flutter_local_notifications:packageDebugResources UP-TO-DATE
+> Task :permission_handler_android:generateDebugResValues UP-TO-DATE
+> Task :permission_handler_android:generateDebugResources UP-TO-DATE
+> Task :image_picker_android:packageDebugResources UP-TO-DATE
+> Task :share_plus:generateDebugResValues UP-TO-DATE
+> Task :share_plus:generateDebugResources UP-TO-DATE
+> Task :connectivity_plus:packageDebugResources UP-TO-DATE
+> Task :shared_preferences_android:generateDebugResValues UP-TO-DATE
+> Task :shared_preferences_android:generateDebugResources UP-TO-DATE
+> Task :share_plus:packageDebugResources UP-TO-DATE
+> Task :permission_handler_android:packageDebugResources UP-TO-DATE
+> Task :shared_preferences_android:packageDebugResources UP-TO-DATE
+> Task :sqflite_android:generateDebugResValues UP-TO-DATE
+> Task :sqflite_android:generateDebugResources UP-TO-DATE
+> Task :geocoding_android:packageDebugResources UP-TO-DATE
+> Task :url_launcher_android:generateDebugResValues UP-TO-DATE
+> Task :url_launcher_android:generateDebugResources UP-TO-DATE
+> Task :package_info_plus:packageDebugResources UP-TO-DATE
+> Task :video_player_android:generateDebugResValues UP-TO-DATE
+> Task :video_player_android:generateDebugResources UP-TO-DATE
+> Task :url_launcher_android:packageDebugResources UP-TO-DATE
+> Task :video_player_android:packageDebugResources UP-TO-DATE
+> Task :webview_flutter_android:generateDebugResValues UP-TO-DATE
+> Task :webview_flutter_android:generateDebugResources UP-TO-DATE
+> Task :camera_android:extractDeepLinksDebug UP-TO-DATE
+> Task :connectivity_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :camera_android:processDebugManifest UP-TO-DATE
+> Task :connectivity_plus:processDebugManifest UP-TO-DATE
+> Task :path_provider_android:generateDebugResValues UP-TO-DATE
+> Task :path_provider_android:generateDebugResources UP-TO-DATE
+> Task :device_info_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :dynamic_color:extractDeepLinksDebug UP-TO-DATE
+> Task :device_info_plus:processDebugManifest UP-TO-DATE
+> Task :path_provider_android:packageDebugResources UP-TO-DATE
+> Task :file_picker:extractDeepLinksDebug UP-TO-DATE
+> Task :webview_flutter_android:packageDebugResources UP-TO-DATE
+> Task :flutter_local_notifications:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:extractDeepLinksDebug UP-TO-DATE
+> Task :sqflite_android:packageDebugResources UP-TO-DATE
+> Task :flutter_secure_storage:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_logs:extractDeepLinksDebug UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:processDebugManifest UP-TO-DATE
+> Task :flutter_local_notifications:processDebugManifest UP-TO-DATE
+> Task :fluttertoast:extractDeepLinksDebug UP-TO-DATE
+> Task :geocoding_android:extractDeepLinksDebug UP-TO-DATE
+> Task :dynamic_color:processDebugManifest UP-TO-DATE
+> Task :fluttertoast:processDebugManifest UP-TO-DATE
+> Task :geocoding_android:processDebugManifest UP-TO-DATE
+> Task :flutter_logs:processDebugManifest UP-TO-DATE
+> Task :geolocator_android:extractDeepLinksDebug UP-TO-DATE
+> Task :image_picker_android:extractDeepLinksDebug UP-TO-DATE
+> Task :isar_flutter_libs:extractDeepLinksDebug UP-TO-DATE
+> Task :isar_flutter_libs:processDebugManifest UP-TO-DATE
+> Task :package_info_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :file_picker:processDebugManifest UP-TO-DATE
+> Task :path_provider_android:extractDeepLinksDebug UP-TO-DATE
+> Task :open_file_android:packageDebugResources UP-TO-DATE
+> Task :path_provider_android:processDebugManifest UP-TO-DATE
+> Task :open_file_android:extractDeepLinksDebug UP-TO-DATE
+> Task :permission_handler_android:extractDeepLinksDebug UP-TO-DATE
+> Task :open_file_android:processDebugManifest UP-TO-DATE
+> Task :share_plus:extractDeepLinksDebug UP-TO-DATE
+> Task :shared_preferences_android:extractDeepLinksDebug UP-TO-DATE
+> Task :image_picker_android:processDebugManifest UP-TO-DATE
+> Task :share_plus:processDebugManifest UP-TO-DATE
+> Task :sqflite_android:extractDeepLinksDebug UP-TO-DATE
+> Task :url_launcher_android:extractDeepLinksDebug UP-TO-DATE
+> Task :shared_preferences_android:processDebugManifest UP-TO-DATE
+> Task :url_launcher_android:processDebugManifest UP-TO-DATE
+> Task :video_player_android:extractDeepLinksDebug UP-TO-DATE
+> Task :webview_flutter_android:extractDeepLinksDebug UP-TO-DATE
+> Task :video_player_android:processDebugManifest UP-TO-DATE
+> Task :webview_flutter_android:processDebugManifest UP-TO-DATE
+> Task :camera_android:compileDebugLibraryResources UP-TO-DATE
+> Task :connectivity_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_secure_storage:processDebugManifest UP-TO-DATE
+> Task :package_info_plus:processDebugManifest UP-TO-DATE
+> Task :geolocator_android:processDebugManifest UP-TO-DATE
+> Task :device_info_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :dynamic_color:compileDebugLibraryResources UP-TO-DATE
+> Task :permission_handler_android:processDebugManifest UP-TO-DATE
+> Task :file_picker:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_local_notifications:compileDebugLibraryResources UP-TO-DATE
+> Task :sqflite_android:processDebugManifest UP-TO-DATE
+> Task :flutter_logs:compileDebugLibraryResources UP-TO-DATE
+> Task :device_info_plus:parseDebugLocalResources UP-TO-DATE
+> Task :device_info_plus:generateDebugRFile UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_local_notifications:parseDebugLocalResources UP-TO-DATE
+> Task :camera_android:parseDebugLocalResources UP-TO-DATE
+> Task :camera_android:generateDebugRFile UP-TO-DATE
+> Task :flutter_logs:parseDebugLocalResources UP-TO-DATE
+> Task :dynamic_color:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_secure_storage:compileDebugLibraryResources UP-TO-DATE
+> Task :file_picker:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_logs:generateDebugRFile UP-TO-DATE
+> Task :dynamic_color:generateDebugRFile UP-TO-DATE
+> Task :fluttertoast:compileDebugLibraryResources UP-TO-DATE
+> Task :file_picker:generateDebugRFile UP-TO-DATE
+> Task :flutter_local_notifications:generateDebugRFile UP-TO-DATE
+> Task :connectivity_plus:parseDebugLocalResources UP-TO-DATE
+> Task :geocoding_android:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:parseDebugLocalResources UP-TO-DATE
+> Task :connectivity_plus:generateDebugRFile UP-TO-DATE
+> Task :fluttertoast:parseDebugLocalResources UP-TO-DATE
+> Task :geolocator_android:compileDebugLibraryResources UP-TO-DATE
+> Task :fluttertoast:generateDebugRFile UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:generateDebugRFile UP-TO-DATE
+> Task :open_file_android:compileDebugLibraryResources UP-TO-DATE
+> Task :geocoding_android:parseDebugLocalResources UP-TO-DATE
+> Task :image_picker_android:compileDebugLibraryResources UP-TO-DATE
+> Task :package_info_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :geolocator_android:parseDebugLocalResources UP-TO-DATE
+> Task :geocoding_android:generateDebugRFile UP-TO-DATE
+> Task :open_file_android:parseDebugLocalResources UP-TO-DATE
+> Task :image_picker_android:parseDebugLocalResources UP-TO-DATE
+> Task :geolocator_android:generateDebugRFile UP-TO-DATE
+> Task :package_info_plus:parseDebugLocalResources UP-TO-DATE
+> Task :isar_flutter_libs:compileDebugLibraryResources UP-TO-DATE
+> Task :flutter_secure_storage:parseDebugLocalResources UP-TO-DATE
+> Task :package_info_plus:generateDebugRFile UP-TO-DATE
+> Task :share_plus:compileDebugLibraryResources UP-TO-DATE
+> Task :path_provider_android:compileDebugLibraryResources UP-TO-DATE
+> Task :open_file_android:generateDebugRFile UP-TO-DATE
+> Task :shared_preferences_android:compileDebugLibraryResources UP-TO-DATE
+> Task :image_picker_android:generateDebugRFile UP-TO-DATE
+> Task :sqflite_android:compileDebugLibraryResources UP-TO-DATE
+> Task :isar_flutter_libs:parseDebugLocalResources UP-TO-DATE
+> Task :share_plus:parseDebugLocalResources UP-TO-DATE
+> Task :flutter_secure_storage:generateDebugRFile UP-TO-DATE
+> Task :share_plus:generateDebugRFile UP-TO-DATE
+> Task :permission_handler_android:compileDebugLibraryResources UP-TO-DATE
+> Task :isar_flutter_libs:generateDebugRFile UP-TO-DATE
+> Task :sqflite_android:parseDebugLocalResources UP-TO-DATE
+> Task :url_launcher_android:compileDebugLibraryResources UP-TO-DATE
+> Task :path_provider_android:parseDebugLocalResources UP-TO-DATE
+> Task :permission_handler_android:parseDebugLocalResources UP-TO-DATE
+> Task :sqflite_android:generateDebugRFile UP-TO-DATE
+> Task :path_provider_android:generateDebugRFile UP-TO-DATE
+> Task :permission_handler_android:generateDebugRFile UP-TO-DATE
+> Task :video_player_android:compileDebugLibraryResources UP-TO-DATE
+> Task :webview_flutter_android:compileDebugLibraryResources UP-TO-DATE
+> Task :shared_preferences_android:parseDebugLocalResources UP-TO-DATE
+> Task :shared_preferences_android:generateDebugRFile UP-TO-DATE
+> Task :flutter_plugin_android_lifecycle:javaPreCompileDebug UP-TO-DATE
+> Task :camera_android:generateDebugBuildConfig UP-TO-DATE
+> Task :connectivity_plus:javaPreCompileDebug UP-TO-DATE
+> Task :camera_android:javaPreCompileDebug UP-TO-DATE
+> Task :webview_flutter_android:parseDebugLocalResources UP-TO-DATE
+> Task :webview_flutter_android:generateDebugRFile UP-TO-DATE
+> Task :file_picker:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_local_notifications:javaPreCompileDebug UP-TO-DATE
+> Task :video_player_android:parseDebugLocalResources UP-TO-DATE
+> Task :video_player_android:generateDebugRFile UP-TO-DATE
+> Task :url_launcher_android:parseDebugLocalResources UP-TO-DATE
+> Task :url_launcher_android:generateDebugRFile UP-TO-DATE
+> Task :flutter_secure_storage:generateDebugBuildConfig UP-TO-DATE
+> Task :flutter_secure_storage:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_secure_storage:compileDebugJavaWithJavac UP-TO-DATE
+> Task :flutter_secure_storage:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :connectivity_plus:compileDebugJavaWithJavac UP-TO-DATE
+> Task :connectivity_plus:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :geocoding_android:javaPreCompileDebug UP-TO-DATE
+> Task :geocoding_android:compileDebugJavaWithJavac UP-TO-DATE
+> Task :device_info_plus:compileDebugKotlin UP-TO-DATE
+> Task :device_info_plus:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_logs:compileDebugKotlin UP-TO-DATE
+> Task :flutter_logs:javaPreCompileDebug UP-TO-DATE
+> Task :geocoding_android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :dynamic_color:compileDebugKotlin UP-TO-DATE
+> Task :geolocator_android:javaPreCompileDebug UP-TO-DATE
+> Task :flutter_logs:compileDebugJavaWithJavac NO-SOURCE
+> Task :device_info_plus:compileDebugJavaWithJavac NO-SOURCE
+> Task :fluttertoast:compileDebugKotlin UP-TO-DATE
+> Task :dynamic_color:javaPreCompileDebug
+> Task :dynamic_color:compileDebugJavaWithJavac NO-SOURCE
+> Task :fluttertoast:javaPreCompileDebug
+> Task :fluttertoast:compileDebugJavaWithJavac NO-SOURCE
+> Task :device_info_plus:bundleLibCompileToJarDebug
+> Task :dynamic_color:bundleLibCompileToJarDebug
+> Task :isar_flutter_libs:javaPreCompileDebug
+> Task :geolocator_android:compileDebugJavaWithJavac UP-TO-DATE
+> Task :image_picker_android:javaPreCompileDebug
+> Task :fluttertoast:bundleLibCompileToJarDebug
+> Task :open_file_android:javaPreCompileDebug
+> Task :flutter_logs:bundleLibCompileToJarDebug
+> Task :geolocator_android:bundleLibCompileToJarDebug
+> Task :path_provider_android:javaPreCompileDebug
+> Task :permission_handler_android:javaPreCompileDebug
+
+> Task :isar_flutter_libs:compileDebugJavaWithJavac
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :open_file_android:compileDebugJavaWithJavac
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+
+> Task :isar_flutter_libs:bundleLibCompileToJarDebug
+> Task :package_info_plus:javaPreCompileDebug
+
+> Task :permission_handler_android:compileDebugJavaWithJavac
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+
+> Task :open_file_android:compileDebugJavaWithJavac
+3 warnings
+
+> Task :open_file_android:bundleLibCompileToJarDebug
+
+> Task :permission_handler_android:compileDebugJavaWithJavac
+3 warnings
+
+> Task :permission_handler_android:bundleLibCompileToJarDebug
+> Task :share_plus:javaPreCompileDebug
+> Task :sqflite_android:javaPreCompileDebug
+
+> Task :package_info_plus:compileDebugKotlin
+w: file:///C:/Users/GLC/AppData/Local/Pub/Cache/hosted/pub.dev/package_info_plus-4.2.0/android/src/main/kotlin/dev/fluttercommunity/plus/packageinfo/PackageInfoPlugin.kt:37:43 'getPackageInfo(String, Int): PackageInfo!' is deprecated. Deprecated in Java
+
+> Task :package_info_plus:compileDebugJavaWithJavac NO-SOURCE
+> Task :package_info_plus:bundleLibCompileToJarDebug
+> Task :shared_preferences_android:javaPreCompileDebug
+> Task :url_launcher_android:generateDebugBuildConfig
+> Task :url_launcher_android:javaPreCompileDebug
+> Task :share_plus:compileDebugKotlin
+> Task :share_plus:compileDebugJavaWithJavac NO-SOURCE
+> Task :share_plus:bundleLibCompileToJarDebug
+> Task :video_player_android:javaPreCompileDebug
+> Task :flutter_local_notifications:compileDebugJavaWithJavac FAILED
+> Task :url_launcher_android:compileDebugJavaWithJavac FAILED
+> Task :path_provider_android:compileDebugJavaWithJavac FAILED
+> Task :flutter_plugin_android_lifecycle:compileDebugJavaWithJavac FAILED
+> Task :sqflite_android:compileDebugJavaWithJavac FAILED
+> Task :video_player_android:compileDebugJavaWithJavac FAILED
+> Task :app:compileFlutterBuildDebug
+> Task :shared_preferences_android:compileDebugKotlin
+w: file:///C:/Users/GLC/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences_android-2.4.11/android/src/main/kotlin/io/flutter/plugins/sharedpreferences/SharedPreferencesPlugin.kt:451:52 Unnecessary non-null assertion (!!) on a non-null receiver of type String
+
+> Task :app:compileFlutterBuildDebug
+/C:/Users/GLC/AppData/Local/Pub/Cache/hosted/pub.dev/geolocator_android-5.0.2/lib/src/types/foreground_settings.dart:122:23: Error: The method 'toARGB32' isn't defined for the class 'Color'.
+ - 'Color' is from 'dart:ui'.
+Try correcting the name to the name of an existing method, or defining a method named 'toARGB32'.
+      'color': color?.toARGB32(),
+                      ^^^^^^^^
+/C:/Users/GLC/AppData/Local/Pub/Cache/hosted/pub.dev/dynamic_color-1.8.1/lib/src/harmonization.dart:7:37: Error: The method 'toARGB32' isn't defined for the class 'Color'.
+ - 'Color' is from 'dart:ui'.
+Try correcting the name to the name of an existing method, or defining a method named 'toARGB32'.
+  return Color(Blend.harmonize(from.toARGB32(), to.toARGB32()));
+                                    ^^^^^^^^
+/C:/Users/GLC/AppData/Local/Pub/Cache/hosted/pub.dev/dynamic_color-1.8.1/lib/src/harmonization.dart:7:52: Error: The method 'toARGB32' isn't defined for the class 'Color'.
+ - 'Color' is from 'dart:ui'.
+Try correcting the name to the name of an existing method, or defining a method named 'toARGB32'.
+  return Color(Blend.harmonize(from.toARGB32(), to.toARGB32()));
+                                                   ^^^^^^^^
+Target kernel_snapshot_program failed: Exception
+
+
+> Task :app:compileFlutterBuildDebug FAILED
+
+FAILURE: Build completed with 7 failures.
+
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':flutter_local_notifications:compileDebugJavaWithJavac'.
+> Could not resolve all files for configuration ':flutter_local_notifications:androidJdkImage'.
+   > Failed to transform core-for-system-modules.jar to match attributes {artifactType=_internal_android_jdk_image, org.gradle.libraryelements=jar, org.gradle.usage=java-runtime}.
+      > Execution failed for JdkImageTransform: D:\Logiciels\sdk\platforms\android-35\core-for-system-modules.jar.
+         > Error while executing process C:\Program Files\Android\Android Studio1\jbr\bin\jlink.exe with arguments {--module-path C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\temp\jmod --add-modules java.base --output C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\jdkImage --disable-plugin system-modules}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':flutter_plugin_android_lifecycle:compileDebugJavaWithJavac'.
+> Could not resolve all files for configuration ':flutter_plugin_android_lifecycle:androidJdkImage'.
+   > Failed to transform core-for-system-modules.jar to match attributes {artifactType=_internal_android_jdk_image, org.gradle.libraryelements=jar, org.gradle.usage=java-runtime}.
+      > Execution failed for JdkImageTransform: D:\Logiciels\sdk\platforms\android-35\core-for-system-modules.jar.
+         > Error while executing process C:\Program Files\Android\Android Studio1\jbr\bin\jlink.exe with arguments {--module-path C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\temp\jmod --add-modules java.base --output C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\jdkImage --disable-plugin system-modules}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+3: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':path_provider_android:compileDebugJavaWithJavac'.
+> Could not resolve all files for configuration ':path_provider_android:androidJdkImage'.
+   > Failed to transform core-for-system-modules.jar to match attributes {artifactType=_internal_android_jdk_image, org.gradle.libraryelements=jar, org.gradle.usage=java-runtime}.
+      > Execution failed for JdkImageTransform: D:\Logiciels\sdk\platforms\android-35\core-for-system-modules.jar.
+         > Error while executing process C:\Program Files\Android\Android Studio1\jbr\bin\jlink.exe with arguments {--module-path C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\temp\jmod --add-modules java.base --output C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\jdkImage --disable-plugin system-modules}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+4: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':url_launcher_android:compileDebugJavaWithJavac'.
+> Could not resolve all files for configuration ':url_launcher_android:androidJdkImage'.
+   > Failed to transform core-for-system-modules.jar to match attributes {artifactType=_internal_android_jdk_image, org.gradle.libraryelements=jar, org.gradle.usage=java-runtime}.
+      > Execution failed for JdkImageTransform: D:\Logiciels\sdk\platforms\android-35\core-for-system-modules.jar.
+         > Error while executing process C:\Program Files\Android\Android Studio1\jbr\bin\jlink.exe with arguments {--module-path C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\temp\jmod --add-modules java.base --output C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\jdkImage --disable-plugin system-modules}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+5: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':sqflite_android:compileDebugJavaWithJavac'.
+> Could not resolve all files for configuration ':sqflite_android:androidJdkImage'.
+   > Failed to transform core-for-system-modules.jar to match attributes {artifactType=_internal_android_jdk_image, org.gradle.libraryelements=jar, org.gradle.usage=java-runtime}.
+      > Execution failed for JdkImageTransform: D:\Logiciels\sdk\platforms\android-34\core-for-system-modules.jar.
+         > Error while executing process C:\Program Files\Android\Android Studio1\jbr\bin\jlink.exe with arguments {--module-path C:\Users\GLC\.gradle\caches\transforms-3\3c61f0d9f87b428e01ca100e140a325a\transformed\output\temp\jmod --add-modules java.base --output C:\Users\GLC\.gradle\caches\transforms-3\3c61f0d9f87b428e01ca100e140a325a\transformed\output\jdkImage --disable-plugin system-modules}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+6: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':video_player_android:compileDebugJavaWithJavac'.
+> Could not resolve all files for configuration ':video_player_android:androidJdkImage'.
+   > Failed to transform core-for-system-modules.jar to match attributes {artifactType=_internal_android_jdk_image, org.gradle.libraryelements=jar, org.gradle.usage=java-runtime}.
+      > Execution failed for JdkImageTransform: D:\Logiciels\sdk\platforms\android-35\core-for-system-modules.jar.
+         > Error while executing process C:\Program Files\Android\Android Studio1\jbr\bin\jlink.exe with arguments {--module-path C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\temp\jmod --add-modules java.base --output C:\Users\GLC\.gradle\caches\transforms-3\6851ef134a0f6efc2285308bad98a1f1\transformed\output\jdkImage --disable-plugin system-modules}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+7: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':app:compileFlutterBuildDebug'.
+> Process 'command 'D:\Logiciels\sdk\flutter_windows_3.27.3-stable\flutter\bin\flutter.bat'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+BUILD FAILED in 1m 43s
+304 actionable tasks: 37 executed, 267 up-to-date

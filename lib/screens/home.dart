@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/theming/dimens.dart';
@@ -9,7 +8,6 @@ import 'package:munturai/features/chatbot/presentation/providers/chatbot_provide
 import 'package:munturai/screens/chat.dart';
 
 import 'package:munturai/features/notifications/presentation/providers/notification_provider.dart';
-import 'package:munturai/core/utils/size_utils.dart';
 import 'package:munturai/screens/maps.dart';
 import 'package:munturai/screens/notifications.dart';
 import 'package:munturai/screens/settings.dart';

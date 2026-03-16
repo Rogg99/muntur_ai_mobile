@@ -350,7 +350,7 @@
   "encounters": "Encounters",
   "likes": "Likes",
   "conversations": "Chats",
-  "likesAdvice": "The sooner you return a Like, the better your chances of chatting and meeting up!" ,
+  "likesAdvice": "The sooner you return a Like, the better your chances of chatting and meeting up!",
   "current_mood_question": "What's your current mood?",
   "share_feelings": "Share how you feel right now",
   "unknown_mood": "Not sure",
@@ -408,7 +408,6 @@
   "feature_premium_weekly_boost": "1 Boost per week",
   "feature_premium_advanced_filters": "Advanced search filters",
   "feature_premium_ai_suggestions": "AI-powered high compatibility suggestions",
-
   "feature_gold_all_premium": "All Premium features",
   "feature_gold_message_without_match": "Send messages without matching",
   "feature_gold_three_boosts": "3 Boosts per week",
@@ -453,5 +452,6 @@
   "forumsTitle": "Forums",
   "notificationsTitle": "Notifications",
   "newDiscussion": "New Chat",
-  "you": "You"
+  "you": "You",
+  "chatWelcome": "Start a new discussion with Muntur AI,Ask me any question you want !"
 }

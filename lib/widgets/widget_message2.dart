@@ -50,6 +50,7 @@ class MessageWidget2_ extends State<MessageWidget2> {
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     int messagelength =
         message!.contenu.length >= 36 ? 36 : message!.contenu.length;
     double proportion = (((MediaQuery.of(context).size.width) * 0.6)) / (36);
@@ -86,7 +87,7 @@ class MessageWidget2_ extends State<MessageWidget2> {
                     bottom: 4,
                   ),
                   child: Text(
-                    "Start a new discussion with Muntur AI,Ask me any question you want !",
+                    translator.chatWelcome,
                     maxLines: null,
                     textAlign: TextAlign.center,
                     style: appStyle.H4(color: Colors.grey),
@@ -205,12 +206,12 @@ class MessageWidget2_ extends State<MessageWidget2> {
     String duree = '';
     double actual = DateTime.now().millisecondsSinceEpoch / 1000;
     double periode = actual - time;
-    if (periode / 3600 < 1)
+    if (periode / 3600 < 1) {
       duree = (periode / 60).floor().toString() + 'min';
-    else if (periode / 3600 < 24)
+    } else if (periode / 3600 < 24) {
       duree = DateTime.fromMillisecondsSinceEpoch(time.toInt() * 1000)
           .format('kk:mm');
-    else
+    } else
       duree = DateTime.fromMillisecondsSinceEpoch(time.toInt() * 1000)
           .format('MM/dd');
     return duree;

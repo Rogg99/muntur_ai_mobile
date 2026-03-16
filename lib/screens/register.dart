@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:munturai/core/colors/colors.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
-import 'package:munturai/model/Token.dart';
 import 'package:munturai/utils/sized_extension.dart';
 import 'package:munturai/widgets/primary_button.dart';
 import '../core/app_export.dart';
@@ -117,7 +115,6 @@ class _signupState extends ConsumerState<Signup2>
   @override
   Widget build(BuildContext context) {
     var appStyle = AppStyle.of(context);
-    var themeProvider = ThemeProvider.of(context);
     AppLocalizations translator = AppLocalizations.of(context)!;
 
     return Scaffold(

@@ -1,7 +1,7 @@
 class ImageConstant {
   static String logo_white = 'assets/images/logo_white.png';
   static String logo_dark = 'assets/images/logo_dark.png';
-  static String affiche = 'assets/images/bot_img.png';
+  static String affiche = 'assets/images/bot_img.jpg';
   static String map = 'assets/images/map.png';
   static String garage = 'assets/images/garageIcon.png';
 

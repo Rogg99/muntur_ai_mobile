@@ -74,11 +74,11 @@ class _CoinsState extends ConsumerState<Coins> with TickerProviderStateMixin {
         children: [
           // ── Grille des packs ────────────────────────────────────
           GridView.count(
-            childAspectRatio: 210 / 300,
+            childAspectRatio: 280 / 300,
             padding:
                 const EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 80),
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 0,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 10,
             crossAxisCount: 2,
             children: [
               for (int i = 0; i < _coinPlans.length; i++)

@@ -67,7 +67,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (token == null || token.isEmpty) {
         return _loadFromIsar();
       }
-      final response = await _apiClient.get('/profiles/my-profile/');
+      final response = await _apiClient.get('/auth/get-user-profile/');
       if (response.statusCode == 200) {
         final raw = response.data;
         // Backend may wrap in 'data'

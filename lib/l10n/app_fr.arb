@@ -408,7 +408,6 @@
   "feature_premium_weekly_boost": "1 Boost/semaine",
   "feature_premium_advanced_filters": "Filtres de recherche avancés",
   "feature_premium_ai_suggestions": "Suggestions IA de haute compatibilité",
-
   "feature_gold_all_premium": "Toutes les options Premium",
   "feature_gold_message_without_match": "Envoyer des messages sans match",
   "feature_gold_three_boosts": "3 Boosts/semaine",
@@ -453,5 +452,6 @@
   "forumsTitle": "Forums",
   "notificationsTitle": "Notifications",
   "newDiscussion": "Nouveau Chat",
-  "you": "Vous"
+  "you": "Vous",
+  "chatWelcome": "Commencez une nouvelle discussion avec Muntur AI, posez-moi toutes les questions que vous voulez !"
 }

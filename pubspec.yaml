@@ -23,7 +23,6 @@ dependencies:
   fluttertoast: ^8.0.8
   calendar_date_picker2: ^0.5.3
   cupertino_rounded_corners: ^2.1.1
-#  twemoji: ^1.1.0
   fl_chart: ^0.71.0
   blurrycontainer: ^1.0.2
   vector_math: ^2.1.4
@@ -43,7 +42,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   share_plus: ^10.1.4
   sqflite: ^2.2.8+4
-#  dio: ^5.4.0
   positioned_scroll_observer: ^2.2.2
   path: ^1.8.2
   url_launcher: ^6.1.11
@@ -80,6 +78,7 @@ dependencies:
   dio: ^5.9.2
   json_annotation: ^4.9.0
   flutter_secure_storage: ^9.2.4
+  flutter_gen: ^5.9.0
 #  flutter_lints: ^3.0.2
 
 flutter_launcher_icons:
@@ -141,17 +140,11 @@ flutter:
         - asset: assets/fonts/stolzl_regular.otf
           weight: 400
 
-localizations:
-  arb-dir: lib/l10n
-  template-arb-file: app_en.arb
-  output-localization-file: app_localizations.dart
+
 
 flutter_gen:
   output: lib/generated/
   line_length: 120
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
 
@@ -163,11 +156,8 @@ dev_dependencies:
   riverpod_generator: ^2.3.5
   build_runner: ^2.4.13
   freezed: ^2.4.7
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^3.0.2
 
+dependency_overrides:
+  dynamic_color: 1.7.0
+  geolocator_android: 4.6.1

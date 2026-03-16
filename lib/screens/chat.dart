@@ -131,7 +131,7 @@ class Chat_ extends ConsumerState<ChatView> with TickerProviderStateMixin {
     final appStyle = AppStyle.of(context);
     AppLocalizations? translator = AppLocalizations.of(context)!;
 
-    final messagesState = ref.watch(chatMessagesProvider(disc?.id ?? 'none'));
+    final messagesState = ref.watch(chatMessagesProvider(disc?.id ?? 'new'));
     if (messagesState is AsyncData) {
       messages = (messagesState.value ?? [])
           .map((m) => UIMessage(
@@ -166,7 +166,7 @@ class Chat_ extends ConsumerState<ChatView> with TickerProviderStateMixin {
         backgroundColor: Theme.of(context).colorScheme.surface,
         resizeToAvoidBottomInset: true,
         appBar: CustomAppBar(
-          titleTxt: disc?.title ?? 'Nouvelle discussion',
+          titleTxt: disc?.title ?? translator.newDiscussion,
         ),
         body: Stack(
           children: [

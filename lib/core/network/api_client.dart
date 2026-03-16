@@ -2,9 +2,12 @@ import 'package:dio/dio.dart';
 import '../services/secure_storage_service.dart';
 
 class ApiClient {
+  static final ApiClient _instance = ApiClient._internal();
+  factory ApiClient() => _instance;
+
   late final Dio _dio;
 
-  ApiClient() {
+  ApiClient._internal() {
     _dio = Dio(
       BaseOptions(
         baseUrl: 'https://195.26.244.215:447/m/muntur',
@@ -36,6 +39,16 @@ class ApiClient {
         },
       ),
     );
+
+    // Add logger for API calls
+    _dio.interceptors.add(LogInterceptor(
+      request: true,
+      requestHeader: true,
+      requestBody: true,
+      responseHeader: true,
+      responseBody: true,
+      error: true,
+    ));
   }
 
   Dio get dio => _dio;

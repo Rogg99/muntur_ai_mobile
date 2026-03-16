@@ -43,23 +43,27 @@ class PrimaryButtonState extends State<PrimaryButton> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (widget.icon != null)
-              Icon(widget.icon, color: Theme.of(context).colorScheme.background),
-            if (widget.icon != null)
-              const SizedBox(width: 8),
+              Icon(widget.icon,
+                  color: Theme.of(context).colorScheme.background),
+            if (widget.icon != null) const SizedBox(width: 8),
             Text(
               widget.text,
               style: appStyle.H5(
                 weight: 'bold',
-                color: widget.textColor ?? Theme.of(context).colorScheme.background,
+                color:
+                    widget.textColor ?? Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            if(widget.loading!)
+            if (widget.loading!)
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(color:Theme.of(context).colorScheme.background,strokeWidth: 2,)),
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.background,
+                      strokeWidth: 2,
+                    )),
               )
           ],
         ),

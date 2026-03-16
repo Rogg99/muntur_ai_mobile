@@ -25,7 +25,7 @@ import 'package:munturai/core/services/sync_service.dart';
 import 'core/fonctions.dart';
 import 'core/theming/theme.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:munturai/l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

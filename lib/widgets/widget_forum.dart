@@ -1,16 +1,13 @@
-import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:munturai/core/app_export.dart';
-import 'package:munturai/core/colors/colors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:munturai/screens/chat.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/utils/dateUtils.dart';
 
 class WidgetForum extends StatefulWidget {
-  DiscussionModel? disc;
-  WidgetForum({
+  final DiscussionModel? disc;
+  const WidgetForum({
     super.key,
     required this.disc,
   });

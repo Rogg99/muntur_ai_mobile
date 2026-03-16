@@ -12,16 +12,29 @@ class SecureStorageService {
   );
 
   static const _tokenKey = 'auth_token';
+  String? _cachedToken;
+  Future<String?>? _getTokenFuture;
 
   Future<void> saveToken(String token) async {
+    _cachedToken = token;
     await _storage.write(key: _tokenKey, value: token);
   }
 
   Future<String?> getToken() async {
-    return await _storage.read(key: _tokenKey);
+    if (_cachedToken != null) return _cachedToken;
+    if (_getTokenFuture != null) return _getTokenFuture;
+
+    _getTokenFuture = _storage.read(key: _tokenKey);
+    try {
+      _cachedToken = await _getTokenFuture;
+    } finally {
+      _getTokenFuture = null;
+    }
+    return _cachedToken;
   }
 
   Future<void> deleteToken() async {
+    _cachedToken = null;
     await _storage.delete(key: _tokenKey);
   }
 

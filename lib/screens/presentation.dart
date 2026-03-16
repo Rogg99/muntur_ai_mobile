@@ -17,18 +17,17 @@ class PresentationScreen extends StatefulWidget {
 }
 
 class Animated extends State<PresentationScreen> with TickerProviderStateMixin {
-  String uitheme='light';
+  String uitheme = 'light';
   late Animation<double> animation;
   late AnimationController controller;
   var results;
   @override
   void initState() {
-      getKey('theme').then((value) => (){
-        log('AppTheme : $value');
-          uitheme=value;
-       setState(() {
-       });
-     });
+    getKey('theme').then((value) => () {
+          log('AppTheme : $value');
+          uitheme = value;
+          setState(() {});
+        });
     super.initState();
     int i = 1;
     controller = AnimationController(
@@ -37,8 +36,7 @@ class Animated extends State<PresentationScreen> with TickerProviderStateMixin {
     );
     animation = Tween<double>(begin: 0, end: 6).animate(controller)
       ..addListener(() {
-        setState(() {
-        });
+        setState(() {});
       });
     controller.forward();
   }
@@ -68,7 +66,9 @@ class Animated extends State<PresentationScreen> with TickerProviderStateMixin {
                 "Welcome to MUNTUR AI, your AI Assistant",
                 maxLines: null,
                 textAlign: TextAlign.center,
-                style: appStyle.H3(weight: 'bold'),
+                style: appStyle.H3(
+                    weight: 'bold',
+                    color: Theme.of(context).colorScheme.primary),
               ),
             ),
             Padding(
@@ -77,10 +77,11 @@ class Animated extends State<PresentationScreen> with TickerProviderStateMixin {
                 bottom: 30,
               ),
               child: Text(
-                "The AI that help you on everything concerning car repair!Connect and Enjoy it!",
+                "The AI that help you on everything concerning car repair!\nConnect and Enjoy it!",
                 maxLines: null,
                 textAlign: TextAlign.center,
-                style: appStyle.H5(),
+                style:
+                    appStyle.H5(color: Theme.of(context).colorScheme.primary),
               ),
             ),
             CustomImageView(
@@ -89,13 +90,13 @@ class Animated extends State<PresentationScreen> with TickerProviderStateMixin {
               height: 400,
               width: BodyWidth(),
             ),
-            Padding(padding: getPadding(top:25)),
+            Padding(padding: getPadding(top: 25)),
             PrimaryButton(
-              text: translator.continue__,
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
-              }
-            )
+                text: translator.continue__,
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Login()));
+                })
           ],
         ),
       ),

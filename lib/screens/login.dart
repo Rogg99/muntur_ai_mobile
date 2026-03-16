@@ -1,22 +1,17 @@
-import 'dart:convert';
-import 'dart:developer';
+// ignore_for_file: camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/colors/colors.dart';
-import 'package:munturai/model/Token.dart';
 import 'package:munturai/screens/home.dart';
 import 'package:munturai/screens/register.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/widgets/primary_button.dart';
 
 import '../core/app_export.dart';
-import '../model/User.dart';
 
 class Login extends ConsumerStatefulWidget {
-  const Login({Key? key})
-      : super(
-          key: key,
-        );
+  const Login({super.key});
 
   @override
   ConsumerState<Login> createState() => _loginState();
@@ -68,7 +63,7 @@ class _loginState extends ConsumerState<Login> with TickerProviderStateMixin {
           Padding(padding: getPadding(top: 100)),
           Container(
             padding: getPadding(all: 10),
-            margin: EdgeInsets.symmetric(horizontal: 20),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
             height: 170,
             decoration: BoxDecoration(
                 color: UIColors.primaryAccent,
@@ -136,7 +131,7 @@ class _loginState extends ConsumerState<Login> with TickerProviderStateMixin {
                 ),
                 Padding(padding: getPadding(top: 5)),
                 Text(
-                  '$textFieldMessage',
+                  textFieldMessage,
                   style: appStyle.txtArimoHebrewSubset(size: 16).copyWith(
                       fontStyle: FontStyle.italic, color: textFieldColor),
                 ),
