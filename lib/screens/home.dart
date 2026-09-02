@@ -28,6 +28,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
   bool _firstClick = false;
+  bool _centerUser = false;
   Timer? _autoRefreshTimer;
 
   @override
@@ -99,7 +100,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       _DiscussionsTab(),
 
       // Tab 1 — Carte / Garages (MapScreen déjà Riverpod)
-      const MapScreen(),
+      MapScreen(buttonPressed: _centerUser),
 
       // Tab 2 — Actualités (Infos ConsumerWidget newsListProvider)
       const Infos(),
@@ -141,6 +142,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
           ),
           actions: [
+            _selectedIndex == 1
+                ? IconButton(
+                    icon: const Icon(Icons.my_location),
+                    tooltip: 'Ma position',
+                    onPressed: () {
+                      setState(() {
+                        _centerUser = true;
+                        Timer(const Duration(milliseconds: 100), () {
+                          setState(() {
+                            _centerUser = false;
+                          });
+                        });
+                      });
+                    },
+                  )
+                : SizedBox(),
             Padding(
               padding: EdgeInsets.only(right: Dimens.padding.w),
               child: GestureDetector(

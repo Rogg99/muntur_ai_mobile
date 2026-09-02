@@ -9,7 +9,8 @@ import 'package:munturai/features/garages/presentation/providers/garage_provider
 import 'package:munturai/screens/garage.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
-  const MapScreen({super.key});
+  final bool? buttonPressed;
+  const MapScreen({super.key, this.buttonPressed});
 
   @override
   ConsumerState<MapScreen> createState() => _MapScreenState();
@@ -23,6 +24,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void initState() {
     super.initState();
     _locateUser();
+  }
+
+  void _centerUser() {
+    if (_currentPosition != null) {
+      _mapController.move(_currentPosition!, 14.0);
+    } else {
+      _locateUser();
+    }
   }
 
   Future<void> _locateUser() async {
@@ -50,31 +59,16 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final appStyle = AppStyle.of(context);
     final garagesAsync = ref.watch(garagesAroundProvider());
+    final buttonPressed = widget.buttonPressed ?? false;
+    if (buttonPressed) {
+      _centerUser();
+    }
 
     // Default center: Yaoundé, Cameroon
     final center = _currentPosition ?? const LatLng(3.848, 11.502);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: colorScheme.surface,
-        centerTitle: true,
-        title: Text('Carte', style: appStyle.H3(weight: 'bold')),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.my_location),
-            tooltip: 'Ma position',
-            onPressed: () {
-              if (_currentPosition != null) {
-                _mapController.move(_currentPosition!, 14.0);
-              } else {
-                _locateUser();
-              }
-            },
-          ),
-        ],
-      ),
       body: Stack(
         children: [
           FlutterMap(
