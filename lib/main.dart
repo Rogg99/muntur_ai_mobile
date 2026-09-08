@@ -50,7 +50,9 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  HttpOverrides.global = MyHttpOverrides(); // DEV ONLY
+  if (kDebugMode) {
+    HttpOverrides.global = MyHttpOverrides(); // DEV ONLY: skip TLS cert checks against local/self-signed servers
+  }
 
   runApp(ProviderScope(child: MyApp(savedLocale)));
 }
