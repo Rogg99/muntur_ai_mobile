@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Muntur AI's production server (195.26.244.215) is fronted by Nginx with a
+  self-signed certificate (no public CA, no domain name yet). Android's
+  default trust store rejects that outright, so we pin this exact
+  certificate as a trust anchor for that one host instead of disabling TLS
+  verification app-wide. Cleartext (plain HTTP) stays disabled everywhere.
+
+  If the server certificate is renewed, replace res/raw/muntur_server_cert.pem
+  with the new one (see Muntur-ai-2.0/api/ssl/livekit.crt).
+-->
+<network-security-config>
+    <domain-config>
+        <domain includeSubdomains="false">195.26.244.215</domain>
+        <trust-anchors>
+            <certificates src="@raw/muntur_server_cert"/>
+        </trust-anchors>
+    </domain-config>
+</network-security-config>
