@@ -95,9 +95,14 @@ class ChatbotRepositoryImpl {
     return [];
   }
 
-  Future<MessageModel?> askQuestion(
+  /// Sends the user's message to the AI chatbot. The backend acks with the
+  /// saved user message only (202, `ai_response_status: "pending"`) — the AI
+  /// reply is generated in the background and delivered later as a
+  /// `discussion_message` WebSocket event, not in this response. Returns the
+  /// real discussion id the message was filed under (relevant when
+  /// [discussionId] was null/'auto' and the backend had to create one).
+  Future<({MessageModel message, String discId})?> askQuestion(
       {required String query, String? discussionId}) async {
-    // Optimistic UI: Create pending message locally
     final isar = IsarDb.instance;
     final tempMessage = MessageModel.create(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -114,23 +119,31 @@ class ChatbotRepositoryImpl {
 
     try {
       final response = await _apiClient.post('/ask-question', data: {
-        'message': query,
-        if (discussionId != null) 'discussion_id': discussionId,
+        'contenu': query,
+        'discussion': discussionId ?? 'auto',
       });
 
-      if (response.statusCode == 200) {
-        final aiMessage = MessageModel.fromJson(response.data['data']);
+      if (response.statusCode == 200 || response.statusCode == 202) {
+        final data = response.data['data'];
+        final discId = data['disc_id'].toString();
+        final confirmedMessage = tempMessage.copyWith(
+          id: data['id']?.toString() ?? tempMessage.id,
+          discId: discId,
+          pendingSync: false,
+        );
 
         await isar.writeTxn(() async {
-          // Update temp user message as synced
-          final syncedMessage = tempMessage.copyWith(pendingSync: false);
-          await isar.messageModels.put(syncedMessage);
-
-          // Save AI response
-          await isar.messageModels.put(aiMessage);
+          final tempInDb = await isar.messageModels
+              .filter()
+              .idEqualTo(tempMessage.id)
+              .findFirst();
+          if (tempInDb != null) {
+            await isar.messageModels.delete(tempInDb.isarId);
+          }
+          await isar.messageModels.put(confirmedMessage);
         });
 
-        return aiMessage;
+        return (message: confirmedMessage, discId: discId);
       }
     } catch (e) {
       // Leave tempMessage as pending_sync for Background SyncService

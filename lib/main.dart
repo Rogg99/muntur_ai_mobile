@@ -21,6 +21,7 @@ import 'package:munturai/features/news/data/models/news_model.dart';
 import 'package:munturai/features/notifications/data/models/notification_model.dart';
 import 'package:munturai/features/subscriptions/data/models/subscription_model.dart';
 import 'package:munturai/core/services/sync_service.dart';
+import 'package:munturai/services/notifications.dart';
 
 import 'core/fonctions.dart';
 import 'core/theming/theme.dart';
@@ -43,6 +44,8 @@ Future<void> main() async {
 
   // Sync any pending offline messages in background
   SyncService().syncPendingData();
+
+  await NotificationService.init();
 
   final savedLocale = await LocaleManager.loadLocale();
 
@@ -76,8 +79,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late final ValueNotifier<ThemeSettings> settings = ValueNotifier(
     ThemeSettings(
-      sourceColor: const Color(0xFFF9A8D4),
-      themeMode: ThemeMode.system, // default
+      sourceColor: const Color(0xFF7B2CBF), // AUTOSYNX brand purple
+      themeMode: ThemeMode.dark, // default
     ),
   );
 
@@ -173,7 +176,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 final theme = ThemeProvider.of(context);
                 return MaterialApp(
                   debugShowCheckedModeBanner: false,
-                  title: 'MunturAi',
+                  title: 'Autosynx',
                   locale: _locale,
                   supportedLocales: AppLocalizations.supportedLocales,
                   localizationsDelegates: const [

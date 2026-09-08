@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../main.dart';
 import '../../screens/login.dart';
+import '../../services/notifications.dart';
 import '../../services/websocket.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/chatbot/presentation/providers/chatbot_provider.dart';
@@ -41,6 +42,7 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
         if (discId != null) {
           ref.invalidate(chatMessagesProvider(discId));
         }
+        _notify(_senderLabel(data, fallback: 'MUNTUR AI'), _messageBody(data));
         break;
 
       case 'forum_message':
@@ -49,10 +51,12 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
         if (forumId != null) {
           ref.invalidate(chatMessagesProvider(forumId));
         }
+        _notify(_senderLabel(data, fallback: 'Forum'), _messageBody(data));
         break;
 
       case 'notification':
         ref.read(notificationsListProvider.notifier).refresh();
+        _notify('Notification', (data is Map ? data['text'] : null)?.toString() ?? '');
         break;
 
       case 'profile_updated':
@@ -71,6 +75,26 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
         }
         break;
     }
+  }
+
+  void _notify(String title, String body) {
+    if (body.isEmpty) return;
+    NotificationService.show(title, body);
+  }
+
+  String _senderLabel(dynamic data, {required String fallback}) {
+    if (data is! Map) return fallback;
+    final sender = data['emetteur'];
+    if (sender is Map) {
+      final name = '${sender['nom'] ?? ''} ${sender['prenom'] ?? ''}'.trim();
+      if (name.isNotEmpty) return name;
+    }
+    return fallback;
+  }
+
+  String _messageBody(dynamic data) {
+    if (data is! Map) return '';
+    return (data['contenu'] as String?)?.trim() ?? '';
   }
 
   Future<void> _forceLogout() async {

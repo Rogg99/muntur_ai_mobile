@@ -94,8 +94,11 @@ class ChatMessages extends _$ChatMessages {
     }
   }
 
-  /// Sends a user message to the AI chatbot.
-  /// Uses optimistic UI update via Isar, then sends to API.
+  /// Sends a user message to the AI chatbot. The AI's reply is NOT returned
+  /// here anymore — the backend acks the user's message and generates the
+  /// reply in the background, delivering it as a `discussion_message` WS
+  /// event (see RealtimeDispatcher), which invalidates this provider and
+  /// refetches the thread once the reply lands.
   Future<void> askQuestion(String query) async {
     if (query.trim().isEmpty) return;
 
@@ -113,16 +116,25 @@ class ChatMessages extends _$ChatMessages {
     state = AsyncValue.data([...currentList, tempMsg]);
 
     try {
-      final aiResponse = await ref.read(chatbotRepositoryProvider).askQuestion(
+      final result = await ref.read(chatbotRepositoryProvider).askQuestion(
             query: query,
             discussionId: discussionId != 'new' ? discussionId : null,
           );
 
-      if (aiResponse != null) {
+      if (result != null) {
         final updatedList = (state.value ?? [])
-            .map((m) => m.id == tempMsg.id ? m.copyWith(pendingSync: false) : m)
+            .map((m) => m.id == tempMsg.id ? result.message : m)
             .toList();
-        state = AsyncValue.data([...updatedList, aiResponse]);
+        state = AsyncValue.data(updatedList);
+
+        // A brand-new AI discussion got a real id from the backend — refresh
+        // the discussion list so it shows up. Note: this screen instance
+        // stays keyed on 'new', so the AI reply (delivered via WS against the
+        // real id) won't appear here until the user reopens the discussion
+        // by its real id.
+        if (discussionId == 'new' && result.discId != 'new') {
+          ref.invalidate(discussionsProvider);
+        }
       }
     } catch (e) {
       // Message stays as pendingSync=true — SyncService will retry
