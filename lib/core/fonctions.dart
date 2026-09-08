@@ -8,7 +8,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:munturai/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:getwidget/getwidget.dart';
 import 'package:vector_math/vector_math.dart' as vectorMath;
 
 Text texte(String data,
@@ -48,18 +47,6 @@ Future<bool?> toast(String message, {color = Colors.green}) {
       backgroundColor: color);
 }
 
-gftoast(BuildContext context, String message,
-    {position = GFToastPosition.CENTER, bgcolor = GFColors.DANGER, duration = 5}) {
-  return GFToast.showToast(message, context,
-      toastPosition: position,
-      backgroundColor: bgcolor,
-      toastDuration: duration,
-      trailing: const Icon(
-        Icons.notifications,
-        color: GFColors.SUCCESS,
-      ));
-}
-
 void loading() {
   EasyLoading.show(status: 'OMC ...', maskType: EasyLoadingMaskType.black);
 }
@@ -87,11 +74,11 @@ Future<String> getKey(String key) async {
   return value;
 }
 
-GFAppBar appBar(String title) {
-  return GFAppBar(
+AppBar appBar(String title) {
+  return AppBar(
     title: texte(title, color: Colors.white),
     actions: <Widget>[
-      GFIconButton(
+      IconButton(
         icon: const Icon(
           Icons.account_circle,
           color: Colors.white,
@@ -99,18 +86,17 @@ GFAppBar appBar(String title) {
         onPressed: () {
           print("mettre à jour son profil");
         },
-        type: GFButtonType.transparent,
       ),
     ],
   );
 }
 
-GFDrawer drawer(BuildContext context, User user) {
-  return GFDrawer(
+Drawer drawer(BuildContext context, User user) {
+  return Drawer(
     child: ListView(
       padding: EdgeInsets.zero,
       children: <Widget>[
-        GFDrawerHeader(
+        DrawerHeader(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,

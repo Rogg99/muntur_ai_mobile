@@ -150,8 +150,8 @@ class ThemeProvider extends InheritedWidget {
 
   get colorScheme => colors( this.themeMode() == ThemeMode.light ? Brightness.light : Brightness.dark, null);
 
-  CardTheme cardTheme() {
-    return CardTheme(
+  CardThemeData cardTheme() {
+    return CardThemeData(
       elevation: 0,
       shape: shapeMedium,
       clipBehavior: Clip.antiAlias,
@@ -173,8 +173,8 @@ class ThemeProvider extends InheritedWidget {
     );
   }
 
-  TabBarTheme tabBarTheme(ColorScheme colors) {
-    return TabBarTheme(
+  TabBarThemeData tabBarTheme(ColorScheme colors) {
+    return TabBarThemeData(
       labelColor: colors.secondary,
       unselectedLabelColor: colors.onSurfaceVariant,
       indicator: BoxDecoration(
@@ -188,8 +188,8 @@ class ThemeProvider extends InheritedWidget {
     );
   }
 
-  BottomAppBarTheme bottomAppBarTheme(ColorScheme colors) {
-    return BottomAppBarTheme(
+  BottomAppBarThemeData bottomAppBarTheme(ColorScheme colors) {
+    return BottomAppBarThemeData(
       color: colors.surface,
       elevation: 0,
     );

@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -7,19 +9,24 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get noInternet => 'Il semblerait que vous n\\\'êtes pas connectés à internet.';
+  String get noInternet =>
+      'Il semblerait que vous n\\\'êtes pas connectés à internet.';
 
   @override
-  String get checkInternet => 'Veuillez verifier votre connexion internet puis réessayer.';
+  String get checkInternet =>
+      'Veuillez verifier votre connexion internet puis réessayer.';
 
   @override
-  String get joinMunturAiPrompt => 'Désireux de rejoindre notre vaste communauté MunturAi?';
+  String get joinMunturAiPrompt =>
+      'Désireux de rejoindre notre vaste communauté MunturAi?';
 
   @override
-  String get joinMunturAiInfo => 'Afin de rejoindre notre large communauté MunturAi, Nous aurons besoin de quelques informations de votre part afin de mieux personaliser vos filtres et vous orienter plus rapidement vers les profils qui vous correspondent le mieux .';
+  String get joinMunturAiInfo =>
+      'Afin de rejoindre notre large communauté MunturAi, Nous aurons besoin de quelques informations de votre part afin de mieux personaliser vos filtres et vous orienter plus rapidement vers les profils qui vous correspondent le mieux .';
 
   @override
-  String get acceptTerms => 'J\'ai lu et j\'accepte les conditions générales d\'utilisation';
+  String get acceptTerms =>
+      'J\'ai lu et j\'accepte les conditions générales d\'utilisation';
 
   @override
   String get start => 'Commencer';
@@ -31,7 +38,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get phoneHint => 'Téléphone (+237)';
 
   @override
-  String get confirmationSMSNote => 'NB: Nous allons envoyer un SMS de confirmation à ce numéro';
+  String get confirmationSMSNote =>
+      'NB: Nous allons envoyer un SMS de confirmation à ce numéro';
 
   @override
   String get emailHint => 'Email';
@@ -103,7 +111,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get jobTitleHint => 'Quel est votre poste ?';
 
   @override
-  String get highestEducationQuestion => 'Quel est votre plus haut niveau scolaire?';
+  String get highestEducationQuestion =>
+      'Quel est votre plus haut niveau scolaire?';
 
   @override
   String get highSchool => 'Lycée';
@@ -298,7 +307,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get finish => 'Terminer';
 
   @override
-  String get progressHint => 'Plus que quelques instants et ce sera terminé ...';
+  String get progressHint =>
+      'Plus que quelques instants et ce sera terminé ...';
 
   @override
   String get welcome => 'Bienvenue';
@@ -424,19 +434,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get ai_matching_title => 'AI Matching';
 
   @override
-  String get ai_matching_description => 'Notre plateforme utilise un algorithme à la pointe de la technologie pour vous assurer les meilleurs matchs possible.';
+  String get ai_matching_description =>
+      'Notre plateforme utilise un algorithme à la pointe de la technologie pour vous assurer les meilleurs matchs possible.';
 
   @override
   String get matches_title => 'Matchs';
 
   @override
-  String get matches_description => 'Consultez vos matchs compatibles et commencez à créer des connexions significatives dès aujourd’hui.';
+  String get matches_description =>
+      'Consultez vos matchs compatibles et commencez à créer des connexions significatives dès aujourd’hui.';
 
   @override
   String get premium_title => 'Premium';
 
   @override
-  String get premium_description => 'Débloquez des fonctionnalités exclusives avec Premium et maximisez vos chances de trouver la personne idéale.';
+  String get premium_description =>
+      'Débloquez des fonctionnalités exclusives avec Premium et maximisez vos chances de trouver la personne idéale.';
 
   @override
   String get create_account => 'Créer un compte';
@@ -469,7 +482,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get invalid_email => 'Veuillez saisir un email correct!';
 
   @override
-  String get invalid_credentials => 'Veuillez verifier vos informations de connexion!';
+  String get invalid_credentials =>
+      'Veuillez verifier vos informations de connexion!';
 
   @override
   String get login_failed => 'Echec de connexion! Veuilllez reessayez';
@@ -502,7 +516,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get subscription_premium => 'Abonnement Premium';
 
   @override
-  String get subscription_premium_desc => 'Swipez à volonté et augmentez vos chances de matcher de 20% !';
+  String get subscription_premium_desc =>
+      'Swipez à volonté et augmentez vos chances de matcher de 20% !';
 
   @override
   String get subscription_premium_upgrade => 'Upgrade à partir de 2000 Fcfa';
@@ -511,7 +526,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get subscription_gold => 'Abonnement Gold';
 
   @override
-  String get subscription_gold_desc => 'Bénéficiez de tous les avantages Premium et quelques petits autres en plus et mettez d\'avantages de chance de votre coté !';
+  String get subscription_gold_desc =>
+      'Bénéficiez de tous les avantages Premium et quelques petits autres en plus et mettez d\'avantages de chance de votre coté !';
 
   @override
   String get subscription_gold_upgrade => 'Upgrade à partir de 3500 Fcfa';
@@ -613,7 +629,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filters_clear_all => 'Tout effacer';
 
   @override
-  String get filters_premium_required => 'Pour utiliser ces filtres, vous devez activer l\'abonnement Premium.';
+  String get filters_premium_required =>
+      'Pour utiliser ces filtres, vous devez activer l\'abonnement Premium.';
 
   @override
   String get filters_your_preferences => 'Vos Préférences';
@@ -667,19 +684,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filters_popular => 'Populaires';
 
   @override
-  String get filters_verified_profiles_desc => 'Pour s\'assurer de Liker des profils vrais';
+  String get filters_verified_profiles_desc =>
+      'Pour s\'assurer de Liker des profils vrais';
 
   @override
-  String get filters_height_desc => 'Trouver quelqu\'un qui soit à votre hauteur';
+  String get filters_height_desc =>
+      'Trouver quelqu\'un qui soit à votre hauteur';
 
   @override
   String get filters_here_for_desc => 'Rencontres ... ou Relation sérieuse ?';
 
   @override
-  String get filters_astrology_desc => 'Rencontrez ceux avec qui vos étoiles s\'alignent le mieux';
+  String get filters_astrology_desc =>
+      'Rencontrez ceux avec qui vos étoiles s\'alignent le mieux';
 
   @override
-  String get filters_language_desc => 'Communiquez sans barrière avec vos matchs';
+  String get filters_language_desc =>
+      'Communiquez sans barrière avec vos matchs';
 
   @override
   String get filters_lifestyle => 'Style de vie';
@@ -688,7 +709,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filters_kids_desc => 'Doivent-ils avoir des enfants?';
 
   @override
-  String get filters_pets_desc => 'Que pensent-ils d\'avoir des animaux de compagnie ?';
+  String get filters_pets_desc =>
+      'Que pensent-ils d\'avoir des animaux de compagnie ?';
 
   @override
   String get filters_smoke_desc => 'Acepterez vous un peu de fumée ?';
@@ -703,16 +725,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filters_religion_desc => 'Et sa religion alors ...';
 
   @override
-  String get filters_love_status_desc => 'Pour rencontrer des celibataires ... ou pas';
+  String get filters_love_status_desc =>
+      'Pour rencontrer des celibataires ... ou pas';
 
   @override
-  String get filters_personality_desc => 'Des personnes qui au fond sont un peu comme vous ou pas du tout !';
+  String get filters_personality_desc =>
+      'Des personnes qui au fond sont un peu comme vous ou pas du tout !';
 
   @override
-  String get filters_hobbies_desc => 'Que pensent-ils d\'avoir des animaux de compagnie ?';
+  String get filters_hobbies_desc =>
+      'Que pensent-ils d\'avoir des animaux de compagnie ?';
 
   @override
-  String get filters_expanded_results_info => 'Si plus personne ne correspond à vos critères, nous vous montrerons des profils un peu différents.';
+  String get filters_expanded_results_info =>
+      'Si plus personne ne correspond à vos critères, nous vous montrerons des profils un peu différents.';
 
   @override
   String get filters_apply => 'Appliquer';
@@ -721,7 +747,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filter_verified_profiles_title => 'Profils Vérifiés';
 
   @override
-  String get filter_verified_profiles_description => 'Pour s\'assurer de Liker des profils vrais';
+  String get filter_verified_profiles_description =>
+      'Pour s\'assurer de Liker des profils vrais';
 
   @override
   String get filter_verified_profiles_only => 'Profils vérifiés uniquement';
@@ -733,7 +760,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filter_height_title => 'Taille (cm)';
 
   @override
-  String get filter_height_description => 'Trouver quelqu\'un qui soit à votre hauteur';
+  String get filter_height_description =>
+      'Trouver quelqu\'un qui soit à votre hauteur';
 
   @override
   String get filter_no_minimum => 'Pas de minimum';
@@ -745,7 +773,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filter_here_for_title => 'Vous êtes Ici pour';
 
   @override
-  String get filter_here_for_description => '(Choisissez en autant que vous voulez)';
+  String get filter_here_for_description =>
+      '(Choisissez en autant que vous voulez)';
 
   @override
   String get filter_option_dating => 'Des rencontres';
@@ -760,7 +789,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filter_astrology_title => 'Signe astrologique';
 
   @override
-  String get filter_astrology_description => 'Cherchez-vous un signe astrologique en particulier ?';
+  String get filter_astrology_description =>
+      'Cherchez-vous un signe astrologique en particulier ?';
 
   @override
   String get filter_astrology_aries => 'Bélier';
@@ -802,7 +832,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filter_language_title => 'Langue';
 
   @override
-  String get filter_language_subtitle => 'Vous cherchez quelqu\'un qui parle quelle langue ? \n (Choisissez en autant que vous souhaitez :) )';
+  String get filter_language_subtitle =>
+      'Vous cherchez quelqu\'un qui parle quelle langue ? \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get filter_language_french => 'Français';
@@ -829,7 +860,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filter_children_title => 'Enfants';
 
   @override
-  String get filter_children_subtitle => 'Vous cherchez quelqu\'un qui ... \n (Choisissez en autant que vous souhaitez :) )';
+  String get filter_children_subtitle =>
+      'Vous cherchez quelqu\'un qui ... \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get filter_children_wants => 'En voudrait un jour';
@@ -844,7 +876,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filter_pets_title => 'Animaux';
 
   @override
-  String get filter_pets_subtitle => 'Vous cherchez quelqu\'un qui a des animaux ? \n (Choisissez en autant que vous souhaitez :) )';
+  String get filter_pets_subtitle =>
+      'Vous cherchez quelqu\'un qui a des animaux ? \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get filter_pets_cat => 'Chat(s)';
@@ -865,7 +898,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filter_smoke_title => 'Tabac';
 
   @override
-  String get filter_smoke_subtitle => 'Vous cherchez quelqu\'un qui ... \n (Choisissez en autant que vous souhaitez :) )';
+  String get filter_smoke_subtitle =>
+      'Vous cherchez quelqu\'un qui ... \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get filter_smoke_no => 'Ne fume pas';
@@ -880,7 +914,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get title_alcohol => 'Alcool';
 
   @override
-  String get desc_alcohol => 'Vous cherchez quelqu\'un qui ... \n (Choisissez en autant que vous souhaitez :) )';
+  String get desc_alcohol =>
+      'Vous cherchez quelqu\'un qui ... \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get option_drinks_occasionally => 'Boit à l\'occasion';
@@ -898,7 +933,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get title_study => 'Études';
 
   @override
-  String get desc_study => 'Vous cherchez quelqu\'un qui a un niveau d\'études particulier ? \n (Choisissez en autant que vous souhaitez :) )';
+  String get desc_study =>
+      'Vous cherchez quelqu\'un qui a un niveau d\'études particulier ? \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get option_high_school => 'Lycée';
@@ -919,7 +955,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get title_religion => 'Religion';
 
   @override
-  String get desc_religion => 'Vous cherchez quelqu\'un qui pratique une religion en particulier ? \n (Choisissez en autant que vous souhaitez :) )';
+  String get desc_religion =>
+      'Vous cherchez quelqu\'un qui pratique une religion en particulier ? \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get option_atheist => 'Athée';
@@ -943,7 +980,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get title_love_status => 'Situation amoureuse';
 
   @override
-  String get desc_love_status => 'Vous cherchez quelqu\'un qui est ... \n (Choisissez en autant que vous souhaitez :) )';
+  String get desc_love_status =>
+      'Vous cherchez quelqu\'un qui est ... \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get option_single => 'Célibataire';
@@ -958,7 +996,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get title_personality => 'Personnalité';
 
   @override
-  String get desc_personality => 'Vous cherchez quelqu\'un d\' ... \n (Choisissez en autant que vous souhaitez :) )';
+  String get desc_personality =>
+      'Vous cherchez quelqu\'un d\' ... \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get option_extrovert => 'Extraverti';
@@ -973,7 +1012,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get title_hobbies => 'Centres d\'intérêt';
 
   @override
-  String get desc_hobbies => 'Vous cherchez quelqu\'un avec quels centres d\'intérêt \n (Choisissez en autant que vous souhaitez :) )';
+  String get desc_hobbies =>
+      'Vous cherchez quelqu\'un avec quels centres d\'intérêt \n (Choisissez en autant que vous souhaitez :) )';
 
   @override
   String get premium => 'Premium';
@@ -982,10 +1022,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get gold => 'Gold';
 
   @override
-  String get discover_likes => 'Découvrez ces personnes qui vous ont donné un Like';
+  String get discover_likes =>
+      'Découvrez ces personnes qui vous ont donné un Like';
 
   @override
-  String get info_premium_gold => 'Pour plus d\'informations concernant nos offres Premium et Gold, vous pouvez consulter les Conditions Générales d\'Utilisation.';
+  String get info_premium_gold =>
+      'Pour plus d\'informations concernant nos offres Premium et Gold, vous pouvez consulter les Conditions Générales d\'Utilisation.';
 
   @override
   String subscription_title(Object months, Object type) {
@@ -1018,7 +1060,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get om_placeholder => '69xxxxxxx';
 
   @override
-  String get active_subscription_warning => 'Tout abonnement accepté sous l\'effet d\'un autre n\'annulera ni ne stoppera le précédent, l\'abonnement actif alors sera le plus élevé. Pour plus d\'informations concernant nos offres Premium et Gold, vous pouvez consulter les Conditions Générales d\'Utilisation.';
+  String get active_subscription_warning =>
+      'Tout abonnement accepté sous l\'effet d\'un autre n\'annulera ni ne stoppera le précédent, l\'abonnement actif alors sera le plus élevé. Pour plus d\'informations concernant nos offres Premium et Gold, vous pouvez consulter les Conditions Générales d\'Utilisation.';
 
   @override
   String get pay => 'Payer';
@@ -1033,7 +1076,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get build_date_label => 'Date de compilation : 09/03/2024';
 
   @override
-  String get copyright_label => 'Copyright - 2025 STEPS INDUSTRIES. Tous droits réservés.';
+  String get copyright_label =>
+      'Copyright - 2025 STEPS INDUSTRIES. Tous droits réservés.';
 
   @override
   String get logout_title => 'Déconnexion';
@@ -1045,7 +1089,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get logout_hide_account => 'Cacher mon compte';
 
   @override
-  String get logout_hide_account_description => 'Au cas où vous voulez faire un break pendant un moment.';
+  String get logout_hide_account_description =>
+      'Au cas où vous voulez faire un break pendant un moment.';
 
   @override
   String get logout_button => 'Me déconnecter';
@@ -1066,7 +1111,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get conversations => 'Discussions';
 
   @override
-  String get likesAdvice => 'Plus vite vous renvoyez un Like , plus grandes sont vos chances de discuter et de vous rencontrer !';
+  String get likesAdvice =>
+      'Plus vite vous renvoyez un Like , plus grandes sont vos chances de discuter et de vous rencontrer !';
 
   @override
   String get current_mood_question => 'Quel est votre mood actuel?';
@@ -1081,7 +1127,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get show => 'Afficher';
 
   @override
-  String get select_gender_prompt => 'Vous souhaitez rencontrer des personnes de quel genre ?';
+  String get select_gender_prompt =>
+      'Vous souhaitez rencontrer des personnes de quel genre ?';
 
   @override
   String get gender_male => 'Homme';
@@ -1111,7 +1158,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get more_options => 'Plus d\'options';
 
   @override
-  String get filter_location_question => 'Où voulez-vous situer votre recherche?';
+  String get filter_location_question =>
+      'Où voulez-vous situer votre recherche?';
 
   @override
   String get nearby_location => 'A proximité';
@@ -1123,7 +1171,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get match_title => 'ça match !!!';
 
   @override
-  String get match_description => 'Cette fois c\'est peut-être la bonne ! \n Faites connaissance et donnez vous cette chance !!!)';
+  String get match_description =>
+      'Cette fois c\'est peut-être la bonne ! \n Faites connaissance et donnez vous cette chance !!!)';
 
   @override
   String get send_hi => 'Envoyer un coucou';
@@ -1147,7 +1196,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get hint_password_confirm => 'Confirmer Mot de passe';
 
   @override
-  String get note_sms => 'NB: Nous allons envoyer un SMS de confirmation à ce numéro';
+  String get note_sms =>
+      'NB: Nous allons envoyer un SMS de confirmation à ce numéro';
 
   @override
   String get button_send_code => 'Envoyer le Code';
@@ -1168,10 +1218,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get error_invalid_phone => 'Numéro de téléphone incorrect';
 
   @override
-  String get error_password_mismatch => 'Les champs ne sont pas correctement remplis! Veuillez respecter la consigne!';
+  String get error_password_mismatch =>
+      'Les champs ne sont pas correctement remplis! Veuillez respecter la consigne!';
 
   @override
-  String get success_reset_password => 'Félicitations !!!! \n Vous avez réinitialisé votre mot de passe avec succès !';
+  String get success_reset_password =>
+      'Félicitations !!!! \n Vous avez réinitialisé votre mot de passe avec succès !';
 
   @override
   String get popularity_title => 'Popularité';
@@ -1237,13 +1289,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get feature_premium_advanced_filters => 'Filtres de recherche avancés';
 
   @override
-  String get feature_premium_ai_suggestions => 'Suggestions IA de haute compatibilité';
+  String get feature_premium_ai_suggestions =>
+      'Suggestions IA de haute compatibilité';
 
   @override
   String get feature_gold_all_premium => 'Toutes les options Premium';
 
   @override
-  String get feature_gold_message_without_match => 'Envoyer des messages sans match';
+  String get feature_gold_message_without_match =>
+      'Envoyer des messages sans match';
 
   @override
   String get feature_gold_three_boosts => '3 Boosts/semaine';
@@ -1252,10 +1306,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get feature_gold_gold_badge => 'Badge Gold sur le profil';
 
   @override
-  String get feature_gold_priority_visibility => 'Visibilité prioritaire dans les recherches';
+  String get feature_gold_priority_visibility =>
+      'Visibilité prioritaire dans les recherches';
 
   @override
-  String get feature_gold_exclusive_profiles => 'Accès aux profils exclusifs populaires';
+  String get feature_gold_exclusive_profiles =>
+      'Accès aux profils exclusifs populaires';
 
   @override
   String get pay_with_credit_card => 'Payer avec une carte de crédit';
@@ -1375,5 +1431,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get you => 'Vous';
 
   @override
-  String get chatWelcome => 'Commencez une nouvelle discussion avec Muntur AI, posez-moi toutes les questions que vous voulez !';
+  String get chatWelcome =>
+      'Commencez une nouvelle discussion avec Muntur AI, posez-moi toutes les questions que vous voulez !';
 }
