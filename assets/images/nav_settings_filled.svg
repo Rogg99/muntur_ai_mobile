@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <rect x="10.6" y="1" width="2.8" height="4" rx="1" fill="#000000"/>
+  <rect x="10.6" y="1" width="2.8" height="4" rx="1" fill="#000000" transform="rotate(45 12 12)"/>
+  <rect x="10.6" y="1" width="2.8" height="4" rx="1" fill="#000000" transform="rotate(90 12 12)"/>
+  <rect x="10.6" y="1" width="2.8" height="4" rx="1" fill="#000000" transform="rotate(135 12 12)"/>
+  <rect x="10.6" y="1" width="2.8" height="4" rx="1" fill="#000000" transform="rotate(180 12 12)"/>
+  <rect x="10.6" y="1" width="2.8" height="4" rx="1" fill="#000000" transform="rotate(225 12 12)"/>
+  <rect x="10.6" y="1" width="2.8" height="4" rx="1" fill="#000000" transform="rotate(270 12 12)"/>
+  <rect x="10.6" y="1" width="2.8" height="4" rx="1" fill="#000000" transform="rotate(315 12 12)"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M12 4.6a7.4 7.4 0 1 1 0 14.8 7.4 7.4 0 0 1 0-14.8zm0 4.4a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" fill="#000000"/>
+</svg>

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/theming/dimens.dart';
 import 'package:munturai/features/chatbot/presentation/providers/chatbot_provider.dart';
@@ -173,35 +174,51 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         bottomNavigationBar: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-          destinations: const [
+          destinations: [
             NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded),
+              icon: _navIcon(ImageConstant.navHomeOutline, colorScheme.onSurfaceVariant),
+              selectedIcon: _navIcon(ImageConstant.navHomeFilled, colorScheme.primary),
               label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(Icons.map_outlined),
-              selectedIcon: Icon(Icons.map_rounded),
+              icon: _navIcon(ImageConstant.navMapOutline, colorScheme.onSurfaceVariant),
+              selectedIcon: _navIcon(ImageConstant.navMapFilled, colorScheme.primary),
               label: 'Carte',
             ),
             NavigationDestination(
-              icon: Icon(Icons.article_outlined),
-              selectedIcon: Icon(Icons.article_rounded),
+              icon: _navIcon(ImageConstant.navNewsOutline, colorScheme.onSurfaceVariant),
+              selectedIcon: _navIcon(ImageConstant.navNewsFilled, colorScheme.primary),
               label: 'News',
             ),
             NavigationDestination(
-              icon: Icon(Icons.forum_outlined),
-              selectedIcon: Icon(Icons.forum_rounded),
+              icon: _navIcon(ImageConstant.navForumOutline, colorScheme.onSurfaceVariant),
+              selectedIcon: _navIcon(ImageConstant.navForumFilled, colorScheme.primary),
               label: 'Forums',
             ),
             NavigationDestination(
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings_rounded),
+              icon: _navIcon(ImageConstant.navSettingsOutline, colorScheme.onSurfaceVariant),
+              selectedIcon: _navIcon(ImageConstant.navSettingsFilled, colorScheme.primary),
               label: 'Paramètres',
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // Custom-drawn nav icons (see assets/images/nav_*.svg) instead of stock
+  // Material glyphs. SvgPicture doesn't read the ambient IconTheme the way
+  // Icon does, so the selected/unselected color has to be applied here
+  // explicitly, matching navigationBarTheme() in theme.dart. flutter_svg
+  // 1.1.6's SvgPicture.asset takes color/colorBlendMode, not colorFilter
+  // (that param was added in a later major version).
+  Widget _navIcon(String asset, Color color) {
+    return SvgPicture.asset(
+      asset,
+      width: 24,
+      height: 24,
+      color: color,
+      colorBlendMode: BlendMode.srcIn,
     );
   }
 }
