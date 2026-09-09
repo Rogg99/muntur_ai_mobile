@@ -2887,6 +2887,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlock Premium features: unlimited history, priority alerts and more.'**
   String get onboarding_premium_body;
+
+  /// No description provided for @register_step1_title.
+  ///
+  /// In en, this message translates to:
+  /// **'1/2 — Your account'**
+  String get register_step1_title;
+
+  /// No description provided for @register_step2_title.
+  ///
+  /// In en, this message translates to:
+  /// **'2/2 — Your profile'**
+  String get register_step2_title;
+
+  /// No description provided for @register_error_required.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required.'**
+  String get register_error_required;
+
+  /// No description provided for @register_error_email_invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get register_error_email_invalid;
+
+  /// No description provided for @register_error_password_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters.'**
+  String get register_error_password_short;
+
+  /// No description provided for @register_error_password_mismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match.'**
+  String get register_error_password_mismatch;
+
+  /// No description provided for @register_select_birthdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your date of birth'**
+  String get register_select_birthdate;
+
+  /// No description provided for @register_error_birthdate_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select your date of birth.'**
+  String get register_error_birthdate_required;
+
+  /// No description provided for @register_error_age_min.
+  ///
+  /// In en, this message translates to:
+  /// **'You must be at least 14 years old.'**
+  String get register_error_age_min;
+
+  /// No description provided for @register_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully'**
+  String get register_success;
+
+  /// No description provided for @register_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up failed'**
+  String get register_failed;
+
+  /// No description provided for @register_phone_code_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get register_phone_code_label;
 }
 
 class _AppLocalizationsDelegate

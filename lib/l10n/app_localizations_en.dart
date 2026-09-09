@@ -1456,4 +1456,43 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboarding_premium_body =>
       'Unlock Premium features: unlimited history, priority alerts and more.';
+
+  @override
+  String get register_step1_title => '1/2 — Your account';
+
+  @override
+  String get register_step2_title => '2/2 — Your profile';
+
+  @override
+  String get register_error_required => 'This field is required.';
+
+  @override
+  String get register_error_email_invalid =>
+      'Please enter a valid email address.';
+
+  @override
+  String get register_error_password_short =>
+      'Password must be at least 6 characters.';
+
+  @override
+  String get register_error_password_mismatch => 'Passwords do not match.';
+
+  @override
+  String get register_select_birthdate => 'Select your date of birth';
+
+  @override
+  String get register_error_birthdate_required =>
+      'Please select your date of birth.';
+
+  @override
+  String get register_error_age_min => 'You must be at least 14 years old.';
+
+  @override
+  String get register_success => 'Account created successfully';
+
+  @override
+  String get register_failed => 'Sign up failed';
+
+  @override
+  String get register_phone_code_label => 'Code';
 }

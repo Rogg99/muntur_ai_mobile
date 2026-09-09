@@ -463,5 +463,17 @@
   "onboarding_community_title": "Join the community",
   "onboarding_community_body": "Connect with other enthusiasts in the forums, share tips and experiences.",
   "onboarding_premium_title": "Take it to the next level",
-  "onboarding_premium_body": "Unlock Premium features: unlimited history, priority alerts and more."
+  "onboarding_premium_body": "Unlock Premium features: unlimited history, priority alerts and more.",
+  "register_step1_title": "1/2 — Your account",
+  "register_step2_title": "2/2 — Your profile",
+  "register_error_required": "This field is required.",
+  "register_error_email_invalid": "Please enter a valid email address.",
+  "register_error_password_short": "Password must be at least 6 characters.",
+  "register_error_password_mismatch": "Passwords do not match.",
+  "register_select_birthdate": "Select your date of birth",
+  "register_error_birthdate_required": "Please select your date of birth.",
+  "register_error_age_min": "You must be at least 14 years old.",
+  "register_success": "Account created successfully",
+  "register_failed": "Sign up failed",
+  "register_phone_code_label": "Code"
 }

@@ -1467,4 +1467,45 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get onboarding_premium_body =>
       'Débloquez les fonctionnalités Premium : historique illimité, alertes prioritaires et bien plus.';
+
+  @override
+  String get register_step1_title => '1/2 — Votre compte';
+
+  @override
+  String get register_step2_title => '2/2 — Votre profil';
+
+  @override
+  String get register_error_required => 'Ce champ est requis.';
+
+  @override
+  String get register_error_email_invalid =>
+      'Veuillez saisir une adresse email valide.';
+
+  @override
+  String get register_error_password_short =>
+      'Le mot de passe doit contenir au moins 6 caractères.';
+
+  @override
+  String get register_error_password_mismatch =>
+      'Les mots de passe ne correspondent pas.';
+
+  @override
+  String get register_select_birthdate =>
+      'Sélectionnez votre date de naissance';
+
+  @override
+  String get register_error_birthdate_required =>
+      'Veuillez sélectionner votre date de naissance.';
+
+  @override
+  String get register_error_age_min => 'Vous devez avoir au moins 14 ans.';
+
+  @override
+  String get register_success => 'Compte créé avec succès';
+
+  @override
+  String get register_failed => 'Inscription échouée';
+
+  @override
+  String get register_phone_code_label => 'Indicatif';
 }

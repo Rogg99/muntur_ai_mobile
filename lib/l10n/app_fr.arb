@@ -463,5 +463,17 @@
   "onboarding_community_title": "Rejoignez la communauté",
   "onboarding_community_body": "Échangez avec d'autres passionnés dans les forums, partagez vos bons plans et vos expériences.",
   "onboarding_premium_title": "Passez au niveau supérieur",
-  "onboarding_premium_body": "Débloquez les fonctionnalités Premium : historique illimité, alertes prioritaires et bien plus."
+  "onboarding_premium_body": "Débloquez les fonctionnalités Premium : historique illimité, alertes prioritaires et bien plus.",
+  "register_step1_title": "1/2 — Votre compte",
+  "register_step2_title": "2/2 — Votre profil",
+  "register_error_required": "Ce champ est requis.",
+  "register_error_email_invalid": "Veuillez saisir une adresse email valide.",
+  "register_error_password_short": "Le mot de passe doit contenir au moins 6 caractères.",
+  "register_error_password_mismatch": "Les mots de passe ne correspondent pas.",
+  "register_select_birthdate": "Sélectionnez votre date de naissance",
+  "register_error_birthdate_required": "Veuillez sélectionner votre date de naissance.",
+  "register_error_age_min": "Vous devez avoir au moins 14 ans.",
+  "register_success": "Compte créé avec succès",
+  "register_failed": "Inscription échouée",
+  "register_phone_code_label": "Indicatif"
 }
