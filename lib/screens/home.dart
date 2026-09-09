@@ -29,30 +29,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   int _selectedIndex = 0;
   bool _firstClick = false;
   bool _centerUser = false;
-  Timer? _autoRefreshTimer;
-
-  @override
-  void initState() {
-    super.initState();
-    _startAutoRefresh();
-  }
-
-  @override
-  void dispose() {
-    _autoRefreshTimer?.cancel();
-    super.dispose();
-  }
-
-  // ─── Auto-refresh toutes les 10 secondes ──────────────────────────────────
-
-  void _startAutoRefresh() {
-    _autoRefreshTimer = Timer.periodic(const Duration(seconds: 10), (_) async {
-      if (mounted) {
-        ref.read(discussionsProvider.notifier).refresh();
-        ref.read(forumsProvider.notifier).refresh();
-      }
-    });
-  }
 
   // ─── Retour physique ──────────────────────────────────────────────────────
 
