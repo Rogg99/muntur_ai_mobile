@@ -10,6 +10,17 @@ import '../models/media_ref.dart';
 import '../models/message_model.dart';
 import 'package:isar/isar.dart';
 
+/// last_message.emetteur is always a nested Profile object
+/// (MessageReadSerializer) — extract its id defensively (falling back to a
+/// bare string) so discussion/forum previews can compare it against the
+/// current user's own profile id to decide whether to show "Vous: ...".
+String _lastMessageSenderId(dynamic lastMessage) {
+  if (lastMessage is! Map) return 'none';
+  final emetteur = lastMessage['emetteur'];
+  if (emetteur is Map) return emetteur['id']?.toString() ?? 'none';
+  return emetteur?.toString() ?? 'none';
+}
+
 class ChatbotRepositoryImpl {
   final ApiClient _apiClient;
 
@@ -35,7 +46,10 @@ class ChatbotRepositoryImpl {
                 (json["last_message"] != null
                     ? json["last_message"]["date_creation"]
                     : '1970-01-01'),
-            last_writer: json["last_writer"] ?? 'none',
+            // DiscussionReadSerializer has no top-level "last_writer" field —
+            // the actual sender id lives nested in last_message.emetteur
+            // (a full Profile object, per MessageReadSerializer).
+            last_writer: _lastMessageSenderId(json["last_message"]),
             photo: json["photo"] ?? 'none',
             type: json["type"] ?? 'discussion',
           );
@@ -75,10 +89,7 @@ class ChatbotRepositoryImpl {
                 ? (json['last_message']['date_creation'] as String)
                     .substring(0, 10)
                 : '1970-01-01',
-            last_writer: json['last_message'] != null &&
-                    json['last_message']['emetteur'] != null
-                ? json['last_message']['emetteur']['nom'] ?? 'none'
-                : 'none',
+            last_writer: _lastMessageSenderId(json['last_message']),
             photo: json['photo'] ?? 'none',
             type: "forum",
           );
@@ -219,11 +230,24 @@ class ChatbotRepositoryImpl {
 
   Future<List<MessageModel>> getMessagesForDiscussion(String discId) async {
     try {
-      final response = await _apiClient.get('/discussions/$discId/messages/');
+      // The real endpoint (MessageViewSet.discussion_messages, registered
+      // under the "messages/" router) — "/discussions/$discId/messages/"
+      // doesn't exist and 404s. Its items are raw MessageSerializer objects
+      // with neither "disc_id" nor "date_envoi" (only "date_creation"), so
+      // both are filled in/normalized per item before handing off to
+      // MessageModel.fromJson.
+      final response =
+          await _apiClient.get('/messages/discussion/$discId/messages/');
       if (response.statusCode == 200) {
-        final List<dynamic> data = asResponseList(response.data);
-        final messages =
-            data.map((json) => MessageModel.fromJson(json)).toList();
+        final body = response.data;
+        final items = body is Map ? body['messages']?['items'] : null;
+        final messages = (items is List ? items : const [])
+            .whereType<Map>()
+            .map((json) => MessageModel.fromJson({
+                  ...json.cast<String, dynamic>(),
+                  'disc_id': discId,
+                }))
+            .toList();
 
         final isar = IsarDb.instance;
         await isar.writeTxn(() async {

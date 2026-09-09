@@ -86,6 +86,34 @@ class MessageModel {
     return jsonEncode(refs);
   }
 
+  /// The backend isn't consistent about the shape of "emetteur": the echo of
+  /// the user's own message (MessageSerializer) sends a bare profile UUID
+  /// string, while WS discussion_message/forum_message pushes and
+  /// MessageReadSerializer-backed reads (the AI's replies) send the nested
+  /// Profile object. Handle both so a nested emetteur doesn't get assigned
+  /// straight into the String senderId field and throw.
+  static String _senderId(Map<String, dynamic> json) {
+    final emetteur = json['emetteur'];
+    if (emetteur is Map) return emetteur['id']?.toString() ?? 'none';
+    if (emetteur != null) return emetteur.toString();
+    return json['senderId']?.toString() ?? 'none';
+  }
+
+  static String _senderName(Map<String, dynamic> json) {
+    final emetteur = json['emetteur'];
+    if (emetteur is Map) {
+      final name = '${emetteur['nom'] ?? ''} ${emetteur['prenom'] ?? ''}'.trim();
+      if (name.isNotEmpty) return name;
+    }
+    return json['emetteurName'] ?? json['senderName'] ?? 'none';
+  }
+
+  static String _senderPhoto(Map<String, dynamic> json) {
+    final emetteur = json['emetteur'];
+    if (emetteur is Map) return emetteur['photo'] ?? 'none';
+    return json['emetteurPhoto'] ?? json['senderPhoto'] ?? 'none';
+  }
+
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel.create(
       id: json['id'] ?? 'auto_${DateTime.now().millisecondsSinceEpoch}',
@@ -94,9 +122,9 @@ class MessageModel {
       // distinguishes discussion vs. forum), just a different push key.
       discId: json['disc_id'] ?? json['discId'] ?? json['forum_id'] ?? 'none',
       tempId: json['temp_id'] ?? json['tempId'] ?? 'none',
-      senderId: json['emetteur'] ?? json['senderId'] ?? 'none',
-      senderName: json['emetteurName'] ?? json['senderName'] ?? 'none',
-      senderPhoto: json['emetteurPhoto'] ?? json['senderPhoto'] ?? 'none',
+      senderId: _senderId(json),
+      senderName: _senderName(json),
+      senderPhoto: _senderPhoto(json),
       contenu: json['contenu'] ?? '',
       answerTo: json['answerTo'] ?? 'none',
       media: _encodeMedia(json),
@@ -106,11 +134,14 @@ class MessageModel {
       messageState: json['state'] ?? 'pending',
       isAI: json['isAI'] ?? false,
       pendingSync: json['pendingSync'] ?? false,
-      dateEnvoi: json['date_envoi'] != null
-          ? DateTime.tryParse(json['date_envoi']) ?? DateTime.now()
-          : (json['dateEnvoi'] != null
-              ? DateTime.tryParse(json['dateEnvoi']) ?? DateTime.now()
-              : DateTime.now()),
+      // The WS discussion_message/forum_message push and the raw
+      // MessageSerializer/MessageReadSerializer payloads (fields='__all__')
+      // date-stamp as "date_creation" — only the ask-question 202 echo uses
+      // "date_envoi"/"dateEnvoi".
+      dateEnvoi: DateTime.tryParse(json['date_envoi']?.toString() ?? '') ??
+          DateTime.tryParse(json['dateEnvoi']?.toString() ?? '') ??
+          DateTime.tryParse(json['date_creation']?.toString() ?? '') ??
+          DateTime.now(),
     );
   }
 

@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/screens/chat.dart';
+import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/utils/dateUtils.dart';
 
-class WidgetDiscussion extends StatelessWidget {
+class WidgetDiscussion extends ConsumerWidget {
   final DiscussionModel? disc;
 
   const WidgetDiscussion({
@@ -14,7 +16,7 @@ class WidgetDiscussion extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
@@ -22,6 +24,11 @@ class WidgetDiscussion extends StatelessWidget {
     final unread = d.unreadCount > 0;
     final initial =
         d.title.isNotEmpty ? d.title.substring(0, 1).toUpperCase() : '?';
+    // "Vous:" means the CURRENT USER wrote the last message — last_writer is
+    // now the sender's profile id (see chatbot_repository_impl.dart);
+    // "initiateur" is never populated by the backend and can't be used here.
+    final myId = ref.watch(authStateProvider).valueOrNull?.id;
+    final isMe = myId != null && d.last_writer == myId;
 
     return InkWell(
       onTap: () => Navigator.push(
@@ -54,7 +61,7 @@ class WidgetDiscussion extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    d.last_writer == d.initiateur
+                    isMe
                         ? '${translator.you} : ${d.last_message}'
                         : d.last_message,
                     style: appStyle

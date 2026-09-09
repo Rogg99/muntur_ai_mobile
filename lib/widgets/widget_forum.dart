@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/screens/chat.dart';
+import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/utils/dateUtils.dart';
 
-class WidgetForum extends StatefulWidget {
+class WidgetForum extends ConsumerStatefulWidget {
   final DiscussionModel? disc;
   const WidgetForum({
     super.key,
@@ -13,10 +15,10 @@ class WidgetForum extends StatefulWidget {
   });
 
   @override
-  State<StatefulWidget> createState() => WidgetForumState();
+  ConsumerState<WidgetForum> createState() => WidgetForumState();
 }
 
-class WidgetForumState extends State<WidgetForum> {
+class WidgetForumState extends ConsumerState<WidgetForum> {
   bool load = true;
 
   @override
@@ -41,6 +43,11 @@ class WidgetForumState extends State<WidgetForum> {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final AppLocalizations translator = AppLocalizations.of(context)!;
+    // last_writer is the sender's profile id; "initiateur" is never
+    // populated by the backend, so compare against the current user's own
+    // id instead.
+    final myId = ref.watch(authStateProvider).valueOrNull?.id;
+    final isMe = myId != null && widget.disc!.last_writer == myId;
     return GestureDetector(
         onTap: () async {
           // var usr = await API.getUI_user().then((value) => value[0]);
@@ -125,7 +132,7 @@ class WidgetForumState extends State<WidgetForum> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        widget.disc!.last_writer == (widget.disc!.initiateur)
+                        isMe
                             ? '${translator.you} : ${widget.disc!.last_message}'
                             : widget.disc!.last_message,
                         style: appStyle
