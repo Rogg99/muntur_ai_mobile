@@ -170,42 +170,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           ],
         ),
         body: tabs.elementAt(_selectedIndex),
-        bottomNavigationBar: BottomNavigationBar(
-          elevation: 16,
-          backgroundColor: colorScheme.surface,
-          items: const [
-            BottomNavigationBarItem(
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+          destinations: const [
+            NavigationDestination(
               icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home, size: 28),
+              selectedIcon: Icon(Icons.home_rounded),
               label: 'Home',
             ),
-            BottomNavigationBarItem(
+            NavigationDestination(
               icon: Icon(Icons.map_outlined),
-              activeIcon: Icon(Icons.map, size: 28),
+              selectedIcon: Icon(Icons.map_rounded),
               label: 'Carte',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.newspaper_outlined),
-              activeIcon: Icon(Icons.newspaper, size: 28),
+            NavigationDestination(
+              icon: Icon(Icons.article_outlined),
+              selectedIcon: Icon(Icons.article_rounded),
               label: 'News',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.groups_outlined),
-              activeIcon: Icon(Icons.groups, size: 28),
+            NavigationDestination(
+              icon: Icon(Icons.forum_outlined),
+              selectedIcon: Icon(Icons.forum_rounded),
               label: 'Forums',
             ),
-            BottomNavigationBarItem(
+            NavigationDestination(
               icon: Icon(Icons.settings_outlined),
-              activeIcon: Icon(Icons.settings, size: 28),
+              selectedIcon: Icon(Icons.settings_rounded),
               label: 'Paramètres',
             ),
           ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: colorScheme.primary,
-          unselectedItemColor: colorScheme.onSurface.withValues(alpha: 0.5),
-          selectedLabelStyle: appStyle.H6(),
-          unselectedLabelStyle: appStyle.H6(),
-          onTap: (i) => setState(() => _selectedIndex = i),
         ),
       ),
     );

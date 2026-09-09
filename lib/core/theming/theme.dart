@@ -203,14 +203,32 @@ class ThemeProvider extends InheritedWidget {
     );
   }
 
-  BottomNavigationBarThemeData bottomNavigationBarTheme(ColorScheme colors) {
-    return BottomNavigationBarThemeData(
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: colors.surfaceVariant,
-      selectedItemColor: colors.onSurface,
-      unselectedItemColor: colors.onSurfaceVariant,
+  // Replaces the old BottomNavigationBarThemeData (Material2-style bottom
+  // bar: flat, no selection highlight, abrupt icon swap) now that
+  // home.dart uses NavigationBar instead — Material3's redesigned bottom
+  // nav with a pill-shaped indicator behind the selected icon.
+  NavigationBarThemeData navigationBarTheme(ColorScheme colors) {
+    return NavigationBarThemeData(
+      backgroundColor: colors.surface,
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
-      landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+      indicatorColor: colors.primary.withValues(alpha: 0.16),
+      indicatorShape: const StadiumBorder(),
+      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return TextStyle(
+          fontFamily: 'Sk-Modernist',
+          fontSize: 12,
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          color: selected ? colors.onSurface : colors.onSurfaceVariant,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return IconThemeData(
+          color: selected ? colors.primary : colors.onSurfaceVariant,
+        );
+      }),
     );
   }
 
@@ -261,7 +279,7 @@ class ThemeProvider extends InheritedWidget {
       cardTheme: cardTheme(),
       listTileTheme: listTileTheme(_colors),
       bottomAppBarTheme: bottomAppBarTheme(_colors),
-      bottomNavigationBarTheme: bottomNavigationBarTheme(_colors),
+      navigationBarTheme: navigationBarTheme(_colors),
       navigationRailTheme: navigationRailTheme(_colors),
       tabBarTheme: tabBarTheme(_colors),
       drawerTheme: drawerTheme(_colors),
@@ -282,7 +300,7 @@ class ThemeProvider extends InheritedWidget {
       cardTheme: cardTheme(),
       listTileTheme: listTileTheme(_colors),
       bottomAppBarTheme: bottomAppBarTheme(_colors),
-      bottomNavigationBarTheme: bottomNavigationBarTheme(_colors),
+      navigationBarTheme: navigationBarTheme(_colors),
       navigationRailTheme: navigationRailTheme(_colors),
       tabBarTheme: tabBarTheme(_colors),
       drawerTheme: drawerTheme(_colors),
