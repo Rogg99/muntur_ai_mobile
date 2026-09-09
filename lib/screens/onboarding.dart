@@ -16,33 +16,31 @@ class _OnboardingStep {
   });
 }
 
-// Not `const`: ImageConstant's fields are plain (non-const) static Strings.
-final List<_OnboardingStep> _steps = [
-  _OnboardingStep(
-    image: ImageConstant.onboardingGarage,
-    title: 'Trouvez le bon garage, vite',
-    body:
-        'Localisez les garages, stations et centres de contrôle les plus proches, avec avis et distance en temps réel.',
-  ),
-  _OnboardingStep(
-    image: ImageConstant.onboardingChat,
-    title: 'Un assistant IA à toute heure',
-    body:
-        "Décrivez votre panne ou posez votre question : MUNTUR AI vous répond, jour et nuit.",
-  ),
-  _OnboardingStep(
-    image: ImageConstant.onboardingCommunity,
-    title: 'Rejoignez la communauté',
-    body:
-        'Échangez avec d\'autres passionnés dans les forums, partagez vos bons plans et vos expériences.',
-  ),
-  _OnboardingStep(
-    image: ImageConstant.onboardingPremium,
-    title: 'Passez au niveau supérieur',
-    body:
-        'Débloquez les fonctionnalités Premium : historique illimité, alertes prioritaires et bien plus.',
-  ),
-];
+// Built per-build from AppLocalizations rather than as a static/const list,
+// since the copy must follow the app's current locale (see @onboarding_*
+// keys in lib/l10n/app_en.arb and app_fr.arb).
+List<_OnboardingStep> _buildSteps(AppLocalizations translator) => [
+      _OnboardingStep(
+        image: ImageConstant.onboardingGarage,
+        title: translator.onboarding_garage_title,
+        body: translator.onboarding_garage_body,
+      ),
+      _OnboardingStep(
+        image: ImageConstant.onboardingChat,
+        title: translator.onboarding_chat_title,
+        body: translator.onboarding_chat_body,
+      ),
+      _OnboardingStep(
+        image: ImageConstant.onboardingCommunity,
+        title: translator.onboarding_community_title,
+        body: translator.onboarding_community_body,
+      ),
+      _OnboardingStep(
+        image: ImageConstant.onboardingPremium,
+        title: translator.onboarding_premium_title,
+        body: translator.onboarding_premium_body,
+      ),
+    ];
 
 class OnBoarding extends StatefulWidget {
   const OnBoarding({super.key});
@@ -54,6 +52,7 @@ class OnBoarding extends StatefulWidget {
 class OnBoardingState extends State<OnBoarding> {
   final PageController _controller = PageController();
   int pageIndex = 0;
+  late List<_OnboardingStep> _steps;
 
   bool get _isLastStep => pageIndex == _steps.length - 1;
 
@@ -83,6 +82,7 @@ class OnBoardingState extends State<OnBoarding> {
     final appStyle = AppStyle.of(context);
     final translator = AppLocalizations.of(context)!;
     final photoHeight = MediaQuery.of(context).size.height * 0.6;
+    _steps = _buildSteps(translator);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -130,7 +130,7 @@ class OnBoardingState extends State<OnBoarding> {
                       : TextButton(
                           onPressed: _goToSignup,
                           child: Text(
-                            'Passer',
+                            translator.onboarding_skip,
                             style: appStyle.H6(color: Colors.white),
                           ),
                         ),
@@ -187,7 +187,9 @@ class OnBoardingState extends State<OnBoarding> {
                     ),
                     Padding(padding: getPadding(top: 26)),
                     PrimaryButton(
-                      text: _isLastStep ? 'Créer un compte' : 'Suivant',
+                      text: _isLastStep
+                          ? translator.create_account
+                          : translator.onboarding_next,
                       onPressed: _next,
                     ),
                     Padding(padding: getPadding(top: 16)),

@@ -453,5 +453,15 @@
   "notificationsTitle": "Notifications",
   "newDiscussion": "New Chat",
   "you": "You",
-  "chatWelcome": "Start a new discussion with Autosynx,Ask me any question you want !"
+  "chatWelcome": "Start a new discussion with Autosynx,Ask me any question you want !",
+  "onboarding_skip": "Skip",
+  "onboarding_next": "Next",
+  "onboarding_garage_title": "Find the right garage, fast",
+  "onboarding_garage_body": "Locate nearby garages, service stations and inspection centers, with reviews and real-time distance.",
+  "onboarding_chat_title": "An AI assistant, anytime",
+  "onboarding_chat_body": "Describe your car trouble or ask a question — MUNTUR AI answers, day and night.",
+  "onboarding_community_title": "Join the community",
+  "onboarding_community_body": "Connect with other enthusiasts in the forums, share tips and experiences.",
+  "onboarding_premium_title": "Take it to the next level",
+  "onboarding_premium_body": "Unlock Premium features: unlimited history, priority alerts and more."
 }

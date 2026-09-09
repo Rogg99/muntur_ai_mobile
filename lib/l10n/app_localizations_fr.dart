@@ -1433,4 +1433,38 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get chatWelcome =>
       'Commencez une nouvelle discussion avec Autosynx, posez-moi toutes les questions que vous voulez !';
+
+  @override
+  String get onboarding_skip => 'Passer';
+
+  @override
+  String get onboarding_next => 'Suivant';
+
+  @override
+  String get onboarding_garage_title => 'Trouvez le bon garage, vite';
+
+  @override
+  String get onboarding_garage_body =>
+      'Localisez les garages, stations et centres de contrôle les plus proches, avec avis et distance en temps réel.';
+
+  @override
+  String get onboarding_chat_title => 'Un assistant IA à toute heure';
+
+  @override
+  String get onboarding_chat_body =>
+      'Décrivez votre panne ou posez votre question : MUNTUR AI vous répond, jour et nuit.';
+
+  @override
+  String get onboarding_community_title => 'Rejoignez la communauté';
+
+  @override
+  String get onboarding_community_body =>
+      'Échangez avec d\'autres passionnés dans les forums, partagez vos bons plans et vos expériences.';
+
+  @override
+  String get onboarding_premium_title => 'Passez au niveau supérieur';
+
+  @override
+  String get onboarding_premium_body =>
+      'Débloquez les fonctionnalités Premium : historique illimité, alertes prioritaires et bien plus.';
 }

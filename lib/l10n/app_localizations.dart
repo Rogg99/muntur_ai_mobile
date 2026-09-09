@@ -2827,6 +2827,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start a new discussion with Autosynx,Ask me any question you want !'**
   String get chatWelcome;
+
+  /// No description provided for @onboarding_skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboarding_skip;
+
+  /// No description provided for @onboarding_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboarding_next;
+
+  /// No description provided for @onboarding_garage_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Find the right garage, fast'**
+  String get onboarding_garage_title;
+
+  /// No description provided for @onboarding_garage_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Locate nearby garages, service stations and inspection centers, with reviews and real-time distance.'**
+  String get onboarding_garage_body;
+
+  /// No description provided for @onboarding_chat_title.
+  ///
+  /// In en, this message translates to:
+  /// **'An AI assistant, anytime'**
+  String get onboarding_chat_title;
+
+  /// No description provided for @onboarding_chat_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your car trouble or ask a question — MUNTUR AI answers, day and night.'**
+  String get onboarding_chat_body;
+
+  /// No description provided for @onboarding_community_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Join the community'**
+  String get onboarding_community_title;
+
+  /// No description provided for @onboarding_community_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect with other enthusiasts in the forums, share tips and experiences.'**
+  String get onboarding_community_body;
+
+  /// No description provided for @onboarding_premium_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Take it to the next level'**
+  String get onboarding_premium_title;
+
+  /// No description provided for @onboarding_premium_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Premium features: unlimited history, priority alerts and more.'**
+  String get onboarding_premium_body;
 }
 
 class _AppLocalizationsDelegate
