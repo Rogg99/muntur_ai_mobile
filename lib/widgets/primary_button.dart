@@ -38,7 +38,9 @@ class PrimaryButtonState extends State<PrimaryButton> {
         color: widget.color ?? Theme.of(context).colorScheme.primary,
         padding: EdgeInsets.symmetric(horizontal: widget.padding!),
         borderRadius: BorderRadius.circular(widget.radius!),
-        onPressed: widget.onPressed != null ? () => widget.onPressed!() : null,
+        onPressed: (widget.onPressed != null && widget.loading != true)
+            ? () => widget.onPressed!()
+            : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

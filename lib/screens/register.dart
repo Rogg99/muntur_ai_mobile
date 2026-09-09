@@ -79,7 +79,7 @@ class _signupState extends ConsumerState<Signup2> {
       lastDate: now,
       helpText: AppLocalizations.of(context)!.birthDateLabel,
     );
-    if (picked != null) {
+    if (picked != null && mounted) {
       setState(() {
         _birthDate = picked;
         _birthDateError = null;
@@ -651,6 +651,7 @@ class _signupState extends ConsumerState<Signup2> {
   // ── Soumission ───────────────────────────────────────────────────────
 
   Future<void> register() async {
+    if (show_loading || !mounted) return;
     final translator = AppLocalizations.of(context)!;
 
     final step2Valid = _step2FormKey.currentState?.validate() ?? false;
