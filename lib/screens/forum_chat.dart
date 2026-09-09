@@ -16,7 +16,7 @@ import 'package:munturai/screens/forum_details.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:video_player/video_player.dart';
 
-enum _AttachSheetChoice { camera, gallery, video }
+enum _AttachSheetChoice { camera, gallery }
 
 enum _AttachmentStatus { uploading, uploaded, failed }
 
@@ -86,6 +86,8 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
     super.dispose();
   }
 
+  static const _videoExtensions = {'mp4', 'mov', 'avi', 'mkv', 'webm', '3gp'};
+
   Future<void> _showAttachSheet() async {
     final choice = await showModalBottomSheet<_AttachSheetChoice>(
       context: context,
@@ -94,18 +96,13 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Prendre une photo'),
+              title: const Text('Appareil photo'),
               onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choisir une photo'),
+              title: const Text('Galerie'),
               onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.gallery),
-            ),
-            ListTile(
-              leading: const Icon(Icons.videocam_outlined),
-              title: const Text('Choisir une vidéo'),
-              onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.video),
             ),
           ],
         ),
@@ -113,27 +110,28 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
     );
     if (choice == null) return;
 
-    if (choice == _AttachSheetChoice.video) {
-      final video = await _imagePicker.pickVideo(source: ImageSource.gallery);
-      if (video == null) return;
+    if (choice == _AttachSheetChoice.camera) {
+      final photo = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+      );
+      if (photo == null) return;
       _addAttachment(_PendingAttachment(
-        file: File(video.path),
-        kind: _AttachmentKind.video,
+        file: File(photo.path),
+        kind: _AttachmentKind.image,
       ));
       return;
     }
 
-    final photo = await _imagePicker.pickImage(
-      source: choice == _AttachSheetChoice.camera
-          ? ImageSource.camera
-          : ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (photo == null) return;
-    _addAttachment(_PendingAttachment(
-      file: File(photo.path),
-      kind: _AttachmentKind.image,
-    ));
+    // pickMedia lets the user pick either a photo or a video from the same
+    // gallery picker — the kind is only known afterward, from the file
+    // extension, since the API returns a plain XFile either way.
+    final picked = await _imagePicker.pickMedia();
+    if (picked == null) return;
+    final extension = picked.path.split('.').last.toLowerCase();
+    final kind =
+        _videoExtensions.contains(extension) ? _AttachmentKind.video : _AttachmentKind.image;
+    _addAttachment(_PendingAttachment(file: File(picked.path), kind: kind));
   }
 
   void _addAttachment(_PendingAttachment attachment) {
