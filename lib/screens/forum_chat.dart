@@ -98,7 +98,7 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
     });
 
     try {
-      await ref.read(chatMessagesProvider(_discId).notifier).sendForumMessage(
+      await ref.read(chatMessagesProvider(_discId, isForum: true).notifier).sendForumMessage(
             text,
             senderId: _userId,
             answerToId: replyId ?? 'none',
@@ -111,7 +111,7 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
 
   @override
   Widget build(BuildContext context) {
-    final messagesState = ref.watch(chatMessagesProvider(_discId));
+    final messagesState = ref.watch(chatMessagesProvider(_discId, isForum: true));
 
     List<UIMessage> messages = [];
     if (messagesState is AsyncData) {
@@ -174,7 +174,7 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
 
     if (messages.isEmpty) {
       return RefreshIndicator(
-        onRefresh: () async => ref.invalidate(chatMessagesProvider(_discId)),
+        onRefresh: () async => ref.invalidate(chatMessagesProvider(_discId, isForum: true)),
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
@@ -198,7 +198,7 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
     }
 
     return RefreshIndicator(
-      onRefresh: () async => ref.invalidate(chatMessagesProvider(_discId)),
+      onRefresh: () async => ref.invalidate(chatMessagesProvider(_discId, isForum: true)),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -264,7 +264,7 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
             ),
             const SizedBox(height: 12),
             TextButton(
-              onPressed: () => ref.invalidate(chatMessagesProvider(_discId)),
+              onPressed: () => ref.invalidate(chatMessagesProvider(_discId, isForum: true)),
               child: const Text('Réessayer'),
             ),
           ],

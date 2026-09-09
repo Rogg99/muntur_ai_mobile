@@ -52,7 +52,7 @@ final forumsProvider =
 );
 
 typedef _$Forums = AutoDisposeAsyncNotifier<List<DiscussionModel>>;
-String _$chatMessagesHash() => r'5fd8b8129ffac49773e00aa86a3ec227f259ea54';
+String _$chatMessagesHash() => r'72d73f5082d89257a2f24b3dc917bda42cb2e6f0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -78,10 +78,12 @@ class _SystemHash {
 abstract class _$ChatMessages
     extends BuildlessAutoDisposeAsyncNotifier<List<MessageModel>> {
   late final String discussionId;
+  late final bool isForum;
 
   FutureOr<List<MessageModel>> build(
-    String discussionId,
-  );
+    String discussionId, {
+    bool isForum = false,
+  });
 }
 
 /// See also [ChatMessages].
@@ -95,10 +97,12 @@ class ChatMessagesFamily extends Family<AsyncValue<List<MessageModel>>> {
 
   /// See also [ChatMessages].
   ChatMessagesProvider call(
-    String discussionId,
-  ) {
+    String discussionId, {
+    bool isForum = false,
+  }) {
     return ChatMessagesProvider(
       discussionId,
+      isForum: isForum,
     );
   }
 
@@ -108,6 +112,7 @@ class ChatMessagesFamily extends Family<AsyncValue<List<MessageModel>>> {
   ) {
     return call(
       provider.discussionId,
+      isForum: provider.isForum,
     );
   }
 
@@ -131,9 +136,12 @@ class ChatMessagesProvider extends AutoDisposeAsyncNotifierProviderImpl<
     ChatMessages, List<MessageModel>> {
   /// See also [ChatMessages].
   ChatMessagesProvider(
-    String discussionId,
-  ) : this._internal(
-          () => ChatMessages()..discussionId = discussionId,
+    String discussionId, {
+    bool isForum = false,
+  }) : this._internal(
+          () => ChatMessages()
+            ..discussionId = discussionId
+            ..isForum = isForum,
           from: chatMessagesProvider,
           name: r'chatMessagesProvider',
           debugGetCreateSourceHash:
@@ -144,6 +152,7 @@ class ChatMessagesProvider extends AutoDisposeAsyncNotifierProviderImpl<
           allTransitiveDependencies:
               ChatMessagesFamily._allTransitiveDependencies,
           discussionId: discussionId,
+          isForum: isForum,
         );
 
   ChatMessagesProvider._internal(
@@ -154,9 +163,11 @@ class ChatMessagesProvider extends AutoDisposeAsyncNotifierProviderImpl<
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.discussionId,
+    required this.isForum,
   }) : super.internal();
 
   final String discussionId;
+  final bool isForum;
 
   @override
   FutureOr<List<MessageModel>> runNotifierBuild(
@@ -164,6 +175,7 @@ class ChatMessagesProvider extends AutoDisposeAsyncNotifierProviderImpl<
   ) {
     return notifier.build(
       discussionId,
+      isForum: isForum,
     );
   }
 
@@ -172,13 +184,16 @@ class ChatMessagesProvider extends AutoDisposeAsyncNotifierProviderImpl<
     return ProviderOverride(
       origin: this,
       override: ChatMessagesProvider._internal(
-        () => create()..discussionId = discussionId,
+        () => create()
+          ..discussionId = discussionId
+          ..isForum = isForum,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         discussionId: discussionId,
+        isForum: isForum,
       ),
     );
   }
@@ -191,13 +206,16 @@ class ChatMessagesProvider extends AutoDisposeAsyncNotifierProviderImpl<
 
   @override
   bool operator ==(Object other) {
-    return other is ChatMessagesProvider && other.discussionId == discussionId;
+    return other is ChatMessagesProvider &&
+        other.discussionId == discussionId &&
+        other.isForum == isForum;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, discussionId.hashCode);
+    hash = _SystemHash.combine(hash, isForum.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -207,6 +225,9 @@ mixin ChatMessagesRef
     on AutoDisposeAsyncNotifierProviderRef<List<MessageModel>> {
   /// The parameter `discussionId` of this provider.
   String get discussionId;
+
+  /// The parameter `isForum` of this provider.
+  bool get isForum;
 }
 
 class _ChatMessagesProviderElement
@@ -216,6 +237,8 @@ class _ChatMessagesProviderElement
 
   @override
   String get discussionId => (origin as ChatMessagesProvider).discussionId;
+  @override
+  bool get isForum => (origin as ChatMessagesProvider).isForum;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

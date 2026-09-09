@@ -136,7 +136,8 @@ class Forums extends _$Forums {
 @riverpod
 class ChatMessages extends _$ChatMessages {
   @override
-  FutureOr<List<MessageModel>> build(String discussionId) async {
+  FutureOr<List<MessageModel>> build(String discussionId,
+      {bool isForum = false}) async {
     // 'new' is a local-only placeholder for a discussion that doesn't exist
     // on the backend yet (it's created on the first message) — nothing to
     // load or refresh until then.
@@ -159,8 +160,8 @@ class ChatMessages extends _$ChatMessages {
   /// Applies a message pushed over the WebSocket (AI reply, another party's
   /// forum message, ...) directly into Isar + state — no REST re-fetch. Used
   /// by [RealtimeDispatcher] in place of invalidating this provider, which
-  /// would otherwise hit GET /discussions/<id>/messages/ on every single
-  /// message a WS push delivers while this discussion is open.
+  /// would otherwise hit a GET-messages endpoint on every single message a
+  /// WS push delivers while this discussion/forum is open.
   Future<void> applyIncoming(MessageModel message) async {
     final isar = IsarDb.instance;
     await isar.writeTxn(() async {
@@ -177,9 +178,10 @@ class ChatMessages extends _$ChatMessages {
 
   void _refreshFromApi(String discussionId) async {
     try {
-      final fresh = await ref
-          .read(chatbotRepositoryProvider)
-          .getMessagesForDiscussion(discussionId);
+      final repo = ref.read(chatbotRepositoryProvider);
+      final fresh = isForum
+          ? await repo.getMessagesForForum(discussionId)
+          : await repo.getMessagesForDiscussion(discussionId);
       if (fresh.isNotEmpty) {
         state = AsyncValue.data(fresh);
       }

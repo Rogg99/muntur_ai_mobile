@@ -59,7 +59,9 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
           final message = MessageModel.fromJson(data);
           final forumId = message.discId != 'none' ? message.discId : null;
           if (forumId != null) {
-            ref.read(chatMessagesProvider(forumId).notifier).applyIncoming(message);
+            ref
+                .read(chatMessagesProvider(forumId, isForum: true).notifier)
+                .applyIncoming(message);
             ref.read(forumsProvider.notifier).applyIncomingMessage(
                   forumId: forumId,
                   contenu: message.contenu,

@@ -229,20 +229,20 @@ class ChatbotRepositoryImpl {
     return null;
   }
 
-  Future<List<MessageModel>> getMessagesForDiscussion(String discId) async {
+  /// A discussion and a forum are different models server-side (MessageViewSet
+  /// exposes discussion_messages and forum_messages as separate actions, each
+  /// 404-ing/400-ing on the other's id) — this does the shared unpacking once
+  /// for whichever [url] the caller picked.
+  Future<List<MessageModel>> _fetchMessages(String url, String discId) async {
     try {
-      // The real endpoint (MessageViewSet.discussion_messages, registered
-      // under the "messages/" router) — "/discussions/$discId/messages/"
-      // doesn't exist and 404s. Its items are raw MessageSerializer objects
-      // with neither "disc_id" nor "date_envoi" (only "date_creation"), so
-      // both are filled in/normalized per item before handing off to
-      // MessageModel.fromJson.
-      final response =
-          await _apiClient.get('/messages/discussion/$discId/messages/');
+      final response = await _apiClient.get(url);
       if (response.statusCode == 200) {
         final body = response.data;
         final messagesField = body is Map ? body['messages'] : null;
         final items = messagesField is Map ? messagesField['items'] : null;
+        // Items are raw MessageSerializer objects with neither "disc_id" nor
+        // "date_envoi" (only "date_creation"), so both are filled in/
+        // normalized per item before handing off to MessageModel.fromJson.
         final messages = (items is List ? items : const [])
             .whereType<Map>()
             .map((json) => MessageModel.fromJson({
@@ -268,4 +268,10 @@ class ChatbotRepositoryImpl {
         .sortByDateEnvoi()
         .findAll();
   }
+
+  Future<List<MessageModel>> getMessagesForDiscussion(String discId) =>
+      _fetchMessages('/messages/discussion/$discId/messages/', discId);
+
+  Future<List<MessageModel>> getMessagesForForum(String forumId) =>
+      _fetchMessages('/messages/forum/$forumId/messages/', forumId);
 }
