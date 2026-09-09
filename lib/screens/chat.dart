@@ -67,7 +67,12 @@ class _ChatViewState extends ConsumerState<ChatView> {
 
   String get _discId => widget.disc?.id ?? 'new';
 
-  String get _userId => ref.read(authStateProvider).valueOrNull?.id ?? 'user';
+  // Must be ref.watch, not ref.read: authStateProvider is a plain (autoDispose)
+  // provider, so a bare read() drops it the moment this call returns and the
+  // next access rebuilds it from scratch — re-fetching the profile and
+  // re-running its WS-connect side effect on every message row. Watching
+  // keeps one subscription alive for the screen's lifetime instead.
+  String get _userId => ref.watch(authStateProvider).valueOrNull?.id ?? 'user';
 
   bool get _hasBlockingAttachment => _attachments.any((a) =>
       a.status == _AttachmentStatus.uploading ||
