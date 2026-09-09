@@ -284,7 +284,7 @@ class _signupState extends ConsumerState<Signup2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 108,
+                    width: 132,
                     child: _pickerField(
                       label: translator.register_phone_code_label,
                       value: selectedIndicator,
