@@ -31,8 +31,20 @@ class ApiClient {
   /// media URL through [resolveMediaUrl] before displaying it.
   static const String origin = 'https://195.26.244.215:447';
 
-  static String resolveMediaUrl(String url) =>
-      url.startsWith('http') ? url : '$origin$url';
+  static String resolveMediaUrl(String url) {
+    if (url.isEmpty) return url;
+    final absolute = url.startsWith('http') ? url : '$origin$url';
+    // Some media (news images confirmed so far) come back as an absolute
+    // http:// URL instead of https:// — likely a reverse-proxy not
+    // forwarding the original scheme to Django. Android blocks cleartext
+    // traffic app-wide (network_security_config.xml), so that request would
+    // just silently fail with nothing rendered, no error visible anywhere.
+    // Upgrade to the https port we already pin a certificate for, same host.
+    if (absolute.startsWith('http://195.26.244.215')) {
+      return absolute.replaceFirst('http://195.26.244.215', origin);
+    }
+    return absolute;
+  }
 
   late final Dio _dio;
 

@@ -1,5 +1,7 @@
 import 'package:isar/isar.dart';
 
+import '../../../../core/network/api_client.dart';
+
 part 'news_model.g.dart';
 
 @Collection()
@@ -26,14 +28,22 @@ class NewsModel {
     final m = NewsModel();
     m.id = json['id']?.toString() ?? '';
     m.title = json['title'] ?? '';
-    m.image = json['image'] ?? '';
-    m.contenu = json['contenu'] ?? '';
+    // The image comes as a nested media object ({id, file, kind, ...} — same
+    // MediaSerializer shape used everywhere else), not a flat "image" string.
+    final media = json['media'];
+    m.image = media is Map
+        ? ApiClient.resolveMediaUrl(media['file']?.toString() ?? '')
+        : '';
+    m.contenu = json['text'] ?? json['contenu'] ?? '';
     m.path = json['path'] ?? '';
     m.statut = json['statut'] ?? 'none';
-    m.time = (json['time'] as num?)?.toInt() ?? 0;
-    m.likes = (json['reactions'] ?? json['likes'] as num?)?.toInt() ?? 0;
+    m.time = DateTime.tryParse(json['date_creation']?.toString() ?? '')
+            ?.millisecondsSinceEpoch ??
+        (json['time'] as num?)?.toInt() ??
+        0;
+    m.likes = (json['reactions_count'] ?? json['likes'] as num?)?.toInt() ?? 0;
     m.comments = (json['comments'] as num?)?.toInt() ?? 0;
-    m.liked = json['liked'] == true;
+    m.liked = json['liked'] == true || json['user_reaction'] != null;
     return m;
   }
 
