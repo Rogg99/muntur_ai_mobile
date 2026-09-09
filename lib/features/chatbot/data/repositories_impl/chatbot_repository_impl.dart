@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/database/isar_db.dart';
 import '../models/discussion_model.dart';
+import '../models/forum_detail.dart';
 import '../models/media_ref.dart';
 import '../models/message_model.dart';
 import 'package:isar/isar.dart';
@@ -110,6 +111,20 @@ class ChatbotRepositoryImpl {
           .findAll();
     }
     return [];
+  }
+
+  /// Not cached in Isar — description/member-count are only shown on the
+  /// rarely-visited details page and the chat appbar, not worth a schema
+  /// field on DiscussionModel for.
+  Future<ForumDetail?> getForumDetail(String forumId) async {
+    try {
+      final response = await _apiClient.get('/forums/$forumId/');
+      if (response.statusCode == 200) {
+        final data = response.data['data'] ?? response.data;
+        if (data is Map) return ForumDetail.fromJson(data.cast<String, dynamic>());
+      }
+    } catch (_) {}
+    return null;
   }
 
   /// Uploads a single local file to the shared media store and returns its

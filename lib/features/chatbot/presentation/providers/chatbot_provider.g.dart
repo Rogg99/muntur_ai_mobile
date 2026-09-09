@@ -22,6 +22,155 @@ final chatbotRepositoryProvider =
 );
 
 typedef ChatbotRepositoryRef = AutoDisposeProviderRef<ChatbotRepositoryImpl>;
+String _$forumDetailHash() => r'371cf5a44a8bd35f3eaba579b29b515a59777c11';
+
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
+
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
+
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  }
+}
+
+/// See also [forumDetail].
+@ProviderFor(forumDetail)
+const forumDetailProvider = ForumDetailFamily();
+
+/// See also [forumDetail].
+class ForumDetailFamily extends Family<AsyncValue<ForumDetail?>> {
+  /// See also [forumDetail].
+  const ForumDetailFamily();
+
+  /// See also [forumDetail].
+  ForumDetailProvider call(
+    String forumId,
+  ) {
+    return ForumDetailProvider(
+      forumId,
+    );
+  }
+
+  @override
+  ForumDetailProvider getProviderOverride(
+    covariant ForumDetailProvider provider,
+  ) {
+    return call(
+      provider.forumId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'forumDetailProvider';
+}
+
+/// See also [forumDetail].
+class ForumDetailProvider extends AutoDisposeFutureProvider<ForumDetail?> {
+  /// See also [forumDetail].
+  ForumDetailProvider(
+    String forumId,
+  ) : this._internal(
+          (ref) => forumDetail(
+            ref as ForumDetailRef,
+            forumId,
+          ),
+          from: forumDetailProvider,
+          name: r'forumDetailProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$forumDetailHash,
+          dependencies: ForumDetailFamily._dependencies,
+          allTransitiveDependencies:
+              ForumDetailFamily._allTransitiveDependencies,
+          forumId: forumId,
+        );
+
+  ForumDetailProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.forumId,
+  }) : super.internal();
+
+  final String forumId;
+
+  @override
+  Override overrideWith(
+    FutureOr<ForumDetail?> Function(ForumDetailRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ForumDetailProvider._internal(
+        (ref) => create(ref as ForumDetailRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        forumId: forumId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<ForumDetail?> createElement() {
+    return _ForumDetailProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ForumDetailProvider && other.forumId == forumId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, forumId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin ForumDetailRef on AutoDisposeFutureProviderRef<ForumDetail?> {
+  /// The parameter `forumId` of this provider.
+  String get forumId;
+}
+
+class _ForumDetailProviderElement
+    extends AutoDisposeFutureProviderElement<ForumDetail?> with ForumDetailRef {
+  _ForumDetailProviderElement(super.provider);
+
+  @override
+  String get forumId => (origin as ForumDetailProvider).forumId;
+}
+
 String _$discussionsHash() => r'2423017a9f90f7edbeaf77d1bfabfb1041954ffd';
 
 /// See also [Discussions].
@@ -52,28 +201,7 @@ final forumsProvider =
 );
 
 typedef _$Forums = AutoDisposeAsyncNotifier<List<DiscussionModel>>;
-String _$chatMessagesHash() => r'72d73f5082d89257a2f24b3dc917bda42cb2e6f0';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
+String _$chatMessagesHash() => r'3ed1c28bfd1bba8a530f50578d89fbc5c47f2183';
 
 abstract class _$ChatMessages
     extends BuildlessAutoDisposeAsyncNotifier<List<MessageModel>> {

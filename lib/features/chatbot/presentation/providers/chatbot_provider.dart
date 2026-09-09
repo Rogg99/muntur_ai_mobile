@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'dart:async';
 import 'dart:convert';
 import '../../data/models/discussion_model.dart';
+import '../../data/models/forum_detail.dart';
 import '../../data/models/media_ref.dart';
 import '../../data/models/message_model.dart';
 import '../../data/repositories_impl/chatbot_repository_impl.dart';
@@ -17,6 +18,11 @@ part 'chatbot_provider.g.dart';
 ChatbotRepositoryImpl chatbotRepository(Ref ref) {
   final apiClient = ApiClient();
   return ChatbotRepositoryImpl(apiClient);
+}
+
+@riverpod
+Future<ForumDetail?> forumDetail(Ref ref, String forumId) {
+  return ref.read(chatbotRepositoryProvider).getForumDetail(forumId);
 }
 
 /// Patches the preview fields of the discussion/forum matching [discId] and

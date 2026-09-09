@@ -7,6 +7,7 @@ import 'package:munturai/features/auth/presentation/providers/auth_provider.dart
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/presentation/providers/chatbot_provider.dart';
 import 'package:munturai/model/message.dart';
+import 'package:munturai/screens/forum_details.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 /// Telegram-style name colors, picked deterministically per sender id so the
@@ -388,17 +389,23 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
 /// Group-chat appbar — an avatar and a static "Groupe" line instead of the
 /// plain title bar the 1:1 AI screen uses, so this reads as a different
 /// place the moment it opens.
-class _GroupAppBar extends StatelessWidget implements PreferredSizeWidget {
+class _GroupAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final DiscussionModel? disc;
   const _GroupAppBar({required this.disc});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final title = disc?.title ?? 'Groupe';
     final initial = title.isNotEmpty ? title.substring(0, 1).toUpperCase() : '?';
     final photo = disc?.photo ?? 'none';
+    final detailAsync =
+        disc != null ? ref.watch(forumDetailProvider(disc!.id)) : null;
+    final membersCount = detailAsync?.valueOrNull?.membersCount;
+    final subtitle = membersCount != null
+        ? '$membersCount membre${membersCount > 1 ? 's' : ''}'
+        : 'Groupe';
 
     return AppBar(
       backgroundColor: colorScheme.surface,
@@ -408,43 +415,52 @@ class _GroupAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () => Navigator.pop(context),
       ),
       titleSpacing: 0,
-      title: Row(
-        children: [
-          SizedBox(
-            height: 38,
-            width: 38,
-            child: photo.startsWith('http')
-                ? ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: photo,
-                      fit: BoxFit.cover,
-                      placeholder: (_, __) =>
-                          _GroupAvatarFallback(initial: initial),
-                      errorWidget: (_, __, ___) =>
-                          _GroupAvatarFallback(initial: initial),
-                    ),
-                  )
-                : _GroupAvatarFallback(initial: initial),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  overflow: TextOverflow.ellipsis,
-                  style: appStyle.H4(weight: 'bold'),
+      title: InkWell(
+        onTap: disc == null
+            ? null
+            : () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => ForumDetailsScreen(forum: disc!)),
                 ),
-                Text(
-                  'Groupe',
-                  style: appStyle.H6(color: colorScheme.onSurfaceVariant),
-                ),
-              ],
+        child: Row(
+          children: [
+            SizedBox(
+              height: 38,
+              width: 38,
+              child: photo.startsWith('http')
+                  ? ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: photo,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) =>
+                            _GroupAvatarFallback(initial: initial),
+                        errorWidget: (_, __, ___) =>
+                            _GroupAvatarFallback(initial: initial),
+                      ),
+                    )
+                  : _GroupAvatarFallback(initial: initial),
             ),
-          ),
-        ],
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    overflow: TextOverflow.ellipsis,
+                    style: appStyle.H4(weight: 'bold'),
+                  ),
+                  Text(
+                    subtitle,
+                    style: appStyle.H6(color: colorScheme.onSurfaceVariant),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
