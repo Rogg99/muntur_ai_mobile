@@ -8,7 +8,6 @@ import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/colors/colors.dart';
 import 'package:munturai/core/fonctions.dart';
 import 'package:munturai/model/message.dart';
-import 'package:munturai/screens/chat.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -33,7 +32,7 @@ class MessageWidget extends StatefulWidget {
 
   /// ID de l'utilisateur connecté (remplace User.id)
   final String userId;
-  final Chat_ chatView;
+  final dynamic chatView;
   final bool show_time;
 
   MessageWidget({
@@ -67,7 +66,7 @@ class MessageWidget_ extends State<MessageWidget> {
   int answerIndex;
   String discType;
   String userId;
-  Chat_ chatView;
+  dynamic chatView;
   bool showTime;
   bool loadPhoto = false;
   bool mediaIsDownloaded = false;
