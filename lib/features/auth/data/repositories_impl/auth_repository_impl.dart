@@ -23,11 +23,9 @@ class AuthRepositoryImpl implements AuthRepository {
       });
 
       if (response.statusCode == 200) {
-        final data = response.data;
-        // Backend may return token inside 'data' or at top level
-        final token = data['data']?['token'] ?? data['token'];
+        final token = _extractAccessToken(response.data);
         if (token != null) {
-          await _secureStorage.saveToken(token.toString());
+          await _secureStorage.saveToken(token);
           await _clearCachedProfile();
         }
         return await getUserProfile();
@@ -38,6 +36,20 @@ class AuthRepositoryImpl implements AuthRepository {
     return null;
   }
 
+  // login_view/register in apps/authentication/views.py both return the
+  // token pair nested as {"token": {"access": ..., "refresh": ..., "user": ...}}
+  // — never a bare string. Extracting the outer "token" value as-is and
+  // saving its toString() (the previous bug here) stored the Dart Map's
+  // debug representation instead of the actual JWT, so every request made
+  // with it after login/register was sending a bearer header the backend
+  // could never validate.
+  String? _extractAccessToken(dynamic responseData) {
+    final tokenField = responseData['data']?['token'] ?? responseData['token'];
+    if (tokenField == null) return null;
+    if (tokenField is Map) return tokenField['access']?.toString();
+    return tokenField.toString();
+  }
+
   // ─────────────────────── REGISTER ────────────────────────
 
   @override
@@ -45,10 +57,9 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final response = await _apiClient.post('/auth/register/', data: data);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final respData = response.data;
-        final token = respData['data']?['token'] ?? respData['token'];
+        final token = _extractAccessToken(response.data);
         if (token != null) {
-          await _secureStorage.saveToken(token.toString());
+          await _secureStorage.saveToken(token);
           await _clearCachedProfile();
         }
         return await getUserProfile();
