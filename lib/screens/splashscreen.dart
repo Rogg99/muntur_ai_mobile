@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
-import 'package:munturai/screens/presentation.dart';
+import 'package:munturai/screens/onboarding.dart';
 import 'package:munturai/screens/home.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 
@@ -34,13 +34,13 @@ class Animated extends ConsumerState<SplashscreenScreen>
               context, MaterialPageRoute(builder: (context) => HomeScreen()));
         } else {
           Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => PresentationScreen()));
+              MaterialPageRoute(builder: (context) => const OnBoarding()));
         }
       } catch (e) {
         // If profile fetch fails or there is no local token
         if (!mounted) return;
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => PresentationScreen()));
+            MaterialPageRoute(builder: (context) => const OnBoarding()));
       }
     });
   }
