@@ -34,18 +34,16 @@ class SubscriptionRepositoryImpl {
     try {
       final response = await _apiClient.get('/abonnements/plans/');
       if (response.statusCode == 200) {
-        final rawList = response.data['data'] ?? response.data;
-        if (rawList is List) {
-          final plans =
-              rawList.map((j) => SubscriptionPlanModel.fromJson(j)).toList();
-          final isar = IsarDb.instance;
-          await isar.writeTxn(() async {
-            for (final p in plans) {
-              await isar.subscriptionPlanModels.put(p);
-            }
-          });
-          return plans.map(_toPlanEntity).toList();
-        }
+        final rawList = asResponseList(response.data);
+        final plans =
+            rawList.map((j) => SubscriptionPlanModel.fromJson(j)).toList();
+        final isar = IsarDb.instance;
+        await isar.writeTxn(() async {
+          for (final p in plans) {
+            await isar.subscriptionPlanModels.put(p);
+          }
+        });
+        return plans.map(_toPlanEntity).toList();
       }
     } catch (_) {}
     final isar = IsarDb.instance;

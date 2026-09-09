@@ -19,7 +19,7 @@ class ChatbotRepositoryImpl {
     try {
       final response = await _apiClient.get('/discussions/my-discussions/');
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'] ?? response.data;
+        final List<dynamic> data = asResponseList(response.data);
         final discussions = data.map((json) {
           return DiscussionModel.create(
             id: json["id"],
@@ -63,7 +63,7 @@ class ChatbotRepositoryImpl {
     try {
       final response = await _apiClient.get('/forums/');
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'] ?? response.data;
+        final List<dynamic> data = asResponseList(response.data);
         final forums = data.map((json) {
           return DiscussionModel.create(
             id: json["id"],
@@ -221,7 +221,7 @@ class ChatbotRepositoryImpl {
     try {
       final response = await _apiClient.get('/discussions/$discId/messages/');
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'] ?? response.data;
+        final List<dynamic> data = asResponseList(response.data);
         final messages =
             data.map((json) => MessageModel.fromJson(json)).toList();
 

@@ -4,6 +4,22 @@ import '../services/secure_storage_service.dart';
 import '../database/isar_db.dart';
 import '../../features/auth/data/models/user_model.dart';
 
+/// Some list endpoints wrap their payload as `{"data": [...]}`, others
+/// return the bare JSON array directly. `body['data'] ?? body` throws
+/// instead of falling back when `body` is already a `List` (`List` has no
+/// String-keyed `[]` operator) — the exception then gets silently swallowed
+/// by the repository's surrounding try/catch, which falls back to a
+/// (possibly empty) local cache even though the request actually succeeded.
+/// Use this to normalize either shape without that crash.
+List<dynamic> asResponseList(dynamic body) {
+  if (body is List) return body;
+  if (body is Map) {
+    final data = body['data'];
+    if (data is List) return data;
+  }
+  return const [];
+}
+
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;

@@ -17,17 +17,15 @@ class NewsRepositoryImpl implements NewsRepository {
     try {
       final response = await _apiClient.get('/infos/');
       if (response.statusCode == 200) {
-        final rawList = response.data['data'] ?? response.data;
-        if (rawList is List) {
-          final models = rawList.map((j) => NewsModel.fromJson(j)).toList();
-          final isar = IsarDb.instance;
-          await isar.writeTxn(() async {
-            for (final m in models) {
-              await isar.newsModels.put(m);
-            }
-          });
-          return models.map(_toEntity).toList();
-        }
+        final rawList = asResponseList(response.data);
+        final models = rawList.map((j) => NewsModel.fromJson(j)).toList();
+        final isar = IsarDb.instance;
+        await isar.writeTxn(() async {
+          for (final m in models) {
+            await isar.newsModels.put(m);
+          }
+        });
+        return models.map(_toEntity).toList();
       }
     } catch (_) {}
     return getCachedNews();

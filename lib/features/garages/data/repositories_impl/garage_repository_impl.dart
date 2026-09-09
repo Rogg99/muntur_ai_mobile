@@ -26,21 +26,19 @@ class GarageRepositoryImpl implements GarageRepository {
       });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final rawList = response.data['data'] ?? response.data;
-        if (rawList is List) {
-          final garages = rawList.map((j) => GarageModel.fromJson(j)).toList();
+        final rawList = asResponseList(response.data);
+        final garages = rawList.map((j) => GarageModel.fromJson(j)).toList();
 
-          // Persist to Isar
-          final isar = IsarDb.instance;
-          await isar.writeTxn(() async {
-            for (final g in garages) {
-              g.stale = false;
-              await isar.garageModels.put(g);
-            }
-          });
+        // Persist to Isar
+        final isar = IsarDb.instance;
+        await isar.writeTxn(() async {
+          for (final g in garages) {
+            g.stale = false;
+            await isar.garageModels.put(g);
+          }
+        });
 
-          return garages.map(_toEntity).toList();
-        }
+        return garages.map(_toEntity).toList();
       }
     } catch (_) {}
 
@@ -77,12 +75,8 @@ class GarageRepositoryImpl implements GarageRepository {
       final response =
           await _apiClient.get('/garages/', queryParameters: {'search': query});
       if (response.statusCode == 200) {
-        final rawList = response.data['data'] ?? response.data;
-        if (rawList is List) {
-          return rawList
-              .map((j) => _toEntity(GarageModel.fromJson(j)))
-              .toList();
-        }
+        final rawList = asResponseList(response.data);
+        return rawList.map((j) => _toEntity(GarageModel.fromJson(j))).toList();
       }
     } catch (_) {}
     // Fallback: filter local cache by name

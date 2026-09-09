@@ -13,18 +13,16 @@ class NotificationRepositoryImpl {
     try {
       final response = await _apiClient.get('/notifications/');
       if (response.statusCode == 200) {
-        final rawList = response.data['data'] ?? response.data;
-        if (rawList is List) {
-          final models =
-              rawList.map((j) => NotificationModel.fromJson(j)).toList();
-          final isar = IsarDb.instance;
-          await isar.writeTxn(() async {
-            for (final m in models) {
-              await isar.notificationModels.put(m);
-            }
-          });
-          return models.map(_toEntity).toList();
-        }
+        final rawList = asResponseList(response.data);
+        final models =
+            rawList.map((j) => NotificationModel.fromJson(j)).toList();
+        final isar = IsarDb.instance;
+        await isar.writeTxn(() async {
+          for (final m in models) {
+            await isar.notificationModels.put(m);
+          }
+        });
+        return models.map(_toEntity).toList();
       }
     } catch (_) {}
     return _getCached();
