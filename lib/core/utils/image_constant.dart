@@ -7,4 +7,9 @@ class ImageConstant {
 
   static String imgEllipse = 'assets/images/img_ellipse.png';
   static String imgUserWhiteA700 = 'assets/images/img_user_white_a700.svg';
+
+  static String onboardingGarage = 'assets/images/onboarding_1_garage.jpg';
+  static String onboardingChat = 'assets/images/onboarding_2_chat.jpg';
+  static String onboardingCommunity = 'assets/images/onboarding_3_community.jpg';
+  static String onboardingPremium = 'assets/images/onboarding_4_premium.jpg';
 }

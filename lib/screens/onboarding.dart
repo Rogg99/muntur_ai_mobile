@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../../core/app_export.dart';
@@ -7,171 +5,222 @@ import 'package:munturai/screens/register.dart';
 import '../widgets/primary_button.dart';
 import 'login.dart';
 
-import 'package:infinite_carousel/infinite_carousel.dart';
+class _OnboardingStep {
+  final String image;
+  final String title;
+  final String body;
+  const _OnboardingStep({
+    required this.image,
+    required this.title,
+    required this.body,
+  });
+}
 
-class OnBoarding extends StatefulWidget{
+// Not `const`: ImageConstant's fields are plain (non-const) static Strings.
+final List<_OnboardingStep> _steps = [
+  _OnboardingStep(
+    image: ImageConstant.onboardingGarage,
+    title: 'Trouvez le bon garage, vite',
+    body:
+        'Localisez les garages, stations et centres de contrôle les plus proches, avec avis et distance en temps réel.',
+  ),
+  _OnboardingStep(
+    image: ImageConstant.onboardingChat,
+    title: 'Un assistant IA à toute heure',
+    body:
+        "Décrivez votre panne ou posez votre question : MUNTUR AI vous répond, jour et nuit.",
+  ),
+  _OnboardingStep(
+    image: ImageConstant.onboardingCommunity,
+    title: 'Rejoignez la communauté',
+    body:
+        'Échangez avec d\'autres passionnés dans les forums, partagez vos bons plans et vos expériences.',
+  ),
+  _OnboardingStep(
+    image: ImageConstant.onboardingPremium,
+    title: 'Passez au niveau supérieur',
+    body:
+        'Débloquez les fonctionnalités Premium : historique illimité, alertes prioritaires et bien plus.',
+  ),
+];
+
+class OnBoarding extends StatefulWidget {
   const OnBoarding({super.key});
 
   @override
   State<OnBoarding> createState() => OnBoardingState();
 }
 
-class OnBoardingState extends State<OnBoarding> with TickerProviderStateMixin {
-  late bool progressbarVisibility = false;
+class OnBoardingState extends State<OnBoarding> {
+  final PageController _controller = PageController();
   int pageIndex = 0;
-  late InfiniteScrollController _controller;
-  final images = [ImageConstant.affiche,ImageConstant.imgEllipse,ImageConstant.affiche,];
-  Timer? _autoScrollTimer;
-  @override
-  void initState() {
-    _controller = InfiniteScrollController(initialItem: 0);
-    _autoScrollTimer = Timer.periodic(Duration(seconds: 3), (_) {
-      final nextItem = _controller.selectedItem + 1;
-      _controller.animateToItem(
-        nextItem,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    });
-    super.initState();
-  }
+
+  bool get _isLastStep => pageIndex == _steps.length - 1;
 
   @override
   void dispose() {
     _controller.dispose();
-    _autoScrollTimer?.cancel();
     super.dispose();
+  }
+
+  void _goToSignup() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Signup2()));
+  }
+
+  void _next() {
+    if (_isLastStep) {
+      _goToSignup();
+      return;
+    }
+    _controller.nextPage(
+      duration: const Duration(milliseconds: 320),
+      curve: Curves.easeOut,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
-    AppLocalizations translator = AppLocalizations.of(context)!;
+    final translator = AppLocalizations.of(context)!;
+    final photoHeight = MediaQuery.of(context).size.height * 0.6;
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      resizeToAvoidBottomInset: true,
-      body:
-      Container(
-        height: double.maxFinite,
-        margin: EdgeInsets.symmetric(vertical: 20),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children:[
-              Padding(padding: getPadding(top:30)),
-              SizedBox(
-                height: 360, // Adjust as needed
-                child: InfiniteCarousel.builder(
-                  itemCount: images.length,
-                  itemExtent: 250, // width of each item
-                  center: true,
+      body: Column(
+        children: [
+          // ── Photo plein cadre, 60% de la hauteur ────────────────────────
+          SizedBox(
+            width: double.infinity,
+            height: photoHeight,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                PageView.builder(
                   controller: _controller,
-                  loop: true,
-                  velocityFactor: 0.2,
-                  onIndexChanged: (index){
-                    setState(() {
-                      pageIndex = index;
-                    });
-                  },
-                  itemBuilder: (context, itemIndex, realIndex) {
-                    return AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        final selected = _controller.selectedItem == itemIndex;
-                        final scale = selected ? 1.0 : 0.85;
-
-                        return Transform.scale(
-                          scale: scale,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(24),
-                              child: Image.asset(
-                                images[itemIndex % images.length],
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              Padding(padding: getPadding(top:10)),
-              Text(pageIndex==0?'AI Matching':pageIndex==1?'Matchs':'Premium',
-                style: appStyle.H3(
-                    weight: 'bold',
-                    color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 10),
-                  child: Text(
-                    pageIndex == 0
-                        ? 'Notre plateforme utilise un algorithme à la pointe de la technologie pour vous assurer les meilleurs matchs possible.'
-                        : pageIndex == 1
-                        ? 'Consultez vos matchs compatibles et commencez à créer des connexions significatives dès aujourd’hui.'
-                        : 'Débloquez des fonctionnalités exclusives avec Premium et maximisez vos chances de trouver la personne idéale.',
-                    style: appStyle.H6(),
-                    textAlign: TextAlign.center,
+                  itemCount: _steps.length,
+                  onPageChanged: (i) => setState(() => pageIndex = i),
+                  itemBuilder: (context, i) => Image.asset(
+                    _steps[i].image,
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
-              Padding(padding: getPadding(top:10)),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (int i = 0; i < images.length; i++)
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: pageIndex == i
-                              ? Theme.of(context).colorScheme.secondary
-                              : Colors.grey,
-                        ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 90,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Theme.of(context).colorScheme.background,
+                        ],
                       ),
                     ),
-                ],
-              ),
-              Padding(padding: getPadding(top:40)),
-              PrimaryButton(
-                text: 'Créer un compte',
-                // icon: EvaIcons.personAdd,
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Signup2()));
-                },
-              ),
-              Padding(padding: getPadding(top:20)),
-              RichText(
-                  text: TextSpan(
-                    text: translator.already_have_account,
-                    style: appStyle.H6(),
-                    children: [
-                      TextSpan(
-                        text: translator.login_here,
-                        style: appStyle.H6(
-                          color: Theme.of(context).colorScheme.secondary,
-                          weight: 'bold'
+                  ),
+                ),
+                Positioned(
+                  top: MediaQuery.of(context).padding.top + 12,
+                  right: 20,
+                  child: _isLastStep
+                      ? const SizedBox.shrink()
+                      : TextButton(
+                          onPressed: _goToSignup,
+                          child: Text(
+                            'Passer',
+                            style: appStyle.H6(color: Colors.white),
+                          ),
                         ),
-                        recognizer: TapGestureRecognizer()..onTap = () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
-                        },
-                      ),
-                    ]
-                  )
-              ),
-              Padding(padding: getPadding(top:10)),
-            ]
+                ),
+              ],
+            ),
           ),
-        ),
+
+          // ── Texte + contrôles ────────────────────────────────────────────
+          Expanded(
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        for (int i = 0; i < _steps.length; i++)
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            width: pageIndex == i ? 22 : 8,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              color: pageIndex == i
+                                  ? Theme.of(context).colorScheme.secondary
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .secondary
+                                      .withOpacity(0.25),
+                            ),
+                          ),
+                      ],
+                    ),
+                    Padding(padding: getPadding(top: 22)),
+                    Text(
+                      _steps[pageIndex].title,
+                      textAlign: TextAlign.center,
+                      style: appStyle.H3(
+                        weight: 'bold',
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    Padding(padding: getPadding(top: 10)),
+                    Text(
+                      _steps[pageIndex].body,
+                      textAlign: TextAlign.center,
+                      style: appStyle.H6(),
+                    ),
+                    Padding(padding: getPadding(top: 26)),
+                    PrimaryButton(
+                      text: _isLastStep ? 'Créer un compte' : 'Suivant',
+                      onPressed: _next,
+                    ),
+                    Padding(padding: getPadding(top: 16)),
+                    RichText(
+                      text: TextSpan(
+                        text: translator.already_have_account,
+                        style: appStyle.H6(),
+                        children: [
+                          TextSpan(
+                            text: translator.login_here,
+                            style: appStyle.H6(
+                              color: Theme.of(context).colorScheme.secondary,
+                              weight: 'bold',
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Login()),
+                                );
+                              },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
-
 }
