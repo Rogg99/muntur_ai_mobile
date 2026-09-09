@@ -88,6 +88,15 @@ class AuthState extends _$AuthState {
     });
   }
 
+  /// Manual refetch — e.g. as part of a pull-to-refresh that covers every
+  /// home tab at once. Doesn't show a loading state: this provider is
+  /// keepAlive and often watched by multiple screens at once, so flipping
+  /// to AsyncLoading here would blank all of them out for the round-trip.
+  Future<void> refresh() async {
+    final user = await ref.read(authRepositoryProvider).getUserProfile();
+    state = AsyncValue.data(user);
+  }
+
   /// Applies a `profile_updated` WS push directly — see
   /// [RealtimeDispatcher]. No REST round-trip.
   Future<void> applyRemotePush(Map<String, dynamic> json) async {

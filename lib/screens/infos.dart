@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/services/home_refresh.dart';
 import 'package:munturai/features/news/domain/entities/news_entity.dart';
 import 'package:munturai/features/news/presentation/providers/news_provider.dart';
 import 'package:munturai/screens/news_detail.dart';
@@ -22,12 +23,31 @@ class Infos extends ConsumerWidget {
         error: (e, _) => Center(child: Text('Erreur : $e')),
         data: (news) {
           if (news.isEmpty) {
-            return Center(
-                child: Text('Aucune actualité', style: appStyle.H5()));
+            // Still wrapped in RefreshIndicator + AlwaysScrollableScrollPhysics
+            // + a full-height child — without those, there's nothing to
+            // overflow-scroll and the pull gesture never registers.
+            return RefreshIndicator(
+              onRefresh: () => refreshAllHomeData(ref),
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: Center(
+                      child: Text('Aucune actualité', style: appStyle.H5()),
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
           return RefreshIndicator(
-            onRefresh: () => ref.read(newsListProvider.notifier).refresh(),
+            // Refreshes every home tab, not just news — there's no
+            // pull-to-refresh possible on the Search/map tab, so this is
+            // what keeps its data current too.
+            onRefresh: () => refreshAllHomeData(ref),
             child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.only(bottom: 20),
               itemCount: news.length,
               itemBuilder: (ctx, i) {

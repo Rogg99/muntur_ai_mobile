@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/services/home_refresh.dart';
 import 'package:munturai/core/theming/dimens.dart';
 import 'package:munturai/features/chatbot/presentation/providers/chatbot_provider.dart';
 import 'package:munturai/screens/chat.dart';
@@ -266,8 +267,7 @@ class _DiscussionsTab extends ConsumerWidget {
                 // full-height child is what makes the pull gesture register
                 // at all when there's nothing to naturally overflow-scroll.
                 return RefreshIndicator(
-                  onRefresh: () =>
-                      ref.read(discussionsProvider.notifier).refresh(),
+                  onRefresh: () => refreshAllHomeData(ref),
                   child: ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: [
@@ -289,8 +289,10 @@ class _DiscussionsTab extends ConsumerWidget {
                 );
               }
               return RefreshIndicator(
-                onRefresh: () =>
-                    ref.read(discussionsProvider.notifier).refresh(),
+                // Refreshes every home tab, not just this one — there's no
+                // pull-to-refresh possible on the Search/map tab, so this is
+                // what keeps its data current too.
+                onRefresh: () => refreshAllHomeData(ref),
                 child: ListView.separated(
                   physics: const AlwaysScrollableScrollPhysics(),
                   padding:
@@ -339,7 +341,7 @@ class _ForumsTab extends ConsumerWidget {
               // Still wrapped in RefreshIndicator — see the matching comment
               // in _DiscussionsTab above.
               return RefreshIndicator(
-                onRefresh: () => ref.read(forumsProvider.notifier).refresh(),
+                onRefresh: () => refreshAllHomeData(ref),
                 child: ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: [
@@ -355,7 +357,7 @@ class _ForumsTab extends ConsumerWidget {
               );
             }
             return RefreshIndicator(
-              onRefresh: () => ref.read(forumsProvider.notifier).refresh(),
+              onRefresh: () => refreshAllHomeData(ref),
               child: ListView.separated(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding:
