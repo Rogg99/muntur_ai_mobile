@@ -240,7 +240,8 @@ class ChatbotRepositoryImpl {
           await _apiClient.get('/messages/discussion/$discId/messages/');
       if (response.statusCode == 200) {
         final body = response.data;
-        final items = body is Map ? body['messages']?['items'] : null;
+        final messagesField = body is Map ? body['messages'] : null;
+        final items = messagesField is Map ? messagesField['items'] : null;
         final messages = (items is List ? items : const [])
             .whereType<Map>()
             .map((json) => MessageModel.fromJson({
