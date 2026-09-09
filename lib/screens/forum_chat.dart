@@ -1,14 +1,39 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
+import 'package:munturai/features/chatbot/data/models/media_ref.dart';
 import 'package:munturai/features/chatbot/presentation/providers/chatbot_provider.dart';
 import 'package:munturai/model/message.dart';
 import 'package:munturai/screens/forum_details.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:video_player/video_player.dart';
+
+enum _AttachSheetChoice { camera, gallery, video }
+
+enum _AttachmentStatus { uploading, uploaded, failed }
+
+enum _AttachmentKind { image, video }
+
+/// A picked photo or video, tracked from the moment it's picked through
+/// upload — uploading starts immediately (not at send time) so the composer
+/// can show real progress instead of blocking the whole send on a big file.
+class _PendingAttachment {
+  _PendingAttachment({required this.file, required this.kind});
+
+  final File file;
+  final _AttachmentKind kind;
+  _AttachmentStatus status = _AttachmentStatus.uploading;
+  double progress = 0;
+  MediaRef? mediaRef;
+}
 
 /// Telegram-style name colors, picked deterministically per sender id so the
 /// same person always reads in the same color across the whole group —
@@ -39,20 +64,106 @@ class ForumChatView extends ConsumerStatefulWidget {
 class _ForumChatViewState extends ConsumerState<ForumChatView> {
   final TextEditingController _messageController = TextEditingController();
   final AutoScrollController _scrollController = AutoScrollController();
+  final ImagePicker _imagePicker = ImagePicker();
 
   bool _sending = false;
   int _lastMessageCount = -1;
   UIMessage? _replyTo;
+  final List<_PendingAttachment> _attachments = [];
 
   String get _discId => widget.disc?.id ?? 'none';
 
   String get _userId => ref.watch(authStateProvider).valueOrNull?.id ?? 'user';
+
+  bool get _hasBlockingAttachment => _attachments.any((a) =>
+      a.status == _AttachmentStatus.uploading ||
+      a.status == _AttachmentStatus.failed);
 
   @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _showAttachSheet() async {
+    final choice = await showModalBottomSheet<_AttachSheetChoice>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: const Text('Prendre une photo'),
+              onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Choisir une photo'),
+              onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.videocam_outlined),
+              title: const Text('Choisir une vidéo'),
+              onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.video),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (choice == null) return;
+
+    if (choice == _AttachSheetChoice.video) {
+      final video = await _imagePicker.pickVideo(source: ImageSource.gallery);
+      if (video == null) return;
+      _addAttachment(_PendingAttachment(
+        file: File(video.path),
+        kind: _AttachmentKind.video,
+      ));
+      return;
+    }
+
+    final photo = await _imagePicker.pickImage(
+      source: choice == _AttachSheetChoice.camera
+          ? ImageSource.camera
+          : ImageSource.gallery,
+      imageQuality: 85,
+    );
+    if (photo == null) return;
+    _addAttachment(_PendingAttachment(
+      file: File(photo.path),
+      kind: _AttachmentKind.image,
+    ));
+  }
+
+  void _addAttachment(_PendingAttachment attachment) {
+    setState(() => _attachments.add(attachment));
+    _uploadAttachment(attachment);
+  }
+
+  void _removeAttachment(_PendingAttachment attachment) {
+    setState(() => _attachments.remove(attachment));
+  }
+
+  Future<void> _uploadAttachment(_PendingAttachment attachment) async {
+    attachment.status = _AttachmentStatus.uploading;
+    attachment.progress = 0;
+    if (mounted) setState(() {});
+
+    final mediaRef = await ref.read(chatbotRepositoryProvider).uploadMedia(
+      attachment.file,
+      onSendProgress: (sent, total) {
+        if (total <= 0 || !mounted) return;
+        setState(() => attachment.progress = sent / total);
+      },
+    );
+
+    if (!mounted) return;
+    setState(() {
+      attachment.mediaRef = mediaRef;
+      attachment.status =
+          mediaRef != null ? _AttachmentStatus.uploaded : _AttachmentStatus.failed;
+    });
   }
 
   void _scrollToBottom({bool animate = true}) {
@@ -88,7 +199,13 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
 
   Future<void> _handleSend() async {
     final text = _messageController.text.trim();
-    if (text.isEmpty || _sending) return;
+    final uploaded = _attachments
+        .where((a) => a.status == _AttachmentStatus.uploaded)
+        .map((a) => a.mediaRef!)
+        .toList();
+    if ((text.isEmpty && uploaded.isEmpty) || _sending || _hasBlockingAttachment) {
+      return;
+    }
 
     final replyId = _replyTo?.id;
     _messageController.clear();
@@ -96,6 +213,7 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
     setState(() {
       _sending = true;
       _replyTo = null;
+      _attachments.clear();
     });
 
     try {
@@ -103,6 +221,7 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
             text,
             senderId: _userId,
             answerToId: replyId ?? 'none',
+            media: uploaded,
           );
     } finally {
       if (mounted) setState(() => _sending = false);
@@ -321,66 +440,180 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
     return SafeArea(
       top: false,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+        padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
         decoration: BoxDecoration(
           color: colorScheme.surface,
           border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 120),
-                child: TextField(
-                  controller: _messageController,
-                  minLines: 1,
-                  maxLines: 6,
-                  textCapitalization: TextCapitalization.sentences,
-                  style: AppStyle.of(context).H5(),
-                  decoration: InputDecoration(
-                    hintText: 'Message au groupe...',
-                    filled: true,
-                    fillColor: colorScheme.surfaceContainer,
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
-                      borderSide: BorderSide.none,
+            if (_attachments.isNotEmpty) _buildAttachmentsRow(colorScheme),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.add_circle_outline, color: colorScheme.primary),
+                  onPressed: _showAttachSheet,
+                ),
+                Expanded(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 120),
+                    child: TextField(
+                      controller: _messageController,
+                      minLines: 1,
+                      maxLines: 6,
+                      textCapitalization: TextCapitalization.sentences,
+                      style: AppStyle.of(context).H5(),
+                      decoration: InputDecoration(
+                        hintText: 'Message au groupe...',
+                        filled: true,
+                        fillColor: colorScheme.surfaceContainer,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                      onSubmitted: (_) => _handleSend(),
                     ),
                   ),
-                  onSubmitted: (_) => _handleSend(),
                 ),
-              ),
-            ),
-            const SizedBox(width: 4),
-            ValueListenableBuilder<TextEditingValue>(
-              valueListenable: _messageController,
-              builder: (context, value, _) {
-                final canSend = value.text.trim().isNotEmpty && !_sending;
-                return IconButton(
-                  icon: _sending
-                      ? SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: colorScheme.primary,
-                          ),
-                        )
-                      : Icon(
-                          CupertinoIcons.arrow_up_circle_fill,
-                          color: canSend
-                              ? colorScheme.primary
-                              : colorScheme.onSurface.withValues(alpha: 0.3),
-                          size: 32,
-                        ),
-                  onPressed: canSend ? _handleSend : null,
-                );
-              },
+                const SizedBox(width: 4),
+                ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: _messageController,
+                  builder: (context, value, _) {
+                    final hasUploaded = _attachments
+                        .any((a) => a.status == _AttachmentStatus.uploaded);
+                    final canSend = (value.text.trim().isNotEmpty || hasUploaded) &&
+                        !_sending &&
+                        !_hasBlockingAttachment;
+                    return IconButton(
+                      icon: _sending
+                          ? SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: colorScheme.primary,
+                              ),
+                            )
+                          : Icon(
+                              CupertinoIcons.arrow_up_circle_fill,
+                              color: canSend
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurface.withValues(alpha: 0.3),
+                              size: 32,
+                            ),
+                      onPressed: canSend ? _handleSend : null,
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildAttachmentsRow(ColorScheme colorScheme) {
+    return SizedBox(
+      height: 64,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+        itemCount: _attachments.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final attachment = _attachments[index];
+          return _AttachmentChip(
+            attachment: attachment,
+            colorScheme: colorScheme,
+            onRemove: () => _removeAttachment(attachment),
+            onRetry: () => _uploadAttachment(attachment),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _AttachmentChip extends StatelessWidget {
+  const _AttachmentChip({
+    required this.attachment,
+    required this.colorScheme,
+    required this.onRemove,
+    required this.onRetry,
+  });
+
+  final _PendingAttachment attachment;
+  final ColorScheme colorScheme;
+  final VoidCallback onRemove;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final isImage = attachment.kind == _AttachmentKind.image;
+    return GestureDetector(
+      onTap: attachment.status == _AttachmentStatus.failed ? onRetry : null,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: colorScheme.surfaceContainer,
+            ),
+            child: isImage
+                ? Image.file(attachment.file, fit: BoxFit.cover)
+                : Icon(Icons.videocam, color: colorScheme.primary),
+          ),
+          if (attachment.status == _AttachmentStatus.uploading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black38,
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                    value: attachment.progress > 0 ? attachment.progress : null,
+                  ),
+                ),
+              ),
+            ),
+          if (attachment.status == _AttachmentStatus.failed)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black45,
+                alignment: Alignment.center,
+                child: const Icon(Icons.refresh, color: Colors.white, size: 20),
+              ),
+            ),
+          Positioned(
+            top: -6,
+            right: -6,
+            child: GestureDetector(
+              onTap: onRemove,
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: const BoxDecoration(
+                  color: Colors.black87,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, size: 14, color: Colors.white),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -511,6 +744,16 @@ class _GroupMessageBubble extends StatelessWidget {
     required this.onTapReply,
   });
 
+  List<Map<String, dynamic>> _mediaItems() {
+    try {
+      final decoded = jsonDecode(message.media);
+      if (decoded is List) {
+        return decoded.whereType<Map>().map((e) => e.cast<String, dynamic>()).toList();
+      }
+    } catch (_) {}
+    return const [];
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -519,6 +762,8 @@ class _GroupMessageBubble extends StatelessWidget {
     final bubbleColor =
         isMine ? colorScheme.primary : colorScheme.surfaceContainer;
     final textColor = isMine ? colorScheme.onPrimary : colorScheme.onSurface;
+    final mediaItems = _mediaItems();
+    final hasText = message.contenu.trim().isNotEmpty;
 
     final avatarInitial = message.emetteurName.isNotEmpty
         ? message.emetteurName.substring(0, 1).toUpperCase()
@@ -573,6 +818,14 @@ class _GroupMessageBubble extends StatelessWidget {
                           style: appStyle.H6(color: accent, weight: 'bold'),
                         ),
                       ),
+                    for (final item in mediaItems) ...[
+                      _GroupMediaAttachment(
+                        url: item['file']?.toString() ?? '',
+                        kind: item['kind']?.toString() ?? 'unknown',
+                        foreground: textColor,
+                      ),
+                      if (hasText || repliedTo != null) const SizedBox(height: 6),
+                    ],
                     if (repliedTo != null)
                       GestureDetector(
                         onTap: onTapReply,
@@ -610,10 +863,11 @@ class _GroupMessageBubble extends StatelessWidget {
                           ),
                         ),
                       ),
-                    Text(
-                      message.contenu,
-                      style: appStyle.H5(color: textColor),
-                    ),
+                    if (hasText)
+                      Text(
+                        message.contenu,
+                        style: appStyle.H5(color: textColor),
+                      ),
                   ],
                 ),
               ),
@@ -621,6 +875,146 @@ class _GroupMessageBubble extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Dispatches a single media item to the renderer matching its `kind`.
+class _GroupMediaAttachment extends StatelessWidget {
+  final String url;
+  final String kind;
+  final Color foreground;
+
+  const _GroupMediaAttachment({
+    required this.url,
+    required this.kind,
+    required this.foreground,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (url.isEmpty) return const SizedBox.shrink();
+    switch (kind) {
+      case 'image':
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.network(
+            url,
+            width: 220,
+            height: 220,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, progress) {
+              if (progress == null) return child;
+              final total = progress.expectedTotalBytes;
+              return SizedBox(
+                width: 220,
+                height: 220,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    value: total != null
+                        ? progress.cumulativeBytesLoaded / total
+                        : null,
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (context, error, stack) => Container(
+              width: 220,
+              height: 220,
+              color: Colors.black12,
+              alignment: Alignment.center,
+              child: const Icon(Icons.broken_image_outlined),
+            ),
+          ),
+        );
+      case 'video':
+        return _GroupVideoAttachment(url: url);
+      default:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.attach_file, size: 18, color: foreground),
+            const SizedBox(width: 4),
+            Text(kind, style: TextStyle(color: foreground, fontSize: 12)),
+          ],
+        );
+    }
+  }
+}
+
+/// An inline video player — tap the play overlay to start/pause. Owns its
+/// own controller so playback state never forces a rebuild of the
+/// surrounding message list.
+class _GroupVideoAttachment extends StatefulWidget {
+  final String url;
+  const _GroupVideoAttachment({required this.url});
+
+  @override
+  State<_GroupVideoAttachment> createState() => _GroupVideoAttachmentState();
+}
+
+class _GroupVideoAttachmentState extends State<_GroupVideoAttachment> {
+  late final VideoPlayerController _controller;
+  bool _ready = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
+      ..initialize().then((_) {
+        if (mounted) setState(() => _ready = true);
+      }).catchError((_) {});
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: SizedBox(
+        width: 220,
+        height: 220,
+        child: !_ready
+            ? Container(
+                color: Colors.black12,
+                alignment: Alignment.center,
+                child: const CircularProgressIndicator(strokeWidth: 2),
+              )
+            : GestureDetector(
+                onTap: () => setState(() {
+                  _controller.value.isPlaying
+                      ? _controller.pause()
+                      : _controller.play();
+                }),
+                child: Stack(
+                  alignment: Alignment.center,
+                  fit: StackFit.expand,
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: _controller.value.size.width,
+                        height: _controller.value.size.height,
+                        child: VideoPlayer(_controller),
+                      ),
+                    ),
+                    AnimatedBuilder(
+                      animation: _controller,
+                      builder: (context, _) => _controller.value.isPlaying
+                          ? const SizedBox()
+                          : const Icon(Icons.play_circle_fill,
+                              size: 56, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 }

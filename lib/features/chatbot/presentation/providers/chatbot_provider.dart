@@ -254,11 +254,13 @@ class ChatMessages extends _$ChatMessages {
   }
 
   /// Sends a message to a forum discussion (no AI response expected).
+  /// [content] may be empty as long as at least one media ref is attached.
   Future<void> sendForumMessage(String content,
       {String senderId = 'user',
       String senderName = '',
-      String answerToId = 'none'}) async {
-    if (content.trim().isEmpty) return;
+      String answerToId = 'none',
+      List<MediaRef> media = const []}) async {
+    if (content.trim().isEmpty && media.isEmpty) return;
 
     final isar = IsarDb.instance;
     final tempMsg = MessageModel.create(
@@ -268,6 +270,7 @@ class ChatMessages extends _$ChatMessages {
       senderName: senderName,
       contenu: content,
       answerTo: answerToId,
+      media: jsonEncode(media.map((m) => m.toJson()).toList()),
       dateEnvoi: DateTime.now(),
       pendingSync: true,
     );
@@ -286,6 +289,7 @@ class ChatMessages extends _$ChatMessages {
                 discId: discussionId,
                 content: content,
                 answerTo: answerToId,
+                media: media,
               );
       if (response != null) {
         await isar.writeTxn(() async {

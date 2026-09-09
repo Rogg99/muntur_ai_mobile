@@ -222,16 +222,32 @@ class ChatbotRepositoryImpl {
     required String discId,
     required String content,
     String answerTo = 'none',
+    List<MediaRef> media = const [],
   }) async {
     try {
-      final response =
-          await _apiClient.post('/forums/$discId/messages/', data: {
+      // The real endpoint (MessageViewSet.add_to_forum) is
+      // POST /messages/forum/<forum_id>/ — /forums/<id>/messages/ only has a
+      // GET action registered and 405s. Its write serializer uses the
+      // model's exact field name "answerTo" (not "answer_to"), and the
+      // response is the plain write-serializer output — no "forum_id"/
+      // "disc_id" wrapper (that's only added to the WS push to other
+      // members), so disc_id is injected here before parsing.
+      final response = await _apiClient.post('/messages/forum/$discId/', data: {
         'contenu': content,
-        if (answerTo != 'none') 'answer_to': answerTo,
+        if (answerTo != 'none') 'answerTo': answerTo,
+        if (media.isNotEmpty) 'medias': media.map((m) => m.id).toList(),
       });
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final msg =
-            MessageModel.fromJson(response.data['data'] ?? response.data);
+        final body = response.data;
+        if (body is! Map) return null;
+        final msg = MessageModel.fromJson({
+          ...body.cast<String, dynamic>(),
+          'disc_id': discId,
+          // The write serializer echoes "medias" back as bare uploaded ids,
+          // not the rich {id,file,kind} objects _encodeMedia expects — use
+          // what's already known client-side from the upload step instead.
+          'medias': media.map((m) => m.toJson()).toList(),
+        });
         final isar = IsarDb.instance;
         await isar.writeTxn(() async {
           await isar.messageModels.put(msg);
