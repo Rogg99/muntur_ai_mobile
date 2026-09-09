@@ -224,6 +224,34 @@ class ThemeProvider extends InheritedWidget {
     );
   }
 
+  // No dialogTheme was set anywhere, so every AlertDialog/Dialog fell back
+  // to Material3's default: backgroundColor comes from the *unthemed*
+  // surfaceContainerHigh (only surface/background/onSurface etc. are
+  // overridden in colors() above, not the surface-container tones — those
+  // stay whatever ColorScheme.fromSeed() generated), and a surfaceTintColor
+  // elevation overlay is painted on top of that. Both combine into a flat
+  // grey that doesn't match the app's actual navy/purple surfaces and
+  // washes out contrast against onSurface text, especially in dark mode.
+  DialogThemeData dialogTheme(ColorScheme colors) {
+    return DialogThemeData(
+      backgroundColor: colors.surface,
+      surfaceTintColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      shape: shapeMedium,
+      titleTextStyle: TextStyle(
+        color: colors.onSurface,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        fontFamily: 'Sk-Modernist',
+      ),
+      contentTextStyle: TextStyle(
+        color: colors.onSurface,
+        fontSize: 15,
+        fontFamily: 'Sk-Modernist',
+      ),
+    );
+  }
+
   ThemeData light([Color? targetColor]) {
     final _colors = colors(Brightness.light, targetColor);
     return ThemeData.light(useMaterial3: true).copyWith(
@@ -237,6 +265,7 @@ class ThemeProvider extends InheritedWidget {
       navigationRailTheme: navigationRailTheme(_colors),
       tabBarTheme: tabBarTheme(_colors),
       drawerTheme: drawerTheme(_colors),
+      dialogTheme: dialogTheme(_colors),
       scaffoldBackgroundColor: _colors.background,
       textTheme: ThemeData.light(useMaterial3: true)
           .textTheme
@@ -257,6 +286,7 @@ class ThemeProvider extends InheritedWidget {
       navigationRailTheme: navigationRailTheme(_colors),
       tabBarTheme: tabBarTheme(_colors),
       drawerTheme: drawerTheme(_colors),
+      dialogTheme: dialogTheme(_colors),
       scaffoldBackgroundColor: _colors.background,
       textTheme: ThemeData.light(useMaterial3: true)
           .textTheme
