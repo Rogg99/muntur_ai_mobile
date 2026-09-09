@@ -69,6 +69,11 @@ class Forums extends _$Forums {
 class ChatMessages extends _$ChatMessages {
   @override
   FutureOr<List<MessageModel>> build(String discussionId) async {
+    // 'new' is a local-only placeholder for a discussion that doesn't exist
+    // on the backend yet (it's created on the first message) — nothing to
+    // load or refresh until then.
+    if (discussionId == 'new') return [];
+
     // 1. Load from Isar immediately (offline-first)
     final isar = IsarDb.instance;
     final localMessages = await isar.messageModels
