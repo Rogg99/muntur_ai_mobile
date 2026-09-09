@@ -170,7 +170,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
           ],
         ),
-        body: tabs.elementAt(_selectedIndex),
+        // IndexedStack, not tabs.elementAt(_selectedIndex): the latter swaps
+        // a different widget *type* into this slot on every tab switch, so
+        // Flutter unmounts the outgoing tab and mounts a fresh one — any
+        // autoDispose provider it was watching (discussions, forums, ...)
+        // gets disposed and then rebuilt from scratch next visit, which is
+        // exactly the request-and-loader-on-every-switch this replaces.
+        // IndexedStack keeps all five tabs permanently mounted so none of
+        // that ever happens — the data loads once and stays live via WS.
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: tabs,
+        ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: (i) => setState(() => _selectedIndex = i),

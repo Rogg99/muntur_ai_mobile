@@ -21,12 +21,12 @@ final authRepositoryProvider = AutoDisposeProvider<AuthRepositoryImpl>.internal(
 );
 
 typedef AuthRepositoryRef = AutoDisposeProviderRef<AuthRepositoryImpl>;
-String _$authStateHash() => r'bafab8704920948798edb9feb3c0121115b5b933';
+String _$authStateHash() => r'2ac4f28a0522371bd666bde11ee2d33178ccc07b';
 
 /// See also [AuthState].
 @ProviderFor(AuthState)
 final authStateProvider =
-    AutoDisposeAsyncNotifierProvider<AuthState, UserEntity?>.internal(
+    AsyncNotifierProvider<AuthState, UserEntity?>.internal(
   AuthState.new,
   name: r'authStateProvider',
   debugGetCreateSourceHash:
@@ -35,6 +35,6 @@ final authStateProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$AuthState = AutoDisposeAsyncNotifier<UserEntity?>;
+typedef _$AuthState = AsyncNotifier<UserEntity?>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

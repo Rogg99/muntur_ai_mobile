@@ -22,7 +22,7 @@ final chatbotRepositoryProvider =
 );
 
 typedef ChatbotRepositoryRef = AutoDisposeProviderRef<ChatbotRepositoryImpl>;
-String _$discussionsHash() => r'c095ec5e41a8b0b89b68c814fe4bc75e1e684b6f';
+String _$discussionsHash() => r'2423017a9f90f7edbeaf77d1bfabfb1041954ffd';
 
 /// See also [Discussions].
 @ProviderFor(Discussions)
@@ -37,7 +37,7 @@ final discussionsProvider = AutoDisposeAsyncNotifierProvider<Discussions,
 );
 
 typedef _$Discussions = AutoDisposeAsyncNotifier<List<DiscussionModel>>;
-String _$forumsHash() => r'235e402af21fb2abc8e1fe9ba1ec711151d120f6';
+String _$forumsHash() => r'f7a927ab8d946619e531f4381638f4422660b0da';
 
 /// See also [Forums].
 @ProviderFor(Forums)
@@ -52,7 +52,7 @@ final forumsProvider =
 );
 
 typedef _$Forums = AutoDisposeAsyncNotifier<List<DiscussionModel>>;
-String _$chatMessagesHash() => r'b0bfc02083ba91bfab436f62d1338dc6a0e52b6a';
+String _$chatMessagesHash() => r'0f638e8ccbdf94e03055e52138e552bd2983ac48';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -13,7 +13,12 @@ AuthRepositoryImpl authRepository(AuthRepositoryRef ref) {
   return AuthRepositoryImpl(ApiClient());
 }
 
-@riverpod
+// keepAlive, like RealtimeDispatcher: the current user's identity is
+// session-global state, not something that should dispose and re-fetch
+// just because whichever screen happened to be watching it got unmounted
+// (e.g. tab switches before IndexedStack, or a screen that only ever
+// ref.reads it without a persistent watch).
+@Riverpod(keepAlive: true)
 class AuthState extends _$AuthState {
   @override
   FutureOr<UserEntity?> build() async {

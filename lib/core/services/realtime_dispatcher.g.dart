@@ -7,7 +7,7 @@ part of 'realtime_dispatcher.dart';
 // **************************************************************************
 
 String _$realtimeDispatcherHash() =>
-    r'f5b98c295987be8dac885ae20999dd43b4d68d04';
+    r'7b2a4876ef3dae11f8fe5cc82c91cba4cb9a74d5';
 
 /// Wires [WebSocketService] events to the Riverpod caches that render them, so
 /// discussions/forums/notifications/subscriptions update live instead of
