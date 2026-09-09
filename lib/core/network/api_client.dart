@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../services/secure_storage_service.dart';
 import '../database/isar_db.dart';
 import '../../features/auth/data/models/user_model.dart';
@@ -46,15 +47,18 @@ class ApiClient {
       ),
     );
 
-    // Add logger for API calls
-    _dio.interceptors.add(LogInterceptor(
-      request: true,
-      requestHeader: true,
-      requestBody: true,
-      responseHeader: true,
-      responseBody: true,
-      error: true,
-    ));
+    // Verbose request/response logging — debug builds only, so JWTs and
+    // request/response bodies never end up in a release build's device log.
+    if (kDebugMode) {
+      _dio.interceptors.add(LogInterceptor(
+        request: true,
+        requestHeader: true,
+        requestBody: true,
+        responseHeader: true,
+        responseBody: true,
+        error: true,
+      ));
+    }
   }
 
   Dio get dio => _dio;
