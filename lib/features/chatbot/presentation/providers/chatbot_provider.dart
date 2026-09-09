@@ -8,6 +8,7 @@ import '../../data/models/message_model.dart';
 import '../../data/repositories_impl/chatbot_repository_impl.dart';
 import '../../../../core/network/api_client.dart';
 import '../../../../core/database/isar_db.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import 'package:isar/isar.dart';
 
 part 'chatbot_provider.g.dart';
@@ -196,10 +197,16 @@ class ChatMessages extends _$ChatMessages {
     final trimmed = query.trim();
     if (trimmed.isEmpty && media.isEmpty) return;
 
+    // Was hardcoded to the literal string 'user' — since rendering decides
+    // which side a bubble goes on by comparing this against the real
+    // logged-in user's id, that made every message sent through here look
+    // like it came from the bot instead of the sender.
+    final myId = ref.read(authStateProvider).valueOrNull?.id ?? 'user';
+
     final tempMsg = MessageModel.create(
       id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
       discId: discussionId,
-      senderId: 'user',
+      senderId: myId,
       contenu: trimmed,
       media: jsonEncode(media.map((m) => m.toJson()).toList()),
       dateEnvoi: DateTime.now(),
@@ -215,6 +222,7 @@ class ChatMessages extends _$ChatMessages {
             query: trimmed,
             discussionId: discussionId != 'new' ? discussionId : null,
             media: media,
+            senderId: myId,
           );
 
       if (result != null) {

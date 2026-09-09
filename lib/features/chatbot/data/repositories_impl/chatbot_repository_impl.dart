@@ -151,12 +151,13 @@ class ChatbotRepositoryImpl {
   Future<({MessageModel message, String discId})?> askQuestion(
       {String query = '',
       String? discussionId,
-      List<MediaRef> media = const []}) async {
+      List<MediaRef> media = const [],
+      String senderId = 'user'}) async {
     final isar = IsarDb.instance;
     final tempMessage = MessageModel.create(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       discId: discussionId ?? 'new_disc',
-      senderId: 'user', // Replace with actual user ID
+      senderId: senderId,
       contenu: query,
       media: jsonEncode(media.map((m) => m.toJson()).toList()),
       dateEnvoi: DateTime.now(),
