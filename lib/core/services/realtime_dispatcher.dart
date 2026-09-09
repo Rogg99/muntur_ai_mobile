@@ -77,13 +77,11 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
         break;
 
       case 'profile_updated':
-        // Applied directly only if this actually looks like a full profile
-        // object — a partial/minimal ping payload parsed as one would
-        // silently blank out fields it didn't include. TODO: confirm the
-        // real payload shape server-side and drop this guard once certain.
-        if (data is Map<String, dynamic> &&
-            data['id'] != null &&
-            (data['email'] != null || data['username'] != null)) {
+        // Sent by ProfileViewSet, so data is the full Profile — but never
+        // username/email (those live on the Django User model, only
+        // injected by GET /auth/get-user-profile/ itself). AuthState
+        // preserves those two from whatever's already cached.
+        if (data is Map<String, dynamic>) {
           ref.read(authStateProvider.notifier).applyRemotePush(data);
         } else {
           ref.invalidate(authStateProvider);

@@ -98,15 +98,25 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   /// Applies a profile payload pushed over the WebSocket (`profile_updated`
-  /// event) directly, without a round-trip GET — same parsing/caching as
-  /// [getUserProfile], just fed from the push instead of a fresh fetch.
+  /// event) directly, without a round-trip GET. That push comes from
+  /// ProfileViewSet, so its payload is the full Profile — but never
+  /// username/email (those live on the Django User model, only injected by
+  /// GET /auth/get-user-profile/ itself) — so those two (and the cached
+  /// token) are preserved from whatever's already cached rather than
+  /// expected from the push.
   Future<UserEntity> applyProfilePush(Map<String, dynamic> json) async {
-    final userModel = UserModel.fromJson(json);
     final isar = IsarDb.instance;
+    final existing = await isar.userModels.where().findFirst();
+    final pushed = UserModel.fromJson(json);
+    final merged = pushed.copyWith(
+      username: existing?.username,
+      email: existing?.email,
+      token: existing?.token,
+    );
     await isar.writeTxn(() async {
-      await isar.userModels.put(userModel);
+      await isar.userModels.put(merged);
     });
-    return userModel.toEntity();
+    return merged.toEntity();
   }
 
   Future<UserEntity?> _loadFromIsar() async {
