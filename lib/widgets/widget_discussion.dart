@@ -1,108 +1,154 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:munturai/core/app_export.dart';
-import 'package:munturai/core/colors/colors.dart';
 import 'package:munturai/screens/chat.dart';
-import 'loading_image.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
+import 'package:munturai/utils/dateUtils.dart';
 
-class WidgetDiscussion extends StatefulWidget {
-  DiscussionModel? disc;
-  WidgetDiscussion({
+class WidgetDiscussion extends StatelessWidget {
+  final DiscussionModel? disc;
+
+  const WidgetDiscussion({
     super.key,
     required this.disc,
   });
 
   @override
-  State<StatefulWidget> createState() => WidgetDiscussionState();
+  Widget build(BuildContext context) {
+    final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final d = disc!;
+    final unread = d.unreadCount > 0;
+    final initial =
+        d.title.isNotEmpty ? d.title.substring(0, 1).toUpperCase() : '?';
+
+    return InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatView(disc: d)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _Avatar(photo: d.photo, initial: initial, colorScheme: colorScheme),
+            const SizedBox(width: 12),
+            // Expanded, not a hardcoded (screen width - N) — the row shrinks
+            // and grows with whatever space is actually available instead of
+            // assuming one fixed screen width.
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    d.title,
+                    style: appStyle.H5(
+                      weight: 'bold',
+                      color: colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    d.last_writer == d.initiateur
+                        ? '${translator.you} : ${d.last_message}'
+                        : d.last_message,
+                    style: appStyle
+                        .H6(
+                          color: unread
+                              ? colorScheme.onSurface
+                              : colorScheme.onSurfaceVariant,
+                          weight: unread ? 'bold' : 'Regular',
+                        )
+                        .copyWith(overflow: TextOverflow.ellipsis),
+                    maxLines: 1,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  getLocalizedDate(
+                      d.last_date, Localizations.localeOf(context).languageCode),
+                  style: appStyle.txtDefault(
+                    size: 12,
+                    color: unread ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                if (unread)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    constraints: const BoxConstraints(minWidth: 20),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      d.unreadCount > 99 ? '99+' : '${d.unreadCount}',
+                      textAlign: TextAlign.center,
+                      style: appStyle.H8(color: colorScheme.onPrimary),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class WidgetDiscussionState extends State<WidgetDiscussion> {
-  bool load = true;
+class _Avatar extends StatelessWidget {
+  final String photo;
+  final String initial;
+  final ColorScheme colorScheme;
 
-  @override
-  void initState() {
-    //syncDisc();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  void setState(fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
+  const _Avatar({
+    required this.photo,
+    required this.initial,
+    required this.colorScheme,
+  });
 
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
-    return GestureDetector(
-        onTap: () async {
-          // var usr = await API.getUI_user().then((value) => value[0]);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ChatView(
-                        disc: widget.disc,
-                      )));
-        },
-        child: Container(
-          padding: getPadding(all: 10),
-          width: double.infinity,
-          child: Row(
-            children: [
-              Container(
-                padding: getPadding(left: 10, right: 10),
-                width: size.width - 100,
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        widget.disc!.title,
-                        style: appStyle.H5(
-                            weight: 'bold',
-                            color: Theme.of(context).colorScheme.onSurface),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                width: 50,
-                child: Column(
-                  children: [
-                    Text(
-                      getDate(widget.disc!.last_date),
-                      style: appStyle.txtDefault(
-                          size: 14,
-                          color: Theme.of(context).colorScheme.onSurface),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
-  }
+    final fallbackColor =
+        ConstantsProvider.getColorFromLetter(context, initial);
 
-  String getDate(String time) {
-    String duree = '';
-    Duration periode = DateTime.now().difference(DateTime.parse(time));
-    if (periode.inSeconds / 3600 < 1) {
-      duree = '${(periode.inSeconds / 60).floor()} min';
-    } else if (periode.inSeconds / 3600 < 24) {
-      duree = DateTime.parse(time).format('kk:mm');
-    } else {
-      duree = DateTime.parse(time).format('dd/MM');
-    }
-    return duree;
+    Widget fallback() => Container(
+          decoration: BoxDecoration(
+            color: fallbackColor,
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            initial,
+            style: appStyle.H5(weight: 'bold', color: Colors.white),
+          ),
+        );
+
+    return SizedBox(
+      height: 48,
+      width: 48,
+      child: photo.startsWith('http')
+          ? ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: photo,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => fallback(),
+                errorWidget: (context, url, error) => fallback(),
+              ),
+            )
+          : fallback(),
+    );
   }
 }
