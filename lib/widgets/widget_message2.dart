@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:munturai/core/app_export.dart';
-import 'package:munturai/core/colors/colors.dart';
 import 'package:munturai/model/message.dart';
 
 /// Parses a message's `media` field — a JSON-encoded list of
@@ -73,6 +72,11 @@ class MessageWidget2_ extends State<MessageWidget2> {
     double messageSize = (messagelength * proportion) + 50;
     final mediaItems = _mediaItemsOf(message!.media);
     final hasText = message!.contenu.trim().isNotEmpty;
+    final colorScheme = Theme.of(context).colorScheme;
+    // Pick text/icon color from the bubble's own background, not a fixed
+    // black/white — a bubble tinted for dark mode still needs light text,
+    // and vice versa, regardless of which one sender/receiver happens to be.
+    final bubbleTextColor = !sender ? colorScheme.onPrimary : colorScheme.onSurface;
     //print(messagelength);
     return AnimatedContainer(
       // Provide an optional curve to make the animation feel smoother.
@@ -135,10 +139,10 @@ class MessageWidget2_ extends State<MessageWidget2> {
                       decoration: !sender
                           ? BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: Theme.of(context).colorScheme.primary)
+                              color: colorScheme.primary)
                           : BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: UIColors.boxFillColor),
+                              color: colorScheme.surfaceContainer),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +152,7 @@ class MessageWidget2_ extends State<MessageWidget2> {
                             _MediaAttachment(
                               url: item['file']?.toString() ?? '',
                               kind: item['kind']?.toString() ?? 'unknown',
-                              foreground: !sender ? Colors.white : Colors.black,
+                              foreground: bubbleTextColor,
                             ),
                             if (hasText) const SizedBox(height: 6),
                           ],
@@ -174,10 +178,7 @@ class MessageWidget2_ extends State<MessageWidget2> {
                                   child: Text(message!.contenu,
                                       maxLines: null,
                                       textAlign: TextAlign.left,
-                                      style: appStyle.H5(
-                                          color: !sender
-                                              ? Colors.white
-                                              : Colors.black)),
+                                      style: appStyle.H5(color: bubbleTextColor)),
                                 ),
                               ),
                             ),
