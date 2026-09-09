@@ -271,7 +271,7 @@ class _DiscussionsTab extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(24),
                     child: Text(
-                      'Aucune conversation. Commence une nouvelle conversation avec Muntur AI !',
+                      'Aucune conversation. Commence une nouvelle conversation avec Autosynx !',
                       style: appStyle.H4(color: colorScheme.primary),
                       textAlign: TextAlign.center,
                     ),

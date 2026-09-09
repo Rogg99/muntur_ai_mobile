@@ -142,11 +142,11 @@ Future<void> saveThemeMode(ThemeMode mode) async {
 
 Future<ThemeMode> loadThemeMode() async {
   final prefs = await SharedPreferences.getInstance();
-  final themeString = prefs.getString('theme_mode') ?? 'system';
+  final themeString = prefs.getString('theme_mode') ?? 'dark';
 
   return ThemeMode.values.firstWhere(
         (mode) => mode.name == themeString,
-    orElse: () => ThemeMode.system,
+    orElse: () => ThemeMode.dark,
   );
 }
 

@@ -1,5 +1,5 @@
 name: munturai
-description: Mobile App Muntur AI, an AI assistance on all car problems and topics
+description: Mobile App Autosynx, an AI automotive assistance on all car problems and topics
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 version: 2.0.1+1
@@ -84,19 +84,19 @@ dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/logo_muntur2_200.png"
+  image_path: "assets/images/autosynx_logo/autosynx_appicon_1024.png"
   web:
     generate: true
-    image_path: "assets/images/logo_muntur2_200.png"
-    background_color: "#fff"
-    theme_color: "#fff"
+    image_path: "assets/images/autosynx_logo/autosynx_appicon_1024.png"
+    background_color: "#7B2CBF"
+    theme_color: "#7B2CBF"
   windows:
     generate: true
-    image_path: "assets/images/logo_muntur2_200.png"
+    image_path: "assets/images/autosynx_logo/autosynx_appicon_1024.png"
     icon_size: 48 # min:48, max:256, default: 48
   macos:
     generate: true
-    image_path: "assets/images/logo_muntur2_200.png"
+    image_path: "assets/images/autosynx_logo/autosynx_appicon_1024.png"
 
 flutter:
   uses-material-design: true

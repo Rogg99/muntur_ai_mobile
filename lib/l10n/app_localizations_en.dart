@@ -18,11 +18,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get joinMunturAiPrompt =>
-      'Willing to join our large MunturAi community?';
+      'Willing to join our large Autosynx community?';
 
   @override
   String get joinMunturAiInfo =>
-      'To join our wide MunturAi community, we need some information from you to better personalize your filters and guide you quickly to the profiles that best match you.';
+      'To join our wide Autosynx community, we need some information from you to better personalize your filters and guide you quickly to the profiles that best match you.';
 
   @override
   String get acceptTerms =>
@@ -1023,7 +1023,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String subscription_title(Object months, Object type) {
-    return 'MunturAi $type Subscription $months months';
+    return 'Autosynx $type Subscription $months months';
   }
 
   @override
@@ -1421,5 +1421,5 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatWelcome =>
-      'Start a new discussion with Muntur AI,Ask me any question you want !';
+      'Start a new discussion with Autosynx,Ask me any question you want !';
 }

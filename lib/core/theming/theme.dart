@@ -54,37 +54,45 @@ class ThemeProvider extends InheritedWidget {
     buffer.write(hexString.replaceFirst('#', ''));
     return Color(int.parse(buffer.toString(), radix: 16));
   }
+  // Brand palette, from the AUTOSYNX logotype (assets/images/logo AUTOSYNX FIN-01.jpg.jpeg):
+  // purple #7B2CBF, navy #0C2745, white #FFFFFF.
   static Color fromColorEnum(colorEnum color, bool lightMode) {
     switch (color) {
       case colorEnum.primary:
-        return lightMode ? fromHex('#7F4EC4') : fromHex('#7F4EC4');
+        return fromHex('#7B2CBF');
+      case colorEnum.onPrimary:
+        return Colors.white;
       case colorEnum.secondary:
-        return lightMode ? fromHex('#C6B1E3') : fromHex('#9C7DD8');
+        // Light mode pairs the navy "AX" wordmark with the purple swoosh;
+        // dark mode swaps navy (now the background) for a lighter purple tint.
+        return lightMode ? fromHex('#0C2745') : fromHex('#A566E0');
+      case colorEnum.onSecondary:
+        return Colors.white;
       case colorEnum.tertiary:
         return lightMode ? fromHex('#F19101') : fromHex('#F7B84B');
+      case colorEnum.onTertiary:
+        return Colors.white;
       case colorEnum.error:
         return lightMode ? fromHex('#E53935') : fromHex('#EF5350');
+      case colorEnum.onError:
+        return Colors.white;
       case colorEnum.success:
         return lightMode ? fromHex('#00C48C') : fromHex('#1EE0A0');
-      case colorEnum.onPrimary:
-        return lightMode ? Colors.white : Colors.black;
       case colorEnum.background:
-        return lightMode ? Colors.white : fromHex('#121212');
+        return lightMode ? Colors.white : fromHex('#0C2745');
       case colorEnum.surface:
-        return lightMode ? fromHex('#F9F9FB') : fromHex('#121212');
+        return lightMode ? fromHex('#F6F2FB') : fromHex('#13315B');
       case colorEnum.onBackground:
-        return lightMode ? Colors.black : Colors.white;
+        return lightMode ? fromHex('#0C2745') : Colors.white;
       case colorEnum.onSurface:
-        return lightMode ? Colors.black : Colors.white;
-      default:
-        return lightMode ? primary : primary;
+        return lightMode ? fromHex('#0C2745') : Colors.white;
     }
   }
 
   // Base Colors
-  static const String _primaryHex = '#7F4EC4';
+  static const String _primaryHex = '#7B2CBF';
   static final Color primary = fromHex(_primaryHex);
-  static final Color secondary = fromHex('#C6B1E3');
+  static final Color secondary = fromHex('#0C2745');
   static final Color tertiary = fromHex('#F19101');
   static final Color error = fromHex('#E53935');
   static final Color success = fromHex('#00C48C');
@@ -128,7 +136,7 @@ class ThemeProvider extends InheritedWidget {
     );
 
     return base.copyWith(
-      brightness: Brightness.light,
+      brightness: brightness,
       primary: fromColorEnum(colorEnum.primary, brightness == Brightness.light),
       onPrimary: fromColorEnum(colorEnum.onPrimary, brightness == Brightness.light),
       secondary: fromColorEnum(colorEnum.secondary, brightness == Brightness.light),

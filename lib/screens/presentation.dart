@@ -63,7 +63,7 @@ class Animated extends State<PresentationScreen> with TickerProviderStateMixin {
                 bottom: 30,
               ),
               child: Text(
-                "Welcome to MUNTUR AI, your AI Assistant",
+                "Welcome to AUTOSYNX, your AI Assistant",
                 maxLines: null,
                 textAlign: TextAlign.center,
                 style: appStyle.H3(

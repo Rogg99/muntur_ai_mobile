@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import '../services/secure_storage_service.dart';
+import '../database/isar_db.dart';
+import '../../features/auth/data/models/user_model.dart';
 
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
@@ -31,9 +33,13 @@ class ApiClient {
           return handler.next(options);
         },
         onError: (DioException e, handler) async {
-          // 401 → clear token so authStateProvider redirects to login
+          // 401 → clear token and cached profile so authStateProvider
+          // redirects to login instead of falling back to stale user data
           if (e.response?.statusCode == 401) {
             await SecureStorageService().deleteToken();
+            await IsarDb.instance.writeTxn(() async {
+              await IsarDb.instance.userModels.clear();
+            });
           }
           return handler.next(e);
         },

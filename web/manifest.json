@@ -1,11 +1,11 @@
 {
-    "name": "munturai",
-    "short_name": "munturai",
+    "name": "Autosynx",
+    "short_name": "Autosynx",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "Findlove Mobile: Best Dating App for Cameroonian context",
+    "background_color": "#7B2CBF",
+    "theme_color": "#7B2CBF",
+    "description": "Autosynx: AI Automotive Assistance",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

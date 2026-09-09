@@ -113,13 +113,13 @@ abstract class AppLocalizations {
   /// No description provided for @joinMunturAiPrompt.
   ///
   /// In en, this message translates to:
-  /// **'Willing to join our large MunturAi community?'**
+  /// **'Willing to join our large Autosynx community?'**
   String get joinMunturAiPrompt;
 
   /// No description provided for @joinMunturAiInfo.
   ///
   /// In en, this message translates to:
-  /// **'To join our wide MunturAi community, we need some information from you to better personalize your filters and guide you quickly to the profiles that best match you.'**
+  /// **'To join our wide Autosynx community, we need some information from you to better personalize your filters and guide you quickly to the profiles that best match you.'**
   String get joinMunturAiInfo;
 
   /// No description provided for @acceptTerms.
@@ -2063,7 +2063,7 @@ abstract class AppLocalizations {
   /// No description provided for @subscription_title.
   ///
   /// In en, this message translates to:
-  /// **'MunturAi {type} Subscription {months} months'**
+  /// **'Autosynx {type} Subscription {months} months'**
   String subscription_title(Object months, Object type);
 
   /// No description provided for @duration.
@@ -2825,7 +2825,7 @@ abstract class AppLocalizations {
   /// No description provided for @chatWelcome.
   ///
   /// In en, this message translates to:
-  /// **'Start a new discussion with Muntur AI,Ask me any question you want !'**
+  /// **'Start a new discussion with Autosynx,Ask me any question you want !'**
   String get chatWelcome;
 }
 

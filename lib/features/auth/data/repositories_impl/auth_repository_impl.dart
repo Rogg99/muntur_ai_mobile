@@ -28,6 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
         final token = data['data']?['token'] ?? data['token'];
         if (token != null) {
           await _secureStorage.saveToken(token.toString());
+          await _clearCachedProfile();
         }
         return await getUserProfile();
       }
@@ -48,6 +49,7 @@ class AuthRepositoryImpl implements AuthRepository {
         final token = respData['data']?['token'] ?? respData['token'];
         if (token != null) {
           await _secureStorage.saveToken(token.toString());
+          await _clearCachedProfile();
         }
         return await getUserProfile();
       }
@@ -88,6 +90,15 @@ class AuthRepositoryImpl implements AuthRepository {
     final isar = IsarDb.instance;
     final localUser = await isar.userModels.where().findFirst();
     return localUser?.toEntity();
+  }
+
+  // Wipes any cached profile from a previous session so a failed profile
+  // fetch right after a fresh login/register can't leak a stale user.
+  Future<void> _clearCachedProfile() async {
+    final isar = IsarDb.instance;
+    await isar.writeTxn(() async {
+      await isar.userModels.clear();
+    });
   }
 
   // ──────────────────── UPDATE PROFILE ─────────────────────

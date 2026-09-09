@@ -23,7 +23,7 @@ class ApiHelper {
         const NotificationDetails(
           android: AndroidNotificationDetails(
               notificationChannelId,
-              'MunturAi Notification',
+              'Autosynx Notification',
               icon: '@mipmap/launcher_icon',
               ongoing: false,
               importance: Importance.defaultImportance,

@@ -46,8 +46,8 @@ Garage sampleGarage = Garage(
 // Sample Notification
 Notification sampleNotification = Notification(
   id: '1',
-  title: "Welcome to Munturai!",
-  text: "Thank you for joining Munturai. Start exploring now! This is a sample notification to get you started.",
+  title: "Welcome to Autosynx!",
+  text: "Thank you for joining Autosynx. Start exploring now! This is a sample notification to get you started.",
   time: DateTime.now().millisecondsSinceEpoch~/1000,
   url: "https://www.google.com"
 );

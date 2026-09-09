@@ -1,8 +1,8 @@
 {
   "noInternet": "It looks like you're not connected to the internet.",
   "checkInternet": "Please verify your internet connection, then try again.",
-  "joinMunturAiPrompt": "Willing to join our large MunturAi community?",
-  "joinMunturAiInfo": "To join our wide MunturAi community, we need some information from you to better personalize your filters and guide you quickly to the profiles that best match you.",
+  "joinMunturAiPrompt": "Willing to join our large Autosynx community?",
+  "joinMunturAiInfo": "To join our wide Autosynx community, we need some information from you to better personalize your filters and guide you quickly to the profiles that best match you.",
   "acceptTerms": "I have read and accept the terms and conditions of use",
   "start": "Start",
   "connexionTitle": "1/5 - Login Information",
@@ -326,7 +326,7 @@
   "gold": "Gold",
   "discover_likes": "Discover people who liked you",
   "info_premium_gold": "For more information about our Premium and Gold plans, you can consult the Terms of Use.",
-  "subscription_title": "MunturAi {type} Subscription {months} months",
+  "subscription_title": "Autosynx {type} Subscription {months} months",
   "duration": "Duration",
   "days": "{days} Days",
   "price": "Price",
@@ -453,5 +453,5 @@
   "notificationsTitle": "Notifications",
   "newDiscussion": "New Chat",
   "you": "You",
-  "chatWelcome": "Start a new discussion with Muntur AI,Ask me any question you want !"
+  "chatWelcome": "Start a new discussion with Autosynx,Ask me any question you want !"
 }

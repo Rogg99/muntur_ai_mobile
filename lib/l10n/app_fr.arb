@@ -1,8 +1,8 @@
 {
   "noInternet": "Il semblerait que vous n\\'êtes pas connectés à internet.",
   "checkInternet": "Veuillez verifier votre connexion internet puis réessayer.",
-  "joinMunturAiPrompt": "Désireux de rejoindre notre vaste communauté MunturAi?",
-  "joinMunturAiInfo": "Afin de rejoindre notre large communauté MunturAi, Nous aurons besoin de quelques informations de votre part afin de mieux personaliser vos filtres et vous orienter plus rapidement vers les profils qui vous correspondent le mieux .",
+  "joinMunturAiPrompt": "Désireux de rejoindre notre vaste communauté Autosynx?",
+  "joinMunturAiInfo": "Afin de rejoindre notre large communauté Autosynx, Nous aurons besoin de quelques informations de votre part afin de mieux personaliser vos filtres et vous orienter plus rapidement vers les profils qui vous correspondent le mieux .",
   "acceptTerms": "J'ai lu et j'accepte les conditions générales d'utilisation",
   "start": "Commencer",
   "connexionTitle": "1/5 -  Informations de Connexion",
@@ -326,7 +326,7 @@
   "gold": "Gold",
   "discover_likes": "Découvrez ces personnes qui vous ont donné un Like",
   "info_premium_gold": "Pour plus d'informations concernant nos offres Premium et Gold, vous pouvez consulter les Conditions Générales d'Utilisation.",
-  "subscription_title": "Abonnement MunturAi {type} {months} mois",
+  "subscription_title": "Abonnement Autosynx {type} {months} mois",
   "duration": "Durée",
   "days": "{days} Jours",
   "price": "Prix",
@@ -453,5 +453,5 @@
   "notificationsTitle": "Notifications",
   "newDiscussion": "Nouveau Chat",
   "you": "Vous",
-  "chatWelcome": "Commencez une nouvelle discussion avec Muntur AI, posez-moi toutes les questions que vous voulez !"
+  "chatWelcome": "Commencez une nouvelle discussion avec Autosynx, posez-moi toutes les questions que vous voulez !"
 }
