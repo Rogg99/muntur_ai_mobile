@@ -49,16 +49,39 @@ class Animated extends ConsumerState<SplashscreenScreen>
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        body: SizedBox(
-          width: double.maxFinite,
-          height: double.maxFinite,
-          child: Center(
-            child: Image.asset(
-              ImageConstant.logo_white,
-              height: 250,
-              width: 250,
+        body: Stack(
+          children: [
+            SizedBox(
+              width: double.maxFinite,
+              height: double.maxFinite,
+              child: Center(
+                child: Image.asset(
+                  ImageConstant.logo_white,
+                  height: 250,
+                  width: 250,
+                ),
+              ),
             ),
-          ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 24,
+              child: SafeArea(
+                top: false,
+                child: Center(
+                  child: Text(
+                    'By ZEMNOVA',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ));
   }
 }
