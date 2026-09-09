@@ -104,14 +104,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         appBar: AppBar(
           backgroundColor: colorScheme.surface,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: 'Actualiser',
-            onPressed: () {
-              ref.read(discussionsProvider.notifier).refresh();
-              ref.read(forumsProvider.notifier).refresh();
-            },
-          ),
+          // No reload button — pull-to-refresh (RefreshIndicator) on the
+          // Discussions/Forums lists below covers this already, and doesn't
+          // require a network round-trip on every tab switch to be visible.
           title: Center(
             child: Text(
               titles.elementAt(_selectedIndex),
@@ -265,14 +260,31 @@ class _DiscussionsTab extends ConsumerWidget {
             ),
             data: (list) {
               if (list.isEmpty) {
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      'Aucune conversation. Commence une nouvelle conversation avec Autosynx !',
-                      style: appStyle.H4(color: colorScheme.primary),
-                      textAlign: TextAlign.center,
-                    ),
+                // Still wrapped in RefreshIndicator — there's no reload
+                // button anymore, so an empty list needs its own way to
+                // pull-to-refresh. AlwaysScrollableScrollPhysics + a
+                // full-height child is what makes the pull gesture register
+                // at all when there's nothing to naturally overflow-scroll.
+                return RefreshIndicator(
+                  onRefresh: () =>
+                      ref.read(discussionsProvider.notifier).refresh(),
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.7,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Text(
+                              'Aucune conversation. Commence une nouvelle conversation avec Autosynx !',
+                              style: appStyle.H4(color: colorScheme.primary),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               }
@@ -280,6 +292,7 @@ class _DiscussionsTab extends ConsumerWidget {
                 onRefresh: () =>
                     ref.read(discussionsProvider.notifier).refresh(),
                 child: ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   separatorBuilder: (_, __) =>
@@ -323,13 +336,28 @@ class _ForumsTab extends ConsumerWidget {
           ),
           data: (forums) {
             if (forums.isEmpty) {
-              return Center(
-                child: Text('Aucun forum disponible', style: appStyle.H5()),
+              // Still wrapped in RefreshIndicator — see the matching comment
+              // in _DiscussionsTab above.
+              return RefreshIndicator(
+                onRefresh: () => ref.read(forumsProvider.notifier).refresh(),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: Center(
+                        child: Text('Aucun forum disponible',
+                            style: appStyle.H5()),
+                      ),
+                    ),
+                  ],
+                ),
               );
             }
             return RefreshIndicator(
               onRefresh: () => ref.read(forumsProvider.notifier).refresh(),
               child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 separatorBuilder: (_, __) =>
