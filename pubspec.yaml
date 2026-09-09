@@ -19,7 +19,7 @@ dependencies:
   country_pickers: ^2.0.0
   connectivity_plus: ^4.0.1
   image_picker: ^0.8.1
-  record: ^5.2.1
+  record: ^6.2.1
   just_audio: ^0.9.42
   email_validator: ^2.0.1
   fluttertoast: ^8.0.8
