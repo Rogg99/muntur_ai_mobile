@@ -21,7 +21,7 @@ final authRepositoryProvider = AutoDisposeProvider<AuthRepositoryImpl>.internal(
 );
 
 typedef AuthRepositoryRef = AutoDisposeProviderRef<AuthRepositoryImpl>;
-String _$authStateHash() => r'793997181cf8a5991eb9d0cde64bcfcd337c35b8';
+String _$authStateHash() => r'bafab8704920948798edb9feb3c0121115b5b933';
 
 /// See also [AuthState].
 @ProviderFor(AuthState)
