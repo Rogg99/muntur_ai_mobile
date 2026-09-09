@@ -97,6 +97,18 @@ class AuthRepositoryImpl implements AuthRepository {
     return _loadFromIsar();
   }
 
+  /// Applies a profile payload pushed over the WebSocket (`profile_updated`
+  /// event) directly, without a round-trip GET — same parsing/caching as
+  /// [getUserProfile], just fed from the push instead of a fresh fetch.
+  Future<UserEntity> applyProfilePush(Map<String, dynamic> json) async {
+    final userModel = UserModel.fromJson(json);
+    final isar = IsarDb.instance;
+    await isar.writeTxn(() async {
+      await isar.userModels.put(userModel);
+    });
+    return userModel.toEntity();
+  }
+
   Future<UserEntity?> _loadFromIsar() async {
     final isar = IsarDb.instance;
     final localUser = await isar.userModels.where().findFirst();

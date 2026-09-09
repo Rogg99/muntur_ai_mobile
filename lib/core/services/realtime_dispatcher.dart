@@ -8,6 +8,7 @@ import '../../screens/login.dart';
 import '../../services/notifications.dart';
 import '../../services/websocket.dart';
 import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../features/chatbot/data/models/message_model.dart';
 import '../../features/chatbot/presentation/providers/chatbot_provider.dart';
 import '../../features/notifications/presentation/providers/notification_provider.dart';
 import '../../features/subscriptions/presentation/providers/subscription_provider.dart';
@@ -37,19 +38,35 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
 
     switch (type) {
       case 'discussion_message':
-        ref.invalidate(discussionsProvider);
-        final discId = (data is Map ? data['disc_id'] : null)?.toString();
-        if (discId != null) {
-          ref.invalidate(chatMessagesProvider(discId));
+        if (data is Map<String, dynamic>) {
+          final message = MessageModel.fromJson(data);
+          final discId = message.discId != 'none' ? message.discId : null;
+          if (discId != null) {
+            ref.read(chatMessagesProvider(discId).notifier).applyIncoming(message);
+            ref.read(discussionsProvider.notifier).applyIncomingMessage(
+                  discId: discId,
+                  contenu: message.contenu,
+                  lastWriter: message.senderId,
+                  dateEnvoi: message.dateEnvoi,
+                );
+          }
         }
         _notify(_senderLabel(data, fallback: 'MUNTUR AI'), _messageBody(data));
         break;
 
       case 'forum_message':
-        ref.invalidate(forumsProvider);
-        final forumId = (data is Map ? data['forum_id'] : null)?.toString();
-        if (forumId != null) {
-          ref.invalidate(chatMessagesProvider(forumId));
+        if (data is Map<String, dynamic>) {
+          final message = MessageModel.fromJson(data);
+          final forumId = message.discId != 'none' ? message.discId : null;
+          if (forumId != null) {
+            ref.read(chatMessagesProvider(forumId).notifier).applyIncoming(message);
+            ref.read(forumsProvider.notifier).applyIncomingMessage(
+                  forumId: forumId,
+                  contenu: message.contenu,
+                  lastWriter: message.senderId,
+                  dateEnvoi: message.dateEnvoi,
+                );
+          }
         }
         _notify(_senderLabel(data, fallback: 'Forum'), _messageBody(data));
         break;
@@ -60,7 +77,17 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
         break;
 
       case 'profile_updated':
-        ref.invalidate(authStateProvider);
+        // Applied directly only if this actually looks like a full profile
+        // object — a partial/minimal ping payload parsed as one would
+        // silently blank out fields it didn't include. TODO: confirm the
+        // real payload shape server-side and drop this guard once certain.
+        if (data is Map<String, dynamic> &&
+            data['id'] != null &&
+            (data['email'] != null || data['username'] != null)) {
+          ref.read(authStateProvider.notifier).applyRemotePush(data);
+        } else {
+          ref.invalidate(authStateProvider);
+        }
         break;
 
       case 'transaction':

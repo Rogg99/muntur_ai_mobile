@@ -82,4 +82,11 @@ class AuthState extends _$AuthState {
       return ref.read(authRepositoryProvider).updateProfile(data);
     });
   }
+
+  /// Applies a `profile_updated` WS push directly — see
+  /// [RealtimeDispatcher]. No REST round-trip.
+  Future<void> applyRemotePush(Map<String, dynamic> json) async {
+    final entity = await ref.read(authRepositoryProvider).applyProfilePush(json);
+    state = AsyncValue.data(entity);
+  }
 }

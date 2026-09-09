@@ -18,6 +18,33 @@ ChatbotRepositoryImpl chatbotRepository(Ref ref) {
   return ChatbotRepositoryImpl(apiClient);
 }
 
+/// Patches the preview fields of the discussion/forum matching [discId] and
+/// moves it to the front (most-recent-first), instead of a full re-fetch —
+/// used to apply a WS push's own message data directly. Returns null if
+/// [discId] isn't in [current] yet (e.g. a brand-new discussion the list
+/// hasn't been told about), so the caller can fall back to a real refresh.
+List<DiscussionModel>? _applyIncomingPreview(
+  List<DiscussionModel> current, {
+  required String discId,
+  required String contenu,
+  required String lastWriter,
+  required DateTime dateEnvoi,
+}) {
+  final index = current.indexWhere((d) => d.id == discId);
+  if (index == -1) return null;
+  final updated = [...current];
+  final disc = updated.removeAt(index);
+  updated.insert(
+    0,
+    disc.copyWith(
+      last_message: contenu,
+      last_date: dateEnvoi.toIso8601String(),
+      last_writer: lastWriter,
+    ),
+  );
+  return updated;
+}
+
 @riverpod
 class Discussions extends _$Discussions {
   @override
@@ -39,6 +66,26 @@ class Discussions extends _$Discussions {
     state = await AsyncValue.guard(() async {
       return await ref.read(chatbotRepositoryProvider).getMyDiscussions();
     });
+  }
+
+  /// Applies a `discussion_message` WS push's preview directly — see
+  /// [RealtimeDispatcher]. Falls back to [refresh] only if this discussion
+  /// isn't cached yet.
+  void applyIncomingMessage({
+    required String discId,
+    required String contenu,
+    required String lastWriter,
+    required DateTime dateEnvoi,
+  }) {
+    final current = state.value;
+    if (current == null) return;
+    final updated = _applyIncomingPreview(current,
+        discId: discId, contenu: contenu, lastWriter: lastWriter, dateEnvoi: dateEnvoi);
+    if (updated == null) {
+      refresh();
+      return;
+    }
+    state = AsyncValue.data(updated);
   }
 }
 
@@ -63,6 +110,26 @@ class Forums extends _$Forums {
       return await ref.read(chatbotRepositoryProvider).getForums();
     });
   }
+
+  /// Applies a `forum_message` WS push's preview directly — see
+  /// [RealtimeDispatcher]. Falls back to [refresh] only if this forum isn't
+  /// cached yet.
+  void applyIncomingMessage({
+    required String forumId,
+    required String contenu,
+    required String lastWriter,
+    required DateTime dateEnvoi,
+  }) {
+    final current = state.value;
+    if (current == null) return;
+    final updated = _applyIncomingPreview(current,
+        discId: forumId, contenu: contenu, lastWriter: lastWriter, dateEnvoi: dateEnvoi);
+    if (updated == null) {
+      refresh();
+      return;
+    }
+    state = AsyncValue.data(updated);
+  }
 }
 
 @riverpod
@@ -86,6 +153,25 @@ class ChatMessages extends _$ChatMessages {
     _refreshFromApi(discussionId);
 
     return localMessages;
+  }
+
+  /// Applies a message pushed over the WebSocket (AI reply, another party's
+  /// forum message, ...) directly into Isar + state — no REST re-fetch. Used
+  /// by [RealtimeDispatcher] in place of invalidating this provider, which
+  /// would otherwise hit GET /discussions/<id>/messages/ on every single
+  /// message a WS push delivers while this discussion is open.
+  Future<void> applyIncoming(MessageModel message) async {
+    final isar = IsarDb.instance;
+    await isar.writeTxn(() async {
+      await isar.messageModels.put(message);
+    });
+    final current = state.value ?? [];
+    final updated = [
+      for (final m in current)
+        if (m.id != message.id) m,
+      message,
+    ]..sort((a, b) => a.dateEnvoi.compareTo(b.dateEnvoi));
+    state = AsyncValue.data(updated);
   }
 
   void _refreshFromApi(String discussionId) async {

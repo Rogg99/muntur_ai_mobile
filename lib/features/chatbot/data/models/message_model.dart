@@ -89,7 +89,10 @@ class MessageModel {
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel.create(
       id: json['id'] ?? 'auto_${DateTime.now().millisecondsSinceEpoch}',
-      discId: json['disc_id'] ?? json['discId'] ?? 'none',
+      // A forum's WS push identifies itself with "forum_id" instead of
+      // "disc_id"/"discId" — same underlying field (DiscussionModel.type
+      // distinguishes discussion vs. forum), just a different push key.
+      discId: json['disc_id'] ?? json['discId'] ?? json['forum_id'] ?? 'none',
       tempId: json['temp_id'] ?? json['tempId'] ?? 'none',
       senderId: json['emetteur'] ?? json['senderId'] ?? 'none',
       senderName: json['emetteurName'] ?? json['senderName'] ?? 'none',
