@@ -31,6 +31,11 @@ class SyncService {
           query: message.contenu,
           discussionId: message.discId != 'new' ? message.discId : null,
           media: _parseMedia(message.media),
+          // Without this, askQuestion's default ('user') would stamp the
+          // resynced record with the same wrong sender the recent fix
+          // removed everywhere else — carry over the id it was originally
+          // queued under instead.
+          senderId: message.senderId,
         );
 
         if (aiResponse != null) {
