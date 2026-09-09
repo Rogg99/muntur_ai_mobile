@@ -6,7 +6,7 @@ part 'news_model.g.dart';
 class NewsModel {
   Id isarId = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   String id = '';
 
   String title = '';

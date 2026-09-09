@@ -7,7 +7,7 @@ part 'user_model.g.dart';
 class UserModel {
   Id isarId = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   String id = '';
 
   @Index(unique: true, replace: true)

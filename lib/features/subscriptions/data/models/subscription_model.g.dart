@@ -78,7 +78,7 @@ const SubscriptionModelSchema = CollectionSchema(
       id: -3268401673993471357,
       name: r'id',
       unique: true,
-      replace: false,
+      replace: true,
       properties: [
         IndexPropertySchema(
           name: r'id',
@@ -1857,7 +1857,7 @@ const SubscriptionPlanModelSchema = CollectionSchema(
       id: 329780482934683790,
       name: r'code',
       unique: true,
-      replace: false,
+      replace: true,
       properties: [
         IndexPropertySchema(
           name: r'code',

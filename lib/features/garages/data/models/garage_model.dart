@@ -6,7 +6,7 @@ part 'garage_model.g.dart';
 class GarageModel {
   Id isarId = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   String id = '';
 
   String nom = '';

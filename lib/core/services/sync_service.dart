@@ -39,10 +39,15 @@ class SyncService {
         );
 
         if (aiResponse != null) {
-          // Mark the pending message as synced
+          // askQuestion already persisted the confirmed message itself,
+          // under the server's real id — this pending row (still keyed by
+          // whatever local/temp id it was queued under) is now a leftover
+          // duplicate of that, not something to keep in sync. The API
+          // response is the only source of truth once it exists; delete
+          // the pending placeholder instead of also `put`-ing a second
+          // copy of it under its old id.
           await isar.writeTxn(() async {
-            final synced = message.copyWith(pendingSync: false);
-            await isar.messageModels.put(synced);
+            await isar.messageModels.delete(message.isarId);
           });
         }
       } catch (e) {

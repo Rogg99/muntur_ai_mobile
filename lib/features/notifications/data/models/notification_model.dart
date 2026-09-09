@@ -6,7 +6,7 @@ part 'notification_model.g.dart';
 class NotificationModel {
   Id isarId = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   String id = '';
 
   String title = '';

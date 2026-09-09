@@ -52,7 +52,7 @@ final forumsProvider =
 );
 
 typedef _$Forums = AutoDisposeAsyncNotifier<List<DiscussionModel>>;
-String _$chatMessagesHash() => r'0f638e8ccbdf94e03055e52138e552bd2983ac48';
+String _$chatMessagesHash() => r'5fd8b8129ffac49773e00aa86a3ec227f259ea54';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -10,7 +10,7 @@ part 'message_model.g.dart';
 class MessageModel {
   Id isarId = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   String id = '';
 
   @Index()

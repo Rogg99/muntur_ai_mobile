@@ -6,7 +6,7 @@ part 'discussion_model.g.dart';
 class DiscussionModel {
   Id isarId = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   String id = '';
 
   String title = 'New Discussion';

@@ -6,7 +6,7 @@ part 'subscription_model.g.dart';
 class SubscriptionModel {
   Id isarId = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   String id = '';
 
   String userId = '';
@@ -41,7 +41,7 @@ class SubscriptionModel {
 class SubscriptionPlanModel {
   Id isarId = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   String code = '';
 
   String type = 'Free';
