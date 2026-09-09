@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
-import 'package:munturai/screens/chat.dart';
+import 'package:munturai/screens/forum_chat.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/utils/dateUtils.dart';
@@ -54,7 +54,7 @@ class WidgetForumState extends ConsumerState<WidgetForum> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ChatView(
+                  builder: (context) => ForumChatView(
                         disc: widget.disc,
                       )));
         },
