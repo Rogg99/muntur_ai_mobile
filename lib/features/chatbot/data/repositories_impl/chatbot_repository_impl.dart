@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+
 import '../../../../core/network/api_client.dart';
 import '../../../../core/database/isar_db.dart';
 import '../models/discussion_model.dart';
+import '../models/media_ref.dart';
 import '../models/message_model.dart';
 import 'package:isar/isar.dart';
 
@@ -95,20 +101,53 @@ class ChatbotRepositoryImpl {
     return [];
   }
 
-  /// Sends the user's message to the AI chatbot. The backend acks with the
-  /// saved user message only (202, `ai_response_status: "pending"`) — the AI
-  /// reply is generated in the background and delivered later as a
-  /// `discussion_message` WebSocket event, not in this response. Returns the
-  /// real discussion id the message was filed under (relevant when
-  /// [discussionId] was null/'auto' and the backend had to create one).
+  /// Uploads a single local file to the shared media store and returns its
+  /// UUID, to be passed as one of [askQuestion]'s [mediaIds]. The filename
+  /// (and thus its extension) is what the backend uses to detect content
+  /// type, so callers must pass a path with a real extension (.jpg, .m4a…).
+  Future<MediaRef?> uploadMedia(File file, {ProgressCallback? onSendProgress}) async {
+    try {
+      final form = FormData.fromMap({
+        'file': await MultipartFile.fromFile(
+          file.path,
+          filename: file.uri.pathSegments.last,
+        ),
+      });
+      final response = await _apiClient.postMultipart(
+        '/medias/',
+        form,
+        onSendProgress: onSendProgress,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data['data'] ?? response.data;
+        return MediaRef.fromJson(data);
+      }
+    } catch (e) {
+      // caller keeps the attachment in a failed state and may retry
+    }
+    return null;
+  }
+
+  /// Sends the user's message to the AI chatbot. [mediaIds] are UUIDs
+  /// previously returned by [uploadMedia] — [query] may be empty as long as
+  /// at least one media id is attached (validated server-side too). The
+  /// backend acks with the saved user message only (202,
+  /// `ai_response_status: "pending"`) — the AI reply is generated in the
+  /// background and delivered later as a `discussion_message` WebSocket
+  /// event, not in this response. Returns the real discussion id the message
+  /// was filed under (relevant when [discussionId] was null/'auto' and the
+  /// backend had to create one).
   Future<({MessageModel message, String discId})?> askQuestion(
-      {required String query, String? discussionId}) async {
+      {String query = '',
+      String? discussionId,
+      List<MediaRef> media = const []}) async {
     final isar = IsarDb.instance;
     final tempMessage = MessageModel.create(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       discId: discussionId ?? 'new_disc',
       senderId: 'user', // Replace with actual user ID
       contenu: query,
+      media: jsonEncode(media.map((m) => m.toJson()).toList()),
       dateEnvoi: DateTime.now(),
       pendingSync: true,
     );
@@ -121,6 +160,7 @@ class ChatbotRepositoryImpl {
       final response = await _apiClient.post('/ask-question', data: {
         'contenu': query,
         'discussion': discussionId ?? 'auto',
+        if (media.isNotEmpty) 'media': media.map((m) => m.id).toList(),
       });
 
       if (response.statusCode == 200 || response.statusCode == 202) {

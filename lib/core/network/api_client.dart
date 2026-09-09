@@ -8,6 +8,16 @@ class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;
 
+  /// Origin (scheme+host+port) the API is served from, without the
+  /// /m/muntur API path prefix. Media file URLs pushed over the WebSocket
+  /// come back relative to this (that push fires from a background thread
+  /// with no request object to build an absolute URI from) — resolve any
+  /// media URL through [resolveMediaUrl] before displaying it.
+  static const String origin = 'https://195.26.244.215:447';
+
+  static String resolveMediaUrl(String url) =>
+      url.startsWith('http') ? url : '$origin$url';
+
   late final Dio _dio;
 
   ApiClient._internal() {
@@ -69,6 +79,16 @@ class ApiClient {
 
   Future<Response> post(String path, {dynamic data}) {
     return _dio.post(path, data: data);
+  }
+
+  /// Dio sets the multipart/form-data content type and boundary itself
+  /// whenever [data] is a [FormData] — the same auth interceptor applies.
+  Future<Response> postMultipart(
+    String path,
+    FormData data, {
+    ProgressCallback? onSendProgress,
+  }) {
+    return _dio.post(path, data: data, onSendProgress: onSendProgress);
   }
 
   Future<Response> put(String path, {dynamic data}) {

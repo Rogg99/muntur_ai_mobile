@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:isar/isar.dart';
+
+import 'media_ref.dart';
 
 part 'message_model.g.dart';
 
@@ -67,6 +71,21 @@ class MessageModel {
     return m;
   }
 
+  /// Normalizes the server's media shape to a JSON-encoded list of
+  /// [MediaRef] maps, regardless of which key it arrived under — the 202
+  /// echo of the user's own message uses "media", the WS AI-reply push uses
+  /// "medias" (same underlying MediaSerializer shape, pre-existing key
+  /// mismatch between the two on the backend).
+  static String _encodeMedia(Map<String, dynamic> json) {
+    final raw = json['medias'] ?? json['media'];
+    if (raw is! List) return '[]';
+    final refs = raw
+        .whereType<Map>()
+        .map((m) => MediaRef.fromJson(m.cast<String, dynamic>()).toJson())
+        .toList();
+    return jsonEncode(refs);
+  }
+
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel.create(
       id: json['id'] ?? 'auto_${DateTime.now().millisecondsSinceEpoch}',
@@ -77,7 +96,7 @@ class MessageModel {
       senderPhoto: json['emetteurPhoto'] ?? json['senderPhoto'] ?? 'none',
       contenu: json['contenu'] ?? '',
       answerTo: json['answerTo'] ?? 'none',
-      media: json['media']?.toString() ?? '[]',
+      media: _encodeMedia(json),
       mediaName: json['mediaName'] ?? 'none',
       mediaSize: json['mediaSize'] ?? 'none',
       announced: json['announced'] ?? 'no',

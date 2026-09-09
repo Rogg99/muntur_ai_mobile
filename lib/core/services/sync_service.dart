@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:isar/isar.dart';
+import '../../features/chatbot/data/models/media_ref.dart';
 import '../../features/chatbot/data/models/message_model.dart';
 import '../../features/chatbot/data/repositories_impl/chatbot_repository_impl.dart';
 import '../../core/database/isar_db.dart';
@@ -27,6 +30,7 @@ class SyncService {
         final aiResponse = await _repository.askQuestion(
           query: message.contenu,
           discussionId: message.discId != 'new' ? message.discId : null,
+          media: _parseMedia(message.media),
         );
 
         if (aiResponse != null) {
@@ -40,5 +44,22 @@ class SyncService {
         // Continue — will retry on next launch
       }
     }
+  }
+
+  /// The attachment(s) on a queued message were already uploaded (uploading
+  /// happens at attach time, before the message is even queued) — this just
+  /// recovers their MediaRef so a retried ask-question keeps referencing the
+  /// same media ids instead of resending as text-only.
+  List<MediaRef> _parseMedia(String raw) {
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is List) {
+        return decoded
+            .whereType<Map>()
+            .map((m) => MediaRef.fromJson(m.cast<String, dynamic>()))
+            .toList();
+      }
+    } catch (_) {}
+    return const [];
   }
 }

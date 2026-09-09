@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'dart:async';
+import 'dart:convert';
 import '../../data/models/discussion_model.dart';
+import '../../data/models/media_ref.dart';
 import '../../data/models/message_model.dart';
 import '../../data/repositories_impl/chatbot_repository_impl.dart';
 import '../../../../core/network/api_client.dart';
@@ -99,14 +101,16 @@ class ChatMessages extends _$ChatMessages {
   /// reply in the background, delivering it as a `discussion_message` WS
   /// event (see RealtimeDispatcher), which invalidates this provider and
   /// refetches the thread once the reply lands.
-  Future<void> askQuestion(String query) async {
-    if (query.trim().isEmpty) return;
+  Future<void> askQuestion(String query, {List<MediaRef> media = const []}) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty && media.isEmpty) return;
 
     final tempMsg = MessageModel.create(
       id: 'temp_${DateTime.now().millisecondsSinceEpoch}',
       discId: discussionId,
       senderId: 'user',
-      contenu: query,
+      contenu: trimmed,
+      media: jsonEncode(media.map((m) => m.toJson()).toList()),
       dateEnvoi: DateTime.now(),
       pendingSync: true,
     );
@@ -117,8 +121,9 @@ class ChatMessages extends _$ChatMessages {
 
     try {
       final result = await ref.read(chatbotRepositoryProvider).askQuestion(
-            query: query,
+            query: trimmed,
             discussionId: discussionId != 'new' ? discussionId : null,
+            media: media,
           );
 
       if (result != null) {

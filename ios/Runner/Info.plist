@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Autosynx uses the camera to let you attach a photo to a chat message.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Autosynx uses the microphone to let you record a voice note in a chat message.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Autosynx needs access to your photos to let you attach one to a chat message.</string>
 </dict>
 </plist>
