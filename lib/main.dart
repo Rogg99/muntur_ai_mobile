@@ -53,9 +53,10 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  if (kDebugMode) {
-    HttpOverrides.global = MyHttpOverrides(); // DEV ONLY: skip TLS cert checks against local/self-signed servers
-  }
+  // The API server runs on a self-signed certificate (no CA-signed cert
+  // for a bare IP) — pinned by exact SHA-256 fingerprint in cert_override.dart,
+  // so this is safe to apply in every build mode, not just debug.
+  HttpOverrides.global = MyHttpOverrides();
 
   runApp(ProviderScope(child: MyApp(savedLocale)));
 }
