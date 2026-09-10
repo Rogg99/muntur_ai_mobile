@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:isar/isar.dart';
 
 part 'garage_model.g.dart';
@@ -51,10 +53,14 @@ class GarageModel {
     g.longitude = (json['longitude'] as num?)?.toDouble() ?? 0.0;
     g.rating = (json['rating'] as num?)?.toDouble() ?? 0.0;
     g.distance = (json['distance'] as num?)?.toDouble() ?? 0.0;
+    // GarageSerializer is the write serializer used for reads too (no
+    // read/write split), so this is currently a bare list of media UUIDs,
+    // not resolvable photo URLs — jsonEncode still matters regardless: the
+    // previous `.toString()` on a List<String> produces Dart's debug
+    // representation (unquoted strings), which isn't valid JSON at all and
+    // made jsonDecode fail (silently, via a try/catch) every single time.
     final rawMedias = json['medias'];
-    g.medias = rawMedias is List
-        ? rawMedias.toString()
-        : (rawMedias?.toString() ?? '[]');
+    g.medias = rawMedias is List ? jsonEncode(rawMedias) : '[]';
     return g;
   }
 

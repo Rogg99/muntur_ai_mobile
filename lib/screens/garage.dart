@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/garages/domain/entities/garage_entity.dart';
 import 'package:munturai/features/garages/presentation/providers/garage_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -198,8 +198,25 @@ class _GaragePlaceholder extends StatelessWidget {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// GARAGE DETAIL SCREEN (migrated from legacy garage.dart)
+// GARAGE DETAIL SCREEN
 // ──────────────────────────────────────────────────────────────────────────────
+
+/// Only entries that are actually a displayable URL are kept — GarageSerializer
+/// (used for reads too, no read/write split server-side) currently returns
+/// `medias` as bare Media UUIDs, not resolvable photo URLs. Once the backend
+/// nests them ({id, file, kind, ...}, same shape used for messages/news),
+/// this starts rendering them with no client change needed — a bare id (or
+/// any other non-URL value) is skipped rather than shown broken.
+List<String> _displayableMediaUrls(String rawMedias) {
+  List<dynamic> list = [];
+  try {
+    list = jsonDecode(rawMedias) as List;
+  } catch (_) {}
+  return list
+      .map((item) => item is Map ? item['file']?.toString() ?? '' : item.toString())
+      .where((url) => url.startsWith('http'))
+      .toList();
+}
 
 class GarageDetails extends StatelessWidget {
   final GarageEntity garage;
@@ -210,153 +227,334 @@ class GarageDetails extends StatelessWidget {
     if (await canLaunchUrl(uri)) await launchUrl(uri);
   }
 
+  /// Parses "HH:mm" against the current time — best-effort, defaults to
+  /// null (hidden badge) rather than guessing on a malformed value.
+  bool? _isOpenNow() {
+    try {
+      final now = TimeOfDay.now();
+      final nowMinutes = now.hour * 60 + now.minute;
+      final open = garage.heureOuverture.split(':');
+      final close = garage.heureFermeture.split(':');
+      final openMinutes = int.parse(open[0]) * 60 + int.parse(open[1]);
+      final closeMinutes = int.parse(close[0]) * 60 + int.parse(close[1]);
+      return nowMinutes >= openMinutes && nowMinutes < closeMinutes;
+    } catch (_) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-
-    List<dynamic> mediasList = [];
-    try {
-      mediasList = jsonDecode(garage.medias) as List;
-    } catch (_) {}
+    final photoUrls = _displayableMediaUrls(garage.medias);
+    final isOpen = _isOpenNow();
+    final hasPhone2 = garage.telephone2.isNotEmpty && garage.telephone2 != 'none';
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text('Infos Garage', style: appStyle.H3(weight: 'bold')),
-        backgroundColor: colorScheme.surface,
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: ListView(
-        children: [
-          // ─── Cover photo ───
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest,
-              image: garage.photo.isNotEmpty
-                  ? DecorationImage(
-                      image: NetworkImage(garage.photo),
-                      fit: BoxFit.cover,
-                    )
-                  : const DecorationImage(
-                      image: AssetImage('assets/images/avatar.jpg'),
-                      fit: BoxFit.cover),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 240,
+            pinned: true,
+            backgroundColor: colorScheme.surface,
+            leading: Padding(
+              padding: const EdgeInsets.all(8),
+              child: CircleAvatar(
+                backgroundColor: Colors.black45,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new,
+                      color: Colors.white, size: 18),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: CircleAvatar(
+                  backgroundColor: Colors.black45,
+                  child: IconButton(
+                    icon: const Icon(Icons.share_outlined,
+                        color: Colors.white, size: 18),
+                    onPressed: () => Share.share(
+                        '${garage.nom} — ${garage.ville}, ${garage.pays}'),
+                  ),
+                ),
+              ),
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  garage.photo.isNotEmpty
+                      ? Image.network(
+                          garage.photo,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) =>
+                              Container(color: colorScheme.surfaceContainerHighest),
+                        )
+                      : Container(color: colorScheme.surfaceContainerHighest),
+                  // Scrim so the name stays readable over any photo.
+                  const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, Colors.black87],
+                        stops: [0.5, 1],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 16,
+                    right: 16,
+                    bottom: 16,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(garage.nom,
+                            style: appStyle.H2(weight: 'bold', color: Colors.white)),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on, size: 14, color: Colors.white70),
+                            const SizedBox(width: 4),
+                            Text('${garage.ville}, ${garage.pays}',
+                                style: appStyle.H6(color: Colors.white70)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-
-          // ─── Nom + Description ───
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(garage.nom,
-                    style: appStyle.H3(weight: 'bold'),
-                    textAlign: TextAlign.center),
-                if (garage.description.isNotEmpty) ...[
-                  const SizedBox(height: 6),
-                  Text(garage.description, style: appStyle.H5()),
-                ],
-              ],
-            ),
-          ),
-          const Divider(indent: 16, endIndent: 16),
-
-          // ─── Location ───
-          _InfoRow(
-            icon: Icons.location_on,
-            label: 'Localisation',
-            value: '${garage.ville}, ${garage.pays}',
-          ),
-          const Divider(indent: 16, endIndent: 16),
-
-          // ─── Email ───
-          _InfoRow(
-            icon: Icons.email,
-            label: 'Email',
-            value: garage.email,
-            action: TextButton(
-              onPressed: () => _launch('mailto:${garage.email}'),
-              child: const Text('Envoyer'),
-            ),
-          ),
-          const Divider(indent: 16, endIndent: 16),
-
-          // ─── Tel 1 ───
-          if (garage.telephone1.isNotEmpty)
-            _InfoRow(
-              icon: Icons.phone,
-              label: 'Téléphone 1',
-              value: garage.telephone1,
-              action: TextButton(
-                onPressed: () => _launch('tel:${garage.telephone1}'),
-                child: const Text('Appel'),
-              ),
-            ),
-          const Divider(indent: 16, endIndent: 16),
-
-          // ─── Tel 2 ───
-          if (garage.telephone2.isNotEmpty && garage.telephone2 != 'none')
-            _InfoRow(
-              icon: Icons.phone,
-              label: 'Téléphone 2',
-              value: garage.telephone2,
-              action: TextButton(
-                onPressed: () => _launch('tel:${garage.telephone2}'),
-                child: const Text('Appel'),
-              ),
-            ),
-          const Divider(indent: 16, endIndent: 16),
-
-          // ─── Horaires ───
-          _InfoRow(
-            icon: Icons.schedule,
-            label: 'Horaires',
-            value:
-                'Lun–Sam  ${garage.heureOuverture} – ${garage.heureFermeture}',
-          ),
-          const Divider(indent: 16, endIndent: 16),
-
-          // ─── Rating ───
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                const Icon(Icons.stars),
-                const SizedBox(width: 8),
-                Text('Rating : ', style: appStyle.H6()),
-                for (var _ in List.generate(garage.rating.floor(), (_) => 0))
-                  Icon(Icons.star, color: colorScheme.primary, size: 16),
-                Text(' ${garage.rating}/5', style: appStyle.H5(weight: 'bold')),
-              ],
-            ),
-          ),
-          const Divider(indent: 16, endIndent: 16),
-
-          // ─── Photos ───
-          if (mediasList.isNotEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text('Photos', style: appStyle.H5(weight: 'bold')),
-            ),
-            ...mediasList.map((img) => Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(img.toString(),
-                        height: 180, fit: BoxFit.cover),
+                // ─── Rating / distance / open-closed ───
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _StatChip(
+                        icon: Icons.star_rounded,
+                        iconColor: colorScheme.primary,
+                        label: garage.rating > 0
+                            ? '${garage.rating.toStringAsFixed(1)}/5'
+                            : 'Pas encore noté',
+                      ),
+                      if (garage.distance > 0)
+                        _StatChip(
+                          icon: Icons.near_me_outlined,
+                          label: '${garage.distance.toStringAsFixed(1)} km',
+                        ),
+                      if (isOpen != null)
+                        _StatChip(
+                          icon: Icons.circle,
+                          iconColor: isOpen ? Colors.green : colorScheme.error,
+                          iconSize: 10,
+                          label: isOpen ? 'Ouvert' : 'Fermé',
+                        ),
+                    ],
                   ),
-                )),
-          ],
-          const SizedBox(height: 30),
+                ),
+
+                // ─── Quick actions ───
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    children: [
+                      if (garage.telephone1.isNotEmpty)
+                        _ActionButton(
+                          icon: Icons.call_outlined,
+                          label: 'Appeler',
+                          onTap: () => _launch('tel:${garage.telephone1}'),
+                        ),
+                      if (garage.email.isNotEmpty) ...[
+                        const SizedBox(width: 10),
+                        _ActionButton(
+                          icon: Icons.email_outlined,
+                          label: 'Email',
+                          onTap: () => _launch('mailto:${garage.email}'),
+                        ),
+                      ],
+                      if (garage.latitude != 0.0 || garage.longitude != 0.0) ...[
+                        const SizedBox(width: 10),
+                        _ActionButton(
+                          icon: Icons.directions_outlined,
+                          label: 'Itinéraire',
+                          onTap: () => _launch(
+                              'https://www.google.com/maps/search/?api=1&query=${garage.latitude},${garage.longitude}'),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+
+                if (garage.description.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(garage.description, style: appStyle.H5()),
+                  ),
+                ],
+
+                const SizedBox(height: 16),
+
+                // ─── Info card ───
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        _InfoRow(
+                          icon: Icons.schedule_outlined,
+                          label: 'Horaires',
+                          value:
+                              '${garage.heureOuverture} – ${garage.heureFermeture}',
+                        ),
+                        if (garage.telephone1.isNotEmpty)
+                          _InfoRow(
+                            icon: Icons.phone_outlined,
+                            label: 'Téléphone',
+                            value: garage.telephone1,
+                            onTap: () => _launch('tel:${garage.telephone1}'),
+                          ),
+                        if (hasPhone2)
+                          _InfoRow(
+                            icon: Icons.phone_outlined,
+                            label: 'Téléphone (2)',
+                            value: garage.telephone2,
+                            onTap: () => _launch('tel:${garage.telephone2}'),
+                          ),
+                        if (garage.email.isNotEmpty)
+                          _InfoRow(
+                            icon: Icons.email_outlined,
+                            label: 'Email',
+                            value: garage.email,
+                            onTap: () => _launch('mailto:${garage.email}'),
+                            isLast: true,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // ─── Photos ───
+                if (photoUrls.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text('Photos', style: appStyle.H5(weight: 'bold')),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 140,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: photoUrls.length,
+                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      itemBuilder: (context, index) => ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          photoUrls[index],
+                          width: 140,
+                          height: 140,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                            width: 140,
+                            height: 140,
+                            color: colorScheme.surfaceContainerHighest,
+                            child: const Icon(Icons.broken_image_outlined),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+
+                const SizedBox(height: 30),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _StatChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color? iconColor;
+  final double? iconSize;
+  const _StatChip(
+      {required this.icon, required this.label, this.iconColor, this.iconSize});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: iconSize ?? 16, color: iconColor ?? colorScheme.onSurfaceVariant),
+          const SizedBox(width: 5),
+          Text(label, style: AppStyle.of(context).H6()),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  const _ActionButton({required this.icon, required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Expanded(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+            color: colorScheme.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: colorScheme.primary),
+              const SizedBox(height: 4),
+              Text(label,
+                  style: AppStyle.of(context).H6(color: colorScheme.primary, weight: 'bold')),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -366,26 +564,44 @@ class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  final Widget? action;
-  const _InfoRow(
-      {required this.icon,
-      required this.label,
-      required this.value,
-      this.action});
+  final VoidCallback? onTap;
+  final bool isLast;
+  const _InfoRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.onTap,
+    this.isLast = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Icon(icon),
-          const SizedBox(width: 8),
-          Text('$label : ', style: appStyle.H6()),
-          Flexible(child: Text(value, style: appStyle.H5(weight: 'bold'))),
-          if (action != null) ...[const Spacer(), action!],
-        ],
+    final colorScheme = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: isLast
+          ? const BorderRadius.vertical(bottom: Radius.circular(16))
+          : BorderRadius.zero,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: colorScheme.primary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: appStyle.H6(color: colorScheme.onSurfaceVariant)),
+                  Text(value, style: appStyle.H5(weight: 'bold')),
+                ],
+              ),
+            ),
+            if (onTap != null)
+              Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
+          ],
+        ),
       ),
     );
   }
