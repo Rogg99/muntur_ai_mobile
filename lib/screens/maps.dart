@@ -18,12 +18,32 @@ class MapScreen extends ConsumerStatefulWidget {
 
 class _MapScreenState extends ConsumerState<MapScreen> {
   final MapController _mapController = MapController();
+  final TextEditingController _searchController = TextEditingController();
   LatLng? _currentPosition;
+  bool _searching = false;
 
   @override
   void initState() {
     super.initState();
     _locateUser();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _goToGarage(GarageEntity garage) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      _searching = false;
+      _searchController.clear();
+    });
+    if (garage.latitude != 0.0 || garage.longitude != 0.0) {
+      _mapController.move(LatLng(garage.latitude, garage.longitude), 15.0);
+    }
+    _showGarageSheet(context, garage);
   }
 
   void _centerUser() {
@@ -164,6 +184,110 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 ),
               ),
             ),
+
+          // ─── Search bar + results ───
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.surface,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: const [
+                          BoxShadow(color: Colors.black26, blurRadius: 8),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _searchController,
+                        style: appStyle.H6(),
+                        onChanged: (value) {
+                          setState(() => _searching = value.isNotEmpty);
+                          if (value.isNotEmpty) {
+                            ref.read(garageSearchProvider.notifier).search(value);
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Rechercher un garage…',
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: _searching
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() => _searching = false);
+                                  },
+                                )
+                              : null,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: colorScheme.surface,
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
+                    ),
+                    if (_searching)
+                      Container(
+                        margin: const EdgeInsets.only(top: 6),
+                        constraints: const BoxConstraints(maxHeight: 280),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: const [
+                            BoxShadow(color: Colors.black26, blurRadius: 8),
+                          ],
+                        ),
+                        child: ref.watch(garageSearchProvider).when(
+                              loading: () => const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Center(
+                                    child: CircularProgressIndicator(strokeWidth: 2)),
+                              ),
+                              error: (e, _) => Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Text('Erreur : $e', style: appStyle.H6()),
+                              ),
+                              data: (results) => results.isEmpty
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Text('Aucun garage trouvé',
+                                          style: appStyle.H6()),
+                                    )
+                                  : ListView.separated(
+                                      shrinkWrap: true,
+                                      padding: const EdgeInsets.symmetric(vertical: 4),
+                                      itemCount: results.length,
+                                      separatorBuilder: (_, __) =>
+                                          const Divider(height: 1),
+                                      itemBuilder: (context, index) {
+                                        final g = results[index];
+                                        return ListTile(
+                                          dense: true,
+                                          leading: const Icon(Icons.build_outlined),
+                                          title: Text(g.nom, style: appStyle.H6(weight: 'bold')),
+                                          subtitle: Text('${g.ville}, ${g.pays}',
+                                              style: appStyle.H6()),
+                                          onTap: () => _goToGarage(g),
+                                        );
+                                      },
+                                    ),
+                            ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
