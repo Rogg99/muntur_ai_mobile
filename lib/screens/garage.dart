@@ -207,7 +207,7 @@ class _GaragePlaceholder extends StatelessWidget {
 /// nests them ({id, file, kind, ...}, same shape used for messages/news),
 /// this starts rendering them with no client change needed — a bare id (or
 /// any other non-URL value) is skipped rather than shown broken.
-List<String> _displayableMediaUrls(String rawMedias) {
+List<String> displayableMediaUrls(String rawMedias) {
   List<dynamic> list = [];
   try {
     list = jsonDecode(rawMedias) as List;
@@ -218,37 +218,41 @@ List<String> _displayableMediaUrls(String rawMedias) {
       .toList();
 }
 
+/// Parses "HH:mm" against the current time — best-effort, defaults to null
+/// (hidden badge) rather than guessing on a malformed value. Shared with the
+/// map's garage preview sheet.
+bool? isGarageOpenNow(GarageEntity garage) {
+  try {
+    final now = TimeOfDay.now();
+    final nowMinutes = now.hour * 60 + now.minute;
+    final open = garage.heureOuverture.split(':');
+    final close = garage.heureFermeture.split(':');
+    final openMinutes = int.parse(open[0]) * 60 + int.parse(open[1]);
+    final closeMinutes = int.parse(close[0]) * 60 + int.parse(close[1]);
+    return nowMinutes >= openMinutes && nowMinutes < closeMinutes;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Shared with the map's garage preview sheet.
+Future<void> launchExternalUrl(String url) async {
+  final uri = Uri.parse(url);
+  if (await canLaunchUrl(uri)) await launchUrl(uri);
+}
+
 class GarageDetails extends StatelessWidget {
   final GarageEntity garage;
   const GarageDetails({super.key, required this.garage});
 
-  Future<void> _launch(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) await launchUrl(uri);
-  }
-
-  /// Parses "HH:mm" against the current time — best-effort, defaults to
-  /// null (hidden badge) rather than guessing on a malformed value.
-  bool? _isOpenNow() {
-    try {
-      final now = TimeOfDay.now();
-      final nowMinutes = now.hour * 60 + now.minute;
-      final open = garage.heureOuverture.split(':');
-      final close = garage.heureFermeture.split(':');
-      final openMinutes = int.parse(open[0]) * 60 + int.parse(open[1]);
-      final closeMinutes = int.parse(close[0]) * 60 + int.parse(close[1]);
-      return nowMinutes >= openMinutes && nowMinutes < closeMinutes;
-    } catch (_) {
-      return null;
-    }
-  }
+  Future<void> _launch(String url) => launchExternalUrl(url);
 
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-    final photoUrls = _displayableMediaUrls(garage.medias);
-    final isOpen = _isOpenNow();
+    final photoUrls = displayableMediaUrls(garage.medias);
+    final isOpen = isGarageOpenNow(garage);
     final hasPhone2 = garage.telephone2.isNotEmpty && garage.telephone2 != 'none';
 
     return Scaffold(
