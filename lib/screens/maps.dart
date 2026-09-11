@@ -178,6 +178,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     // Default center: Yaoundé, Cameroon
     final center = _currentPosition ?? const LatLng(3.848, 11.502);
 
+    // The drawer should open tall — stopping right under the search bar, not
+    // partway down the map — so its max (and default) size is computed as a
+    // fraction of the screen instead of a fixed guess like 0.85.
+    final screenHeight = MediaQuery.of(context).size.height;
+    final searchBarBlockHeight = MediaQuery.of(context).padding.top + 80;
+    final maxSheetSize =
+        (1 - (searchBarBlockHeight / screenHeight)).clamp(0.5, 0.95);
+
     return Scaffold(
       backgroundColor: colorScheme.surface,
       body: Stack(
@@ -329,9 +337,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           if (_searching)
             DraggableScrollableSheet(
               controller: _sheetController,
-              initialChildSize: 0.35,
+              initialChildSize: maxSheetSize,
               minChildSize: 0.15,
-              maxChildSize: 0.85,
+              maxChildSize: maxSheetSize,
               builder: (context, scrollController) {
                 return Container(
                   decoration: BoxDecoration(
