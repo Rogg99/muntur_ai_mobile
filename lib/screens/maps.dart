@@ -415,49 +415,32 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             ),
 
           // ─── Single-garage details preview — replaces the results drawer
-          // once a row's tapped, half-open, until a new search or dismissed ───
+          // once a row's tapped, half-open, until a new search or dismissed —
+          // the same full GarageDetailView the pushed-page details screen
+          // uses, not just a compact summary ───
           if (_detailsGarage != null)
             DraggableScrollableSheet(
               initialChildSize: maxSheetSize / 2,
               minChildSize: 0.15,
               maxChildSize: maxSheetSize,
               builder: (context, scrollController) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: colorScheme.surface,
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(20)),
-                    boxShadow: const [
-                      BoxShadow(color: Colors.black26, blurRadius: 10)
-                    ],
-                  ),
-                  child: ListView(
-                    controller: scrollController,
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Center(
-                              child: Container(
-                                width: 36,
-                                height: 4,
-                                margin: const EdgeInsets.only(bottom: 16),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.outlineVariant,
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      _garagePreviewContent(
-                        context,
-                        _detailsGarage!,
-                        onSeeDetails: () => _goToGarageDetails(_detailsGarage!),
-                      ),
-                    ],
+                return ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: colorScheme.surface,
+                      boxShadow: const [
+                        BoxShadow(color: Colors.black26, blurRadius: 10)
+                      ],
+                    ),
+                    child: GarageDetailView(
+                      garage: _detailsGarage!,
+                      scrollController: scrollController,
+                      leadingIcon: Icons.keyboard_arrow_down,
+                      onLeadingPressed: () =>
+                          setState(() => _detailsGarage = null),
+                    ),
                   ),
                 );
               },
