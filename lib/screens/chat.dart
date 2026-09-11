@@ -227,6 +227,35 @@ class _ChatViewState extends ConsumerState<ChatView> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
   }
 
+  Future<void> _sendSuggestion(String text) async {
+    if (_sending || _hasBlockingAttachment) return;
+    _messageController.text = text;
+    await _handleSend();
+  }
+
+  Widget _buildSuggestions(BuildContext context) {
+    final translator = AppLocalizations.of(context)!;
+    final suggestions = [
+      translator.suggestionCarStalls,
+      translator.suggestionEngineLight,
+      translator.suggestionOilChange,
+    ];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 8,
+        runSpacing: 8,
+        children: suggestions
+            .map((text) => _SuggestionChip(
+                  text: text,
+                  onTap: () => _sendSuggestion(text),
+                ))
+            .toList(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final translator = AppLocalizations.of(context)!;
@@ -295,7 +324,16 @@ class _ChatViewState extends ConsumerState<ChatView> {
     }
 
     if (messages.isEmpty) {
-      return Center(child: MessageWidget2(message: UIMessage(), head: true));
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MessageWidget2(message: UIMessage(), head: true),
+            const SizedBox(height: 8),
+            _buildSuggestions(context),
+          ],
+        ),
+      );
     }
 
     return RefreshIndicator(
@@ -624,6 +662,37 @@ class _TypingBubbleState extends State<_TypingBubble>
               }),
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+/// A tappable pill offering a canned question, shown under the empty-state
+/// welcome message so a new discussion has a one-tap on-ramp instead of a
+/// blank composer.
+class _SuggestionChip extends StatelessWidget {
+  const _SuggestionChip({required this.text, required this.onTap});
+
+  final String text;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: colorScheme.outlineVariant),
+        ),
+        child: Text(
+          text,
+          style: AppStyle.of(context).H6(color: colorScheme.onSurface),
         ),
       ),
     );

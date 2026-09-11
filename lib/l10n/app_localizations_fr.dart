@@ -1435,6 +1435,15 @@ class AppLocalizationsFr extends AppLocalizations {
       'Commencez une nouvelle discussion avec Autosynx, posez-moi toutes les questions que vous voulez !';
 
   @override
+  String get suggestionCarStalls => 'Ma voiture cale';
+
+  @override
+  String get suggestionEngineLight => 'Voyant moteur allumé';
+
+  @override
+  String get suggestionOilChange => 'Vidange';
+
+  @override
   String get onboarding_skip => 'Passer';
 
   @override

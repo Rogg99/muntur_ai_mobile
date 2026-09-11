@@ -1424,6 +1424,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Start a new discussion with Autosynx,Ask me any question you want !';
 
   @override
+  String get suggestionCarStalls => 'My car keeps stalling';
+
+  @override
+  String get suggestionEngineLight => 'Engine light is on';
+
+  @override
+  String get suggestionOilChange => 'Oil change';
+
+  @override
   String get onboarding_skip => 'Skip';
 
   @override

@@ -2828,6 +2828,24 @@ abstract class AppLocalizations {
   /// **'Start a new discussion with Autosynx,Ask me any question you want !'**
   String get chatWelcome;
 
+  /// No description provided for @suggestionCarStalls.
+  ///
+  /// In en, this message translates to:
+  /// **'My car keeps stalling'**
+  String get suggestionCarStalls;
+
+  /// No description provided for @suggestionEngineLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine light is on'**
+  String get suggestionEngineLight;
+
+  /// No description provided for @suggestionOilChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Oil change'**
+  String get suggestionOilChange;
+
   /// No description provided for @onboarding_skip.
   ///
   /// In en, this message translates to:
