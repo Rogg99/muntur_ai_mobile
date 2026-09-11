@@ -24,6 +24,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   LatLng? _currentPosition;
   bool _searching = false;
   String? _fittedForQuery;
+  // Set when a search-result row is tapped — replaces the results drawer
+  // with a half-open details preview for that one garage, until a new
+  // search starts or it's dismissed.
+  GarageEntity? _detailsGarage;
 
   @override
   void initState() {
@@ -39,7 +43,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   void _onSearchChanged(String value) {
-    setState(() => _searching = value.isNotEmpty);
+    setState(() {
+      _searching = value.isNotEmpty;
+      // A new search replaces whatever single-garage preview was open and
+      // brings the full results drawer back.
+      if (value.isNotEmpty) _detailsGarage = null;
+    });
     if (value.isEmpty) {
       _fittedForQuery = null;
       return;
@@ -53,7 +62,21 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     setState(() {
       _searching = false;
       _fittedForQuery = null;
+      _detailsGarage = null;
     });
+  }
+
+  /// Search-result row tap: swap the results drawer for a half-open details
+  /// preview of that one garage, and center the map on it.
+  void _selectGarage(GarageEntity garage) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      _searching = false;
+      _detailsGarage = garage;
+    });
+    if (garage.latitude != 0.0 || garage.longitude != 0.0) {
+      _mapController.move(LatLng(garage.latitude, garage.longitude), 16.0);
+    }
   }
 
   /// Straight-line distance from the user's current position — the search
@@ -89,23 +112,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       context,
       MaterialPageRoute(builder: (_) => GarageDetails(garage: garage)),
     );
-  }
-
-  /// Collapses the results drawer down to its peek size and centers the map
-  /// on this one result, so the marker the user asked about is what they
-  /// actually see once the drawer's out of the way.
-  void _viewGarageOnMap(GarageEntity garage) {
-    FocusManager.instance.primaryFocus?.unfocus();
-    if (garage.latitude != 0.0 || garage.longitude != 0.0) {
-      _mapController.move(LatLng(garage.latitude, garage.longitude), 16.0);
-    }
-    if (_sheetController.isAttached) {
-      _sheetController.animateTo(
-        0.15,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
   }
 
   void _fitToResults(List<GarageEntity> results) {
@@ -393,8 +399,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                 return _SearchResultTile(
                                   garage: g,
                                   distanceKm: _distanceKm(g),
-                                  onTap: () => _goToGarageDetails(g),
-                                  onViewOnMap: () => _viewGarageOnMap(g),
+                                  onTap: () => _selectGarage(g),
                                   onDirections: () => launchExternalUrl(
                                       'https://www.google.com/maps/search/?api=1&query=${g.latitude},${g.longitude}'),
                                 );
@@ -408,22 +413,69 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 );
               },
             ),
+
+          // ─── Single-garage details preview — replaces the results drawer
+          // once a row's tapped, half-open, until a new search or dismissed ───
+          if (_detailsGarage != null)
+            DraggableScrollableSheet(
+              initialChildSize: maxSheetSize / 2,
+              minChildSize: 0.15,
+              maxChildSize: maxSheetSize,
+              builder: (context, scrollController) {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(20)),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.black26, blurRadius: 10)
+                    ],
+                  ),
+                  child: ListView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: Container(
+                                width: 36,
+                                height: 4,
+                                margin: const EdgeInsets.only(bottom: 16),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.outlineVariant,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      _garagePreviewContent(
+                        context,
+                        _detailsGarage!,
+                        onSeeDetails: () => _goToGarageDetails(_detailsGarage!),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
         ],
       ),
     );
   }
 
   void _showGarageSheet(BuildContext context, GarageEntity garage) {
-    final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-    final isOpen = isGarageOpenNow(garage);
 
     showModalBottomSheet(
       context: context,
       backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => SafeArea(
+      builder: (sheetContext) => SafeArea(
         top: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
@@ -443,124 +495,143 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   ),
                 ),
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: garage.photo.isNotEmpty
-                        ? Image.network(
-                            garage.photo,
-                            width: 64,
-                            height: 64,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              width: 64,
-                              height: 64,
-                              color: colorScheme.surfaceContainerHighest,
-                              child: const Icon(Icons.garage_outlined),
-                            ),
-                          )
-                        : Container(
-                            width: 64,
-                            height: 64,
-                            color: colorScheme.surfaceContainerHighest,
-                            child: const Icon(Icons.garage_outlined),
-                          ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(garage.nom, style: appStyle.H4(weight: 'bold')),
-                        const SizedBox(height: 2),
-                        Text('${garage.ville}, ${garage.pays}',
-                            style: appStyle.H6(
-                                color: colorScheme.onSurfaceVariant)),
-                        const SizedBox(height: 6),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.star_rounded,
-                                    size: 16, color: colorScheme.primary),
-                                const SizedBox(width: 2),
-                                Text(
-                                  garage.rating > 0
-                                      ? garage.rating.toStringAsFixed(1)
-                                      : '—',
-                                  style: appStyle.H6(weight: 'bold'),
-                                ),
-                              ],
-                            ),
-                            if (garage.distance > 0)
-                              Text('${garage.distance.toStringAsFixed(1)} km',
-                                  style: appStyle.H6()),
-                            if (isOpen != null)
-                              Text(
-                                isOpen ? 'Ouvert' : 'Fermé',
-                                style: appStyle.H6(
-                                  weight: 'bold',
-                                  color:
-                                      isOpen ? Colors.green : colorScheme.error,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              Row(
-                children: [
-                  if (garage.telephone1.isNotEmpty)
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () =>
-                            launchExternalUrl('tel:${garage.telephone1}'),
-                        icon: const Icon(Icons.call_outlined, size: 18),
-                        label: const Text('Appeler'),
-                      ),
-                    ),
-                  if (garage.telephone1.isNotEmpty &&
-                      (garage.latitude != 0.0 || garage.longitude != 0.0))
-                    const SizedBox(width: 10),
-                  if (garage.latitude != 0.0 || garage.longitude != 0.0)
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () => launchExternalUrl(
-                            'https://www.google.com/maps/search/?api=1&query=${garage.latitude},${garage.longitude}'),
-                        icon: const Icon(Icons.directions_outlined, size: 18),
-                        label: const Text('Itinéraire'),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => GarageDetails(garage: garage)),
-                    );
-                  },
-                  child: const Text('Voir la fiche complète'),
-                ),
+              _garagePreviewContent(
+                context,
+                garage,
+                onSeeDetails: () {
+                  Navigator.pop(sheetContext);
+                  _goToGarageDetails(garage);
+                },
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  /// Photo/name/rating/status + call/directions + "voir la fiche complète" —
+  /// shared by the marker-tap modal and the search-result details drawer so
+  /// the two previews stay identical instead of drifting apart.
+  Widget _garagePreviewContent(
+    BuildContext context,
+    GarageEntity garage, {
+    required VoidCallback onSeeDetails,
+  }) {
+    final appStyle = AppStyle.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final isOpen = isGarageOpenNow(garage);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: garage.photo.isNotEmpty
+                  ? Image.network(
+                      garage.photo,
+                      width: 64,
+                      height: 64,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 64,
+                        height: 64,
+                        color: colorScheme.surfaceContainerHighest,
+                        child: const Icon(Icons.garage_outlined),
+                      ),
+                    )
+                  : Container(
+                      width: 64,
+                      height: 64,
+                      color: colorScheme.surfaceContainerHighest,
+                      child: const Icon(Icons.garage_outlined),
+                    ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(garage.nom, style: appStyle.H4(weight: 'bold')),
+                  const SizedBox(height: 2),
+                  Text('${garage.ville}, ${garage.pays}',
+                      style: appStyle.H6(color: colorScheme.onSurfaceVariant)),
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.star_rounded,
+                              size: 16, color: colorScheme.primary),
+                          const SizedBox(width: 2),
+                          Text(
+                            garage.rating > 0
+                                ? garage.rating.toStringAsFixed(1)
+                                : '—',
+                            style: appStyle.H6(weight: 'bold'),
+                          ),
+                        ],
+                      ),
+                      if (garage.distance > 0)
+                        Text('${garage.distance.toStringAsFixed(1)} km',
+                            style: appStyle.H6()),
+                      if (isOpen != null)
+                        Text(
+                          isOpen ? 'Ouvert' : 'Fermé',
+                          style: appStyle.H6(
+                            weight: 'bold',
+                            color: isOpen ? Colors.green : colorScheme.error,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
+        Row(
+          children: [
+            if (garage.telephone1.isNotEmpty)
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () =>
+                      launchExternalUrl('tel:${garage.telephone1}'),
+                  icon: const Icon(Icons.call_outlined, size: 18),
+                  label: const Text('Appeler'),
+                ),
+              ),
+            if (garage.telephone1.isNotEmpty &&
+                (garage.latitude != 0.0 || garage.longitude != 0.0))
+              const SizedBox(width: 10),
+            if (garage.latitude != 0.0 || garage.longitude != 0.0)
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => launchExternalUrl(
+                      'https://www.google.com/maps/search/?api=1&query=${garage.latitude},${garage.longitude}'),
+                  icon: const Icon(Icons.directions_outlined, size: 18),
+                  label: const Text('Itinéraire'),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: onSeeDetails,
+            child: const Text('Voir la fiche complète'),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -572,13 +643,11 @@ class _SearchResultTile extends StatelessWidget {
   final GarageEntity garage;
   final double? distanceKm;
   final VoidCallback onTap;
-  final VoidCallback onViewOnMap;
   final VoidCallback onDirections;
   const _SearchResultTile({
     required this.garage,
     required this.distanceKm,
     required this.onTap,
-    required this.onViewOnMap,
     required this.onDirections,
   });
 
@@ -682,14 +751,6 @@ class _SearchResultTile extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
           child: Row(
             children: [
-              Expanded(
-                child: TextButton.icon(
-                  onPressed: onViewOnMap,
-                  icon: const Icon(Icons.map_outlined, size: 18),
-                  label: const Text('Voir sur la carte'),
-                ),
-              ),
-              const SizedBox(width: 4),
               Expanded(
                 child: TextButton.icon(
                   onPressed: onDirections,
