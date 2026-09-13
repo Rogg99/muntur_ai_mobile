@@ -75,7 +75,7 @@ class ProfileState extends ConsumerState<Profile>
 
   Widget _buildBody(
     BuildContext context,
-    dynamic appStyle,
+    AppStyle appStyle,
     AppLocalizations translator,
     ColorScheme colorScheme,
     UserEntity user,
