@@ -11,6 +11,8 @@ import 'package:munturai/screens/about.dart';
 import 'package:munturai/screens/cgu.dart';
 import 'package:munturai/screens/help.dart';
 import 'package:munturai/screens/login.dart';
+import 'package:munturai/screens/marketplace_home.dart';
+import 'package:munturai/screens/marketplace_orders.dart';
 import 'package:munturai/screens/privacy_policy.dart';
 
 import '../core/fonctions.dart';
@@ -133,6 +135,18 @@ class Settings extends ConsumerWidget {
               label: translator.coins,
               onTap: () => Navigator.push(
                   context, MaterialPageRoute(builder: (_) => Coins())),
+            ),
+            _SettingsTile(
+              icon: CupertinoIcons.bag,
+              label: 'Marketplace',
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const MarketplaceHome())),
+            ),
+            _SettingsTile(
+              icon: CupertinoIcons.cart,
+              label: 'Mes commandes',
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const MarketplaceOrders())),
             ),
             _SettingsTile(
               icon: CupertinoIcons.question,
