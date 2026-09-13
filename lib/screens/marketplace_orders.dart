@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/marketplace/data/models/marketplace_models.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
+import 'package:munturai/screens/marketplace_order_tracking.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
 const Map<String, String> _statusLabels = {
@@ -25,9 +26,8 @@ const Map<String, Color> _statusColors = {
   'disputed': Colors.red,
 };
 
-/// Buyer's marketplace order history — read-only. No detail drill-down yet:
-/// the PIN/delivery/return actions that would live there depend on phase 3b
-/// (payment), not shipped.
+/// Buyer's marketplace order history — tap an order for its tracking
+/// screen (status, PIN reveal, return action).
 class MarketplaceOrders extends ConsumerWidget {
   const MarketplaceOrders({super.key});
 
@@ -77,7 +77,13 @@ class _OrderTile extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final statusColor = _statusColors[order.status] ?? Colors.grey;
 
-    return Container(
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => MarketplaceOrderTracking(orderId: order.id)),
+      ),
+      child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainer,
@@ -113,6 +119,7 @@ class _OrderTile extends StatelessWidget {
             style: appStyle.H6(color: Colors.grey),
           ),
         ],
+      ),
       ),
     );
   }

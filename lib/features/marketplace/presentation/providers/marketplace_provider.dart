@@ -38,6 +38,11 @@ final marketplaceMyOrdersProvider = FutureProvider.autoDispose<List<MarketplaceO
   return ref.read(marketplaceRepositoryProvider).getMyOrders();
 });
 
+final marketplaceOrderDetailProvider =
+    FutureProvider.autoDispose.family<MarketplaceOrder, int>((ref, id) {
+  return ref.read(marketplaceRepositoryProvider).getOrderDetail(id);
+});
+
 /// Null when this account has no vendor storefront yet.
 final marketplaceMyVendorProvider = FutureProvider.autoDispose<VendorProfile?>((ref) {
   return ref.read(marketplaceRepositoryProvider).getMyVendorProfile();

@@ -9,6 +9,18 @@ import '../models/marketplace_models.dart';
 /// buyer's own order history — the stable endpoints from a4's commit
 /// 14344ce. Checkout/pay/PIN/return are intentionally not wired here yet
 /// (phase 3b, not shipped) per muntur-ai-9c's direction.
+/// Rethrows a DioException carrying the backend's `{"detail": "..."}` body
+/// (pay/confirm-delivery/return all reply this way on 4xx/502) as a plain
+/// Exception with that message, instead of Dio's verbose default toString.
+Future<T> _withCleanError<T>(Future<T> Function() call) async {
+  try {
+    return await call();
+  } on DioException catch (e) {
+    final detail = e.response?.data is Map ? e.response?.data['detail'] : null;
+    throw Exception(detail?.toString() ?? 'La requête a échoué.');
+  }
+}
+
 class MarketplaceRepositoryImpl {
   final ApiClient _apiClient;
 
@@ -57,6 +69,52 @@ class MarketplaceRepositoryImpl {
         .whereType<Map>()
         .map((j) => MarketplaceOrder.fromJson(j.cast<String, dynamic>()))
         .toList();
+  }
+
+  // ─────────────────────── ORDERS (buyer checkout / tracking) ───────────
+
+  Future<MarketplaceOrder> getOrderDetail(int id) async {
+    final response = await _apiClient.get('/marketplace/orders/$id/');
+    final raw = response.data['data'] ?? response.data;
+    return MarketplaceOrder.fromJson((raw as Map).cast<String, dynamic>());
+  }
+
+  Future<MarketplaceOrder> createOrder({
+    required int partId,
+    required int quantity,
+    Map<String, dynamic> deliveryAddress = const {},
+  }) {
+    return _withCleanError(() async {
+      final response = await _apiClient.post('/marketplace/orders/', data: {
+        'listing': partId,
+        'quantity': quantity,
+        'delivery_address': deliveryAddress,
+      });
+      final raw = response.data['data'] ?? response.data;
+      return MarketplaceOrder.fromJson((raw as Map).cast<String, dynamic>());
+    });
+  }
+
+  /// Starts the Campay collect prompt on [phone]. The order stays
+  /// 'pending_payment' until Campay's webhook confirms it — this call only
+  /// triggers the mobile money prompt, it doesn't wait for the result.
+  Future<void> payOrder(int orderId, String phone) {
+    return _withCleanError(() => _apiClient
+        .post('/marketplace/orders/$orderId/pay/', data: {'phone': phone}));
+  }
+
+  /// Vendor-side: redeems the buyer's PIN and starts the 95% payout.
+  Future<void> confirmDelivery(int orderId, String pin) {
+    return _withCleanError(() => _apiClient
+        .post('/marketplace/orders/$orderId/confirm-delivery/', data: {'pin': pin}));
+  }
+
+  /// Buyer-side: only valid before the PIN is redeemed and within the 48h
+  /// return window. [phone] defaults server-side to the phone paid from.
+  Future<void> returnOrder(int orderId, {String? phone}) {
+    return _withCleanError(() => _apiClient.post(
+        '/marketplace/orders/$orderId/return/',
+        data: phone != null ? {'phone': phone} : {}));
   }
 
   // ─────────────────────── VENDOR (own storefront) ───────────────────────

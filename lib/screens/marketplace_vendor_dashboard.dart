@@ -219,13 +219,53 @@ class _CatalogTile extends ConsumerWidget {
   }
 }
 
-class _ReceivedOrderTile extends StatelessWidget {
+class _ReceivedOrderTile extends ConsumerWidget {
   const _ReceivedOrderTile({required this.order});
 
   final MarketplaceOrder order;
 
+  Future<void> _confirmDeliveryDialog(BuildContext context, WidgetRef ref) async {
+    final pinController = TextEditingController();
+    final pin = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Confirmer la livraison'),
+        content: TextField(
+          controller: pinController,
+          keyboardType: TextInputType.number,
+          maxLength: 4,
+          decoration: const InputDecoration(labelText: 'Code PIN du client'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, pinController.text.trim()),
+            child: const Text('Valider'),
+          ),
+        ],
+      ),
+    );
+    pinController.dispose();
+    if (pin == null || pin.isEmpty) return;
+    try {
+      await ref.read(marketplaceRepositoryProvider).confirmDelivery(order.id, pin);
+      ref.invalidate(marketplaceVendorDashboardProvider);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Livraison confirmée, versement en cours.')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        );
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -248,6 +288,13 @@ class _ReceivedOrderTile extends StatelessWidget {
           const SizedBox(height: 4),
           Text(_statusLabels[order.status] ?? order.status,
               style: appStyle.H6(color: colorScheme.primary)),
+          if (order.status == 'escrow_held') ...[
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed: () => _confirmDeliveryDialog(context, ref),
+              child: const Text('Confirmer livraison (PIN)'),
+            ),
+          ],
         ],
       ),
     );

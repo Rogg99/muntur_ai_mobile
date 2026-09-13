@@ -125,6 +125,11 @@ class MarketplaceOrder {
   final String currency;
   final String status;
   final String dateCreation;
+  // Only ever non-null for the buyer's own request (server-side check on
+  // request.user) — null for a vendor viewing the same order, and null
+  // before the order reaches escrow_held.
+  final String? deliveryPinReveal;
+  final String? returnWindowExpiresAt;
 
   const MarketplaceOrder({
     required this.id,
@@ -136,6 +141,8 @@ class MarketplaceOrder {
     this.currency = 'XAF',
     this.status = 'pending_payment',
     this.dateCreation = '',
+    this.deliveryPinReveal,
+    this.returnWindowExpiresAt,
   });
 
   factory MarketplaceOrder.fromJson(Map<String, dynamic> json) =>
@@ -153,6 +160,8 @@ class MarketplaceOrder {
         currency: json['currency']?.toString() ?? 'XAF',
         status: json['status']?.toString() ?? 'pending_payment',
         dateCreation: json['date_creation']?.toString() ?? '',
+        deliveryPinReveal: json['delivery_pin_reveal']?.toString(),
+        returnWindowExpiresAt: json['return_window_expires_at']?.toString(),
       );
 }
 

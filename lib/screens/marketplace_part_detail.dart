@@ -3,12 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/network/api_client.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
+import 'package:munturai/screens/marketplace_checkout.dart';
 import 'package:munturai/screens/marketplace_vendor.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
-/// Read-only part detail — "Acheter" is disabled until checkout/escrow
-/// (phase 3b) ships; wiring it now would mean redoing the flow once the
-/// real payment contract lands.
+/// Part detail with the escrow checkout entry point (phase 3b, Campay).
 class MarketplacePartDetail extends ConsumerWidget {
   const MarketplacePartDetail({super.key, required this.partId});
 
@@ -125,17 +124,21 @@ class MarketplacePartDetail extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text(
-                            'Achat avec escrow bientôt disponible sur cette pièce.')),
-                  ),
+                  onPressed: part.stockQuantity < 1
+                      ? null
+                      : () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => MarketplaceCheckout(part: part)),
+                          ),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    backgroundColor: colorScheme.surfaceContainerHighest,
-                    foregroundColor: colorScheme.onSurfaceVariant,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                   ),
-                  child: const Text('Acheter avec Escrow Protégé — bientôt disponible'),
+                  child: Text(part.stockQuantity < 1
+                      ? 'Rupture de stock'
+                      : 'Acheter avec Escrow Protégé'),
                 ),
               ),
             ],
