@@ -9,8 +9,7 @@ import 'package:munturai/features/garages/presentation/providers/garage_provider
 import 'package:munturai/screens/garage.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
-  final bool? buttonPressed;
-  const MapScreen({super.key, this.buttonPressed});
+  const MapScreen({super.key});
 
   @override
   ConsumerState<MapScreen> createState() => _MapScreenState();
@@ -166,10 +165,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final appStyle = AppStyle.of(context);
     final garagesAsync = ref.watch(garagesAroundProvider());
     final searchAsync = ref.watch(garageSearchProvider);
-    final buttonPressed = widget.buttonPressed ?? false;
-    if (buttonPressed) {
-      _centerUser();
-    }
 
     // Fits the camera to the results once per new result set — not on every
     // rebuild the same data causes, which would fight any panning/zooming
@@ -287,6 +282,25 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       Text('Chargement des garages…', style: appStyle.H6()),
                     ],
                   ),
+                ),
+              ),
+            ),
+
+          // ─── Recenter-on-me button — was a HomeScreen appBar action
+          // ("Ma position") before that appBar got trimmed down to just
+          // title/settings/notifications; this is where the action
+          // actually applies, so it moved into this screen's own body ───
+          if (!_searching && _detailsGarage == null)
+            Positioned(
+              right: 16,
+              bottom: 16,
+              child: SafeArea(
+                child: FloatingActionButton.small(
+                  heroTag: 'recenter',
+                  backgroundColor: colorScheme.surface,
+                  foregroundColor: colorScheme.primary,
+                  onPressed: _centerUser,
+                  child: const Icon(Icons.my_location),
                 ),
               ),
             ),

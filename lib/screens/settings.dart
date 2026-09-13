@@ -11,6 +11,8 @@ import 'package:munturai/screens/about.dart';
 import 'package:munturai/screens/cgu.dart';
 import 'package:munturai/screens/help.dart';
 import 'package:munturai/screens/login.dart';
+import 'package:munturai/screens/marketplace_orders.dart';
+import 'package:munturai/screens/marketplace_vendor_dashboard.dart';
 import 'package:munturai/screens/privacy_policy.dart';
 
 import '../core/fonctions.dart';
@@ -31,6 +33,20 @@ class Settings extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
+      // Settings is a pushed screen (moved out of the bottom-nav tabs so the
+      // 5 main tabs' app bars stay to just title+settings+notifications) —
+      // it needs its own back arrow, unlike when it lived in HomeScreen's
+      // IndexedStack under the shared outer app bar.
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: Text(translator.settings_title, style: appStyle.H3()),
+      ),
       body: userAsync.when(
         loading: () => Center(
             child: CircularProgressIndicator(color: colorScheme.primary)),
@@ -38,7 +54,7 @@ class Settings extends ConsumerWidget {
         data: (user) => ListView(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           children: [
-            const SizedBox(height: 60),
+            const SizedBox(height: 20),
 
             // ─── Avatar + Nom ───
             Center(
@@ -135,6 +151,20 @@ class Settings extends ConsumerWidget {
                   context, MaterialPageRoute(builder: (_) => Coins())),
             ),
             _SettingsTile(
+              icon: CupertinoIcons.cart,
+              label: 'Mes commandes',
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const MarketplaceOrders())),
+            ),
+            _SettingsTile(
+              icon: CupertinoIcons.shopping_cart,
+              label: 'Ma boutique',
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const MarketplaceVendorDashboard())),
+            ),
+            _SettingsTile(
               icon: CupertinoIcons.question,
               label: translator.help,
               onTap: () => Navigator.push(
@@ -153,16 +183,16 @@ class Settings extends ConsumerWidget {
                   MaterialPageRoute(builder: (_) => const PrivacyPolicy())),
             ),
             _SettingsTile(
-              icon: CupertinoIcons.arrowshape_turn_up_right,
-              label: translator.logout,
-              color: Colors.redAccent,
-              onTap: () => _confirmLogout(context, ref, translator),
-            ),
-            _SettingsTile(
               icon: CupertinoIcons.heart_circle_fill,
               label: translator.about,
               onTap: () => Navigator.push(
                   context, MaterialPageRoute(builder: (_) => About())),
+            ),
+            _SettingsTile(
+              icon: CupertinoIcons.arrowshape_turn_up_right,
+              label: translator.logout,
+              color: Colors.redAccent,
+              onTap: () => _confirmLogout(context, ref, translator),
             ),
             const SizedBox(height: 30),
           ],

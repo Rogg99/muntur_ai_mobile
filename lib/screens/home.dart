@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,8 +12,6 @@ import 'package:munturai/screens/chat.dart';
 import 'package:munturai/features/notifications/presentation/providers/notification_provider.dart';
 import 'package:munturai/screens/maps.dart';
 import 'package:munturai/screens/marketplace_home.dart';
-import 'package:munturai/screens/marketplace_orders.dart';
-import 'package:munturai/screens/marketplace_vendor_dashboard.dart';
 import 'package:munturai/screens/notifications.dart';
 import 'package:munturai/screens/settings.dart';
 import 'package:munturai/utils/sized_extension.dart';
@@ -35,7 +31,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     with TickerProviderStateMixin {
   int _selectedIndex = 0;
   bool _firstClick = false;
-  bool _centerUser = false;
 
   // ─── Retour physique ──────────────────────────────────────────────────────
 
@@ -74,10 +69,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final titles = [
       translator.homeTitle,
       translator.searchTitle,
+      'Marketplace',
       translator.newsTitle,
       translator.forumsTitle,
-      'Marketplace',
-      translator.settings_title,
     ];
 
     // ── Unread count depuis notificationsListProvider ──────────────────
@@ -86,24 +80,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         notifAsync.valueOrNull?.where((n) => !n.isRead).length ?? 0;
 
     // ── Onglets ────────────────────────────────────────────────────────
+    // Settings is no longer a tab — pushed from the appBar's settings icon
+    // instead, so the 5 tabs' shared app bar stays to just
+    // title + settings + notifications (see appBar actions below).
     final tabs = <Widget>[
       // Tab 0 — Discussions IA
       _DiscussionsTab(),
 
       // Tab 1 — Carte / Garages (MapScreen déjà Riverpod)
-      MapScreen(buttonPressed: _centerUser),
+      const MapScreen(),
 
-      // Tab 2 — Actualités (Infos ConsumerWidget newsListProvider)
-      const Infos(),
-
-      // Tab 3 — Forums
-      _ForumsTab(),
-
-      // Tab 4 — Marketplace
+      // Tab 2 — Marketplace
       const MarketplaceHome(embedded: true),
 
-      // Tab 5 — Paramètres
-      const Settings(),
+      // Tab 3 — Actualités (Infos ConsumerWidget newsListProvider)
+      const Infos(),
+
+      // Tab 4 — Forums
+      _ForumsTab(),
     ];
 
     // ── Scaffold ───────────────────────────────────────────────────────
@@ -130,39 +124,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               style: appStyle.H3(),
             ),
           ),
+          // Kept to exactly 3 elements — title (above) + settings +
+          // notifications — on every one of the 5 tab screens. Anything
+          // that used to live here as a per-tab shortcut (map recenter,
+          // marketplace order/shop shortcuts) moved into Settings or into
+          // the tab's own body instead (see MapScreen's recenter FAB).
           actions: [
-            _selectedIndex == 1
-                ? IconButton(
-                    icon: const Icon(Icons.my_location),
-                    tooltip: 'Ma position',
-                    onPressed: () {
-                      setState(() {
-                        _centerUser = true;
-                        Timer(const Duration(milliseconds: 100), () {
-                          setState(() {
-                            _centerUser = false;
-                          });
-                        });
-                      });
-                    },
-                  )
-                : SizedBox(),
-            if (_selectedIndex == 4) ...[
-              IconButton(
-                icon: const Icon(Icons.receipt_long_outlined),
-                tooltip: 'Mes commandes',
-                onPressed: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const MarketplaceOrders())),
-              ),
-              IconButton(
-                icon: const Icon(Icons.storefront_outlined),
-                tooltip: 'Ma boutique',
-                onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const MarketplaceVendorDashboard())),
-              ),
-            ],
+            IconButton(
+              icon: const Icon(Icons.settings_outlined),
+              tooltip: translator.settings_title,
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => const Settings())),
+            ),
             Padding(
               padding: EdgeInsets.only(right: Dimens.padding.w),
               child: GestureDetector(
@@ -225,17 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             NavigationDestination(
               icon: _navIcon(ImageConstant.navMapOutline, colorScheme.onSurfaceVariant),
               selectedIcon: _navIcon(ImageConstant.navMapFilled, colorScheme.primary),
-              label: 'Carte',
-            ),
-            NavigationDestination(
-              icon: _navIcon(ImageConstant.navNewsOutline, colorScheme.onSurfaceVariant),
-              selectedIcon: _navIcon(ImageConstant.navNewsFilled, colorScheme.primary),
-              label: 'News',
-            ),
-            NavigationDestination(
-              icon: _navIcon(ImageConstant.navForumOutline, colorScheme.onSurfaceVariant),
-              selectedIcon: _navIcon(ImageConstant.navForumFilled, colorScheme.primary),
-              label: 'Forums',
+              label: 'Search',
             ),
             NavigationDestination(
               // No custom SVG asset for this one yet (see nav_*.svg vs the
@@ -247,9 +210,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               label: 'Marketplace',
             ),
             NavigationDestination(
-              icon: _navIcon(ImageConstant.navSettingsOutline, colorScheme.onSurfaceVariant),
-              selectedIcon: _navIcon(ImageConstant.navSettingsFilled, colorScheme.primary),
-              label: 'Paramètres',
+              icon: _navIcon(ImageConstant.navNewsOutline, colorScheme.onSurfaceVariant),
+              selectedIcon: _navIcon(ImageConstant.navNewsFilled, colorScheme.primary),
+              label: 'News',
+            ),
+            NavigationDestination(
+              icon: _navIcon(ImageConstant.navForumOutline, colorScheme.onSurfaceVariant),
+              selectedIcon: _navIcon(ImageConstant.navForumFilled, colorScheme.primary),
+              label: 'Forums',
             ),
           ],
         ),
