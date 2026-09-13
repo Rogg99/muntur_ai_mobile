@@ -31,6 +31,15 @@ class MessageModel {
   bool pendingSync = false;
   DateTime dateEnvoi = DateTime.now();
 
+  /// JSON-encoded `{id, title, media, link}` map, or 'null' when the backend
+  /// found no relevant match (keyword-based, not systematic — see
+  /// services/related_article.py server-side).
+  String relatedArticle = 'null';
+
+  /// The current user's own feedback on this (AI) message: 'useful' /
+  /// 'not_useful' / 'none'. Drives which thumb renders as active.
+  String userFeedback = 'none';
+
   MessageModel();
 
   static MessageModel create({
@@ -50,6 +59,8 @@ class MessageModel {
     bool isAI = false,
     bool pendingSync = false,
     required DateTime dateEnvoi,
+    String relatedArticle = 'null',
+    String userFeedback = 'none',
   }) {
     final m = MessageModel();
     m.id = id;
@@ -68,6 +79,8 @@ class MessageModel {
     m.isAI = isAI;
     m.pendingSync = pendingSync;
     m.dateEnvoi = dateEnvoi;
+    m.relatedArticle = relatedArticle;
+    m.userFeedback = userFeedback;
     return m;
   }
 
@@ -114,6 +127,15 @@ class MessageModel {
     return json['emetteurPhoto'] ?? json['senderPhoto'] ?? 'none';
   }
 
+  /// The related-article suggestion arrives as a nested object (or null) —
+  /// re-encoded to a string so it fits the same flat Isar schema as the rest
+  /// of this model, mirroring _encodeMedia's approach.
+  static String _encodeRelatedArticle(Map<String, dynamic> json) {
+    final raw = json['related_article'];
+    if (raw is! Map) return 'null';
+    return jsonEncode(raw);
+  }
+
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel.create(
       id: json['id'] ?? 'auto_${DateTime.now().millisecondsSinceEpoch}',
@@ -134,6 +156,8 @@ class MessageModel {
       messageState: json['state'] ?? 'pending',
       isAI: json['isAI'] ?? false,
       pendingSync: json['pendingSync'] ?? false,
+      relatedArticle: _encodeRelatedArticle(json),
+      userFeedback: json['user_feedback']?.toString() ?? 'none',
       // The WS discussion_message/forum_message push and the raw
       // MessageSerializer/MessageReadSerializer payloads (fields='__all__')
       // date-stamp as "date_creation" — only the ask-question 202 echo uses
@@ -162,6 +186,8 @@ class MessageModel {
     bool? isAI,
     bool? pendingSync,
     DateTime? dateEnvoi,
+    String? relatedArticle,
+    String? userFeedback,
   }) {
     return MessageModel.create(
       id: id ?? this.id,
@@ -180,6 +206,8 @@ class MessageModel {
       isAI: isAI ?? this.isAI,
       pendingSync: pendingSync ?? this.pendingSync,
       dateEnvoi: dateEnvoi ?? this.dateEnvoi,
+      relatedArticle: relatedArticle ?? this.relatedArticle,
+      userFeedback: userFeedback ?? this.userFeedback,
     );
   }
 }

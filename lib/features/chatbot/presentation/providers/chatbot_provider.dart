@@ -314,4 +314,35 @@ class ChatMessages extends _$ChatMessages {
       // stays pending — SyncService will retry
     }
   }
+
+  /// Optimistically flips the thumb, then confirms with the backend —
+  /// reverts on failure so the UI never shows feedback that wasn't recorded.
+  Future<void> setMessageFeedback(String messageId, bool useful) async {
+    final current = state.value ?? [];
+    final index = current.indexWhere((m) => m.id == messageId);
+    if (index == -1) return;
+    final previous = current[index];
+    final optimistic = previous.copyWith(
+      userFeedback: useful ? 'useful' : 'not_useful',
+    );
+    state = AsyncValue.data([
+      for (final m in current) if (m.id == messageId) optimistic else m,
+    ]);
+
+    final ok = await ref
+        .read(chatbotRepositoryProvider)
+        .sendMessageFeedback(messageId, useful);
+
+    if (ok) {
+      final isar = IsarDb.instance;
+      await isar.writeTxn(() async {
+        await isar.messageModels.put(optimistic);
+      });
+    } else {
+      final reverted = state.value ?? [];
+      state = AsyncValue.data([
+        for (final m in reverted) if (m.id == messageId) previous else m,
+      ]);
+    }
+  }
 }

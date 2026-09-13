@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/model/message.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Parses a message's `media` field — a JSON-encoded list of
 /// `{id, file, kind}` maps (see MediaRef) — into displayable items. Returns
@@ -24,29 +25,35 @@ class MessageWidget2 extends StatefulWidget {
   UIMessage? message;
   bool sender;
   bool head;
+  /// Called with the chosen feedback (true=useful, false=not useful) when
+  /// the user taps a thumb. Only ever passed for AI messages.
+  final void Function(bool useful)? onFeedback;
   MessageWidget2({
     Key? key,
     required this.message,
     this.sender = true,
     this.head = false,
+    this.onFeedback,
   }) : super(
           key: key,
         );
 
   @override
-  State<MessageWidget2> createState() =>
-      MessageWidget2_(message: message, sender: sender, head: head);
+  State<MessageWidget2> createState() => MessageWidget2_(
+      message: message, sender: sender, head: head, onFeedback: onFeedback);
 }
 
 class MessageWidget2_ extends State<MessageWidget2> {
   UIMessage? message;
   bool sender;
   bool head;
+  final void Function(bool useful)? onFeedback;
 
   MessageWidget2_({
     required this.message,
     required this.sender,
     required this.head,
+    this.onFeedback,
   });
 
   Color _color = Colors.transparent;
@@ -181,6 +188,18 @@ class MessageWidget2_ extends State<MessageWidget2> {
                                       style: appStyle.H5(color: bubbleTextColor)),
                                 ),
                               ),
+                            ),
+                          if (message!.relatedArticle != 'null' &&
+                              message!.relatedArticle.trim().isNotEmpty)
+                            _RelatedArticleCard(
+                              raw: message!.relatedArticle,
+                              foreground: bubbleTextColor,
+                            ),
+                          if (onFeedback != null)
+                            _FeedbackRow(
+                              current: message!.userFeedback,
+                              foreground: bubbleTextColor,
+                              onFeedback: onFeedback!,
                             ),
                         ],
                       ),
@@ -335,6 +354,127 @@ class _UnsupportedAttachmentChip extends StatelessWidget {
         const SizedBox(width: 4),
         Text(kind, style: TextStyle(color: foreground, fontSize: 12)),
       ],
+    );
+  }
+}
+
+/// A small "en savoir plus" card for the AI reply's suggested article, if
+/// any. [raw] is the JSON-encoded `{id, title, media, link}` map (or absent
+/// fields) coming straight off MessageModel.relatedArticle.
+class _RelatedArticleCard extends StatelessWidget {
+  final String raw;
+  final Color foreground;
+
+  const _RelatedArticleCard({required this.raw, required this.foreground});
+
+  @override
+  Widget build(BuildContext context) {
+    Map<String, dynamic> article;
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) return const SizedBox.shrink();
+      article = decoded.cast<String, dynamic>();
+    } catch (_) {
+      return const SizedBox.shrink();
+    }
+    final title = article['title']?.toString() ?? '';
+    if (title.isEmpty) return const SizedBox.shrink();
+    final link = article['link']?.toString();
+    final media = article['media'];
+    final photoUrl = media is Map ? media['file']?.toString() : null;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: link == null || link.isEmpty
+            ? null
+            : () => launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: foreground.withValues(alpha: 0.2)),
+          ),
+          child: Row(
+            children: [
+              if (photoUrl != null && photoUrl.isNotEmpty)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.network(photoUrl,
+                      width: 40, height: 40, fit: BoxFit.cover),
+                ),
+              if (photoUrl != null && photoUrl.isNotEmpty)
+                const SizedBox(width: 8),
+              Icon(Icons.article_outlined, size: 18, color: foreground),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: foreground,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600),
+                ),
+              ),
+              Icon(Icons.chevron_right, size: 18, color: foreground),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Useful / not-useful thumbs for an AI reply. [current] is
+/// MessageModel.userFeedback ('useful' / 'not_useful' / 'none') and drives
+/// which thumb, if any, renders as active/filled.
+class _FeedbackRow extends StatelessWidget {
+  final String current;
+  final Color foreground;
+  final void Function(bool useful) onFeedback;
+
+  const _FeedbackRow({
+    required this.current,
+    required this.foreground,
+    required this.onFeedback,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isUseful = current == 'useful';
+    final isNotUseful = current == 'not_useful';
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            iconSize: 16,
+            visualDensity: VisualDensity.compact,
+            icon: Icon(
+              isUseful ? Icons.thumb_up : Icons.thumb_up_outlined,
+              color: foreground.withValues(alpha: isUseful ? 1 : 0.5),
+            ),
+            onPressed: () => onFeedback(true),
+          ),
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+            iconSize: 16,
+            visualDensity: VisualDensity.compact,
+            icon: Icon(
+              isNotUseful ? Icons.thumb_down : Icons.thumb_down_outlined,
+              color: foreground.withValues(alpha: isNotUseful ? 1 : 0.5),
+            ),
+            onPressed: () => onFeedback(false),
+          ),
+        ],
+      ),
     );
   }
 }

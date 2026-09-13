@@ -305,4 +305,17 @@ class ChatbotRepositoryImpl {
 
   Future<List<MessageModel>> getMessagesForForum(String forumId) =>
       _fetchMessages('/messages/forum/$forumId/messages/', forumId);
+
+  /// Idempotent — callable again to change one's mind. [useful] null clears
+  /// any prior feedback isn't supported server-side today, so callers only
+  /// ever pass true/false.
+  Future<bool> sendMessageFeedback(String messageId, bool useful) async {
+    try {
+      final response = await _apiClient
+          .post('/messages/$messageId/feedback/', data: {'useful': useful});
+      return response.statusCode == 200;
+    } catch (_) {
+      return false;
+    }
+  }
 }

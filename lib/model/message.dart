@@ -15,6 +15,9 @@ class UIMessage {
   String mediaName;
   String mediaSize;
   String date_envoi;
+  bool isAI;
+  String relatedArticle;
+  String userFeedback;
 
   UIMessage({
     this.id = "auto",
@@ -31,6 +34,9 @@ class UIMessage {
     this.media = "[]",
     this.state = 'pending', //pending,sent,received,read,failed
     this.date_envoi = "1970-01-01 00:00",
+    this.isAI = false,
+    this.relatedArticle = "null",
+    this.userFeedback = "none",
   });
 
   factory UIMessage.fromJson(Map<String, dynamic> json) {

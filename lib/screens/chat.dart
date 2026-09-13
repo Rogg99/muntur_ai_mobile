@@ -279,6 +279,9 @@ class _ChatViewState extends ConsumerState<ChatView> {
                 announced: m.announced,
                 state: m.messageState,
                 date_envoi: m.dateEnvoi.toIso8601String(),
+                isAI: m.isAI,
+                relatedArticle: m.relatedArticle,
+                userFeedback: m.userFeedback,
               ))
           .toList()
         ..sort((a, b) =>
@@ -354,6 +357,11 @@ class _ChatViewState extends ConsumerState<ChatView> {
               message: message,
               sender: message.emetteur == _userId,
               head: false,
+              onFeedback: message.isAI
+                  ? (useful) => ref
+                      .read(chatMessagesProvider(_discId).notifier)
+                      .setMessageFeedback(message.id, useful)
+                  : null,
             );
           },
         ),
