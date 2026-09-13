@@ -24,17 +24,17 @@ final marketplacePartsProvider =
 });
 
 final marketplacePartDetailProvider =
-    FutureProvider.autoDispose.family<PartListing?, int>((ref, id) {
+    FutureProvider.autoDispose.family<PartListing?, String>((ref, id) {
   return ref.read(marketplaceRepositoryProvider).getPartDetail(id);
 });
 
 final marketplaceVendorProvider =
-    FutureProvider.autoDispose.family<VendorProfile?, int>((ref, id) {
+    FutureProvider.autoDispose.family<VendorProfile?, String>((ref, id) {
   return ref.read(marketplaceRepositoryProvider).getVendor(id);
 });
 
 final marketplaceVendorListingsProvider =
-    FutureProvider.autoDispose.family<List<PartListing>, int>((ref, vendorId) {
+    FutureProvider.autoDispose.family<List<PartListing>, String>((ref, vendorId) {
   return ref.read(marketplaceRepositoryProvider).getVendorListings(vendorId);
 });
 
@@ -43,7 +43,7 @@ final marketplaceMyOrdersProvider = FutureProvider.autoDispose<List<MarketplaceO
 });
 
 final marketplaceOrderDetailProvider =
-    FutureProvider.autoDispose.family<MarketplaceOrder, int>((ref, id) {
+    FutureProvider.autoDispose.family<MarketplaceOrder, String>((ref, id) {
   return ref.read(marketplaceRepositoryProvider).getOrderDetail(id);
 });
 

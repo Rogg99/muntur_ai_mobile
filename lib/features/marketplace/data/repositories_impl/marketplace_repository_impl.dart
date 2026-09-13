@@ -38,14 +38,14 @@ class MarketplaceRepositoryImpl {
         .toList();
   }
 
-  Future<PartListing?> getPartDetail(int id) async {
+  Future<PartListing?> getPartDetail(String id) async {
     final response = await _apiClient.get('/marketplace/parts/$id/');
     final raw = response.data['data'] ?? response.data;
     if (raw is! Map) return null;
     return PartListing.fromJson(raw.cast<String, dynamic>());
   }
 
-  Future<VendorProfile?> getVendor(int id) async {
+  Future<VendorProfile?> getVendor(String id) async {
     final response = await _apiClient.get('/marketplace/vendors/$id/');
     final raw = response.data['data'] ?? response.data;
     if (raw is! Map) return null;
@@ -55,7 +55,7 @@ class MarketplaceRepositoryImpl {
   /// No `?vendor=` filter exists server-side yet, so a vendor's storefront
   /// catalog is the full active-parts list filtered client-side. Fine for a
   /// V1-sized catalog; revisit if this ever needs to scale to pagination.
-  Future<List<PartListing>> getVendorListings(int vendorId) async {
+  Future<List<PartListing>> getVendorListings(String vendorId) async {
     final all = await getParts();
     return all.where((p) => p.vendor.id == vendorId).toList();
   }
@@ -73,14 +73,14 @@ class MarketplaceRepositoryImpl {
 
   // ─────────────────────── ORDERS (buyer checkout / tracking) ───────────
 
-  Future<MarketplaceOrder> getOrderDetail(int id) async {
+  Future<MarketplaceOrder> getOrderDetail(String id) async {
     final response = await _apiClient.get('/marketplace/orders/$id/');
     final raw = response.data['data'] ?? response.data;
     return MarketplaceOrder.fromJson((raw as Map).cast<String, dynamic>());
   }
 
   Future<MarketplaceOrder> createOrder({
-    required int partId,
+    required String partId,
     required int quantity,
     Map<String, dynamic> deliveryAddress = const {},
   }) {
@@ -98,20 +98,20 @@ class MarketplaceRepositoryImpl {
   /// Starts the Campay collect prompt on [phone]. The order stays
   /// 'pending_payment' until Campay's webhook confirms it — this call only
   /// triggers the mobile money prompt, it doesn't wait for the result.
-  Future<void> payOrder(int orderId, String phone) {
+  Future<void> payOrder(String orderId, String phone) {
     return _withCleanError(() => _apiClient
         .post('/marketplace/orders/$orderId/pay/', data: {'phone': phone}));
   }
 
   /// Vendor-side: redeems the buyer's PIN and starts the 95% payout.
-  Future<void> confirmDelivery(int orderId, String pin) {
+  Future<void> confirmDelivery(String orderId, String pin) {
     return _withCleanError(() => _apiClient
         .post('/marketplace/orders/$orderId/confirm-delivery/', data: {'pin': pin}));
   }
 
   /// Buyer-side: only valid before the PIN is redeemed and within the 48h
   /// return window. [phone] defaults server-side to the phone paid from.
-  Future<void> returnOrder(int orderId, {String? phone}) {
+  Future<void> returnOrder(String orderId, {String? phone}) {
     return _withCleanError(() => _apiClient.post(
         '/marketplace/orders/$orderId/return/',
         data: phone != null ? {'phone': phone} : {}));
@@ -184,7 +184,7 @@ class MarketplaceRepositoryImpl {
   }
 
   Future<PartListing> updatePart({
-    required int id,
+    required String id,
     required String title,
     required String description,
     required String condition,
@@ -210,7 +210,7 @@ class MarketplaceRepositoryImpl {
     return PartListing.fromJson((raw as Map).cast<String, dynamic>());
   }
 
-  Future<void> deletePart(int id) async {
+  Future<void> deletePart(String id) async {
     await _apiClient.delete('/marketplace/parts/$id/');
   }
 }

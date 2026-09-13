@@ -6,7 +6,7 @@
 library;
 
 class VendorProfile {
-  final int id;
+  final String id;
   final String shopName;
   final bool verified;
   final bool pricePartyAgreed;
@@ -23,7 +23,9 @@ class VendorProfile {
   });
 
   factory VendorProfile.fromJson(Map<String, dynamic> json) => VendorProfile(
-        id: json['id'] as int,
+        // BaseInfoModel.id is a UUIDField, not an int — every model here
+        // (vendor/part/order) uses a UUID primary key, not a sequential int.
+        id: json['id'].toString(),
         shopName: json['shop_name']?.toString() ?? '',
         verified: json['verified'] == true,
         pricePartyAgreed: json['price_parity_agreed'] == true,
@@ -47,7 +49,7 @@ class MediaRefItem {
 }
 
 class PartListing {
-  final int id;
+  final String id;
   final VendorProfile vendor;
   final String title;
   final String description;
@@ -76,7 +78,7 @@ class PartListing {
   });
 
   factory PartListing.fromJson(Map<String, dynamic> json) => PartListing(
-        id: json['id'] as int,
+        id: json['id'].toString(),
         vendor: VendorProfile.fromJson(
             (json['vendor'] as Map).cast<String, dynamic>()),
         title: json['title']?.toString() ?? '',
@@ -116,7 +118,7 @@ class BuyerInfo {
 }
 
 class MarketplaceOrder {
-  final int id;
+  final String id;
   final BuyerInfo buyer;
   final PartListing listing;
   final VendorProfile vendor;
@@ -147,7 +149,7 @@ class MarketplaceOrder {
 
   factory MarketplaceOrder.fromJson(Map<String, dynamic> json) =>
       MarketplaceOrder(
-        id: json['id'] as int,
+        id: json['id'].toString(),
         buyer: json['buyer'] is Map
             ? BuyerInfo.fromJson((json['buyer'] as Map).cast<String, dynamic>())
             : const BuyerInfo(),

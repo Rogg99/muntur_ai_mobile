@@ -11,7 +11,7 @@ import 'package:munturai/widgets/CustomAppBar.dart';
 class MarketplaceVendor extends ConsumerWidget {
   const MarketplaceVendor({super.key, required this.vendorId});
 
-  final int vendorId;
+  final String vendorId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

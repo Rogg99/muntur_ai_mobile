@@ -27,7 +27,7 @@ const List<String> _terminalStatuses = ['completed', 'returned', 'cancelled', 'd
 class MarketplaceOrderTracking extends ConsumerStatefulWidget {
   const MarketplaceOrderTracking({super.key, required this.orderId});
 
-  final int orderId;
+  final String orderId;
 
   @override
   ConsumerState<MarketplaceOrderTracking> createState() =>
