@@ -1450,7 +1450,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboarding_chat_body =>
-      'Describe your car trouble or ask a question — MUNTUR AI answers, day and night.';
+      'Describe your car trouble or ask a question — Autosynx answers, day and night.';
 
   @override
   String get onboarding_community_title => 'Join the community';

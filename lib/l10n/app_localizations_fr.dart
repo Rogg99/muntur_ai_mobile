@@ -1461,7 +1461,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get onboarding_chat_body =>
-      'Décrivez votre panne ou posez votre question : MUNTUR AI vous répond, jour et nuit.';
+      'Décrivez votre panne ou posez votre question : Autosynx vous répond, jour et nuit.';
 
   @override
   String get onboarding_community_title => 'Rejoignez la communauté';

@@ -51,7 +51,7 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
                 );
           }
         }
-        _notify(_senderLabel(data, fallback: 'MUNTUR AI'), _messageBody(data));
+        _notify(_senderLabel(data, fallback: 'Autosynx'), _messageBody(data));
         break;
 
       case 'forum_message':

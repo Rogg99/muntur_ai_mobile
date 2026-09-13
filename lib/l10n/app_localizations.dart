@@ -2879,7 +2879,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding_chat_body.
   ///
   /// In en, this message translates to:
-  /// **'Describe your car trouble or ask a question — MUNTUR AI answers, day and night.'**
+  /// **'Describe your car trouble or ask a question — Autosynx answers, day and night.'**
   String get onboarding_chat_body;
 
   /// No description provided for @onboarding_community_title.
