@@ -5,6 +5,16 @@
 /// `compatible_vehicles` on the real backend, only what's listed below.
 library;
 
+/// DRF's DecimalField serializes to a JSON *string* by default
+/// (COERCE_DECIMAL_TO_STRING defaults to true, and this API doesn't
+/// override it) — `price`/`price_total`/etc. arrive as `"25000.00"`, not a
+/// JSON number. `as num?` throws on a String, so parse defensively instead.
+double _parseDecimal(dynamic value) {
+  if (value == null) return 0;
+  if (value is num) return value.toDouble();
+  return double.tryParse(value.toString()) ?? 0;
+}
+
 class VendorProfile {
   final String id;
   final String shopName;
@@ -84,7 +94,7 @@ class PartListing {
         title: json['title']?.toString() ?? '',
         description: json['description']?.toString() ?? '',
         condition: json['condition']?.toString() ?? 'used',
-        price: (json['price'] as num?)?.toDouble() ?? 0,
+        price: _parseDecimal(json['price']),
         currency: json['currency']?.toString() ?? 'XAF',
         stockQuantity: (json['stock_quantity'] as num?)?.toInt() ?? 0,
         oemReferences: (json['oem_references'] as List? ?? [])
@@ -158,7 +168,7 @@ class MarketplaceOrder {
         vendor: VendorProfile.fromJson(
             (json['vendor'] as Map).cast<String, dynamic>()),
         quantity: (json['quantity'] as num?)?.toInt() ?? 1,
-        priceTotal: (json['price_total'] as num?)?.toDouble() ?? 0,
+        priceTotal: _parseDecimal(json['price_total']),
         currency: json['currency']?.toString() ?? 'XAF',
         status: json['status']?.toString() ?? 'pending_payment',
         dateCreation: json['date_creation']?.toString() ?? '',
