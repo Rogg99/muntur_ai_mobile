@@ -1,13 +1,16 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/network/api_client.dart';
 import 'package:munturai/features/auth/domain/entities/user_entity.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
 import 'package:munturai/screens/marketplace_vendor_dashboard.dart';
+import 'package:munturai/utils/divisionsFilter.dart';
 import 'package:munturai/widgets/custom_filter_card.dart';
 import 'package:munturai/widgets/primary_button.dart';
 import 'package:munturai/widgets/widget_profile_tile.dart';
@@ -26,8 +29,14 @@ class ProfileState extends ConsumerState<Profile>
   bool setLocation = false;
   bool setPassword = false;
   bool setPhone = false;
+  bool setSexe = false;
+  bool setPays = false;
+  bool _uploadingPhoto = false;
 
   String birth = '2000-01-01';
+  // 'MALE' / 'FEMALE' — matches the values register.dart writes at signup.
+  String sexeValue = 'MALE';
+  String paysValue = 'CAMEROUN';
 
   final namecontroller = TextEditingController();
   final prenomcontroller = TextEditingController();
@@ -126,12 +135,17 @@ class ProfileState extends ConsumerState<Profile>
                           border:
                               Border.all(width: 4, color: colorScheme.primary),
                         ),
+                        child: _uploadingPhoto
+                            ? const Center(
+                                child: CircularProgressIndicator(color: Colors.white),
+                              )
+                            : null,
                       ),
                       Positioned(
                         bottom: 0,
                         right: 0,
                         child: GestureDetector(
-                          onTap: _takeImage,
+                          onTap: _uploadingPhoto ? null : _takeImage,
                           child: Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
@@ -214,6 +228,26 @@ class ProfileState extends ConsumerState<Profile>
                 text: translator.birthDateLabel,
                 desc: user.dateNaissance ?? '—',
                 onPressed: () => setState(() => setAge = true),
+              ),
+              ProfileTile(
+                icon: const Icon(Icons.wc),
+                text: translator.genderLabel,
+                desc: (user.sexe ?? 'MALE') == 'FEMALE'
+                    ? translator.genderFemale
+                    : translator.genderMale,
+                onPressed: () {
+                  sexeValue = user.sexe ?? 'MALE';
+                  setState(() => setSexe = true);
+                },
+              ),
+              ProfileTile(
+                icon: const Icon(Icons.public),
+                text: translator.countryHint,
+                desc: user.pays ?? '—',
+                onPressed: () {
+                  paysValue = user.pays ?? 'CAMEROUN';
+                  setState(() => setPays = true);
+                },
               ),
 
               // ─── Ma boutique marketplace (vendeurs uniquement) ───
@@ -337,6 +371,88 @@ class ProfileState extends ConsumerState<Profile>
             onClose: () => setState(() => setAge = false),
           ),
 
+        // ─── Overlay : modifier sexe ───
+        if (setSexe)
+          CustomFilterCard(
+            title: translator.genderLabel,
+            desc: '',
+            body: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ChoiceChip(
+                      label: Text(translator.genderMale),
+                      selected: sexeValue == 'MALE',
+                      onSelected: (_) => setState(() => sexeValue = 'MALE'),
+                    ),
+                    const SizedBox(width: 12),
+                    ChoiceChip(
+                      label: Text(translator.genderFemale),
+                      selected: sexeValue == 'FEMALE',
+                      onSelected: (_) => setState(() => sexeValue = 'FEMALE'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                PrimaryButton(
+                  text: translator.save,
+                  padding: 50,
+                  radius: 50,
+                  onPressed: () async {
+                    await ref
+                        .read(authStateProvider.notifier)
+                        .updateProfile({'sexe': sexeValue});
+                    if (mounted) setState(() => setSexe = false);
+                  },
+                ),
+              ],
+            ),
+            onClose: () => setState(() => setSexe = false),
+          ),
+
+        // ─── Overlay : modifier pays ───
+        if (setPays)
+          CustomFilterCard(
+            title: translator.countryHint,
+            desc: '',
+            body: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 300,
+                  child: ListView.builder(
+                    itemCount: countries_eng.length,
+                    itemBuilder: (context, index) {
+                      final country = countries_eng[index];
+                      return RadioListTile<String>(
+                        title: Text(country),
+                        value: country,
+                        groupValue: paysValue,
+                        onChanged: (v) =>
+                            setState(() => paysValue = v ?? paysValue),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 12),
+                PrimaryButton(
+                  text: translator.save,
+                  padding: 50,
+                  radius: 50,
+                  onPressed: () async {
+                    await ref
+                        .read(authStateProvider.notifier)
+                        .updateProfile({'pays': paysValue});
+                    if (mounted) setState(() => setPays = false);
+                  },
+                ),
+              ],
+            ),
+            onClose: () => setState(() => setPays = false),
+          ),
+
         // ─── Overlay : modifier ville ───
         if (setLocation)
           CustomFilterCard(
@@ -451,13 +567,34 @@ class ProfileState extends ConsumerState<Profile>
     );
   }
 
+  /// Uploads to the same shared /medias/ endpoint the chatbot attachments
+  /// and marketplace catalog photos use, then PATCHes the returned media id
+  /// onto the profile — Profile.photo is a FK to Media, not a raw URL.
   Future<void> _takeImage() async {
     final picker = ImagePicker();
     final XFile? file = await picker.pickMedia();
     if (file == null || !mounted) return;
-    // TODO Phase 8 : upload via MediaRepository puis updateProfile({photo: url})
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Upload photo — implémenté en Phase 8')),
-    );
+
+    setState(() => _uploadingPhoto = true);
+    try {
+      final form = FormData.fromMap({
+        'file': await MultipartFile.fromFile(file.path, filename: file.name),
+      });
+      final response = await ApiClient().postMultipart('/medias/', form);
+      final data = response.data['data'] ?? response.data;
+      final mediaId = data is Map ? data['id']?.toString() : null;
+      if (mediaId == null) throw Exception('no media id in response');
+      await ref
+          .read(authStateProvider.notifier)
+          .updateProfile({'photo': mediaId});
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Échec de l'envoi de la photo.")),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _uploadingPhoto = false);
+    }
   }
 }
