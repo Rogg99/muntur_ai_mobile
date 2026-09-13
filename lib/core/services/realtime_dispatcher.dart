@@ -54,6 +54,28 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
         _notify(_senderLabel(data, fallback: 'Autosynx'), _messageBody(data));
         break;
 
+      // Sent once a voice-note/video message sent with no typed text gets
+      // its transcript filled in server-side (same MessageReadSerializer
+      // shape as discussion_message). applyIncoming replaces-by-id rather
+      // than appending, so this updates the existing bubble in place
+      // instead of showing the transcript as a second message — no push
+      // notification here, the user already saw this message land.
+      case 'discussion_message_updated':
+        if (data is Map<String, dynamic>) {
+          final message = MessageModel.fromJson(data);
+          final discId = message.discId != 'none' ? message.discId : null;
+          if (discId != null) {
+            ref.read(chatMessagesProvider(discId).notifier).applyIncoming(message);
+            ref.read(discussionsProvider.notifier).applyIncomingMessage(
+                  discId: discId,
+                  contenu: message.contenu,
+                  lastWriter: message.senderId,
+                  dateEnvoi: message.dateEnvoi,
+                );
+          }
+        }
+        break;
+
       case 'forum_message':
         if (data is Map<String, dynamic>) {
           final message = MessageModel.fromJson(data);
