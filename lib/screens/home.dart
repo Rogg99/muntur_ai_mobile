@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,6 +13,9 @@ import 'package:munturai/screens/chat.dart';
 
 import 'package:munturai/features/notifications/presentation/providers/notification_provider.dart';
 import 'package:munturai/screens/maps.dart';
+import 'package:munturai/screens/marketplace_home.dart';
+import 'package:munturai/screens/marketplace_orders.dart';
+import 'package:munturai/screens/marketplace_vendor_dashboard.dart';
 import 'package:munturai/screens/notifications.dart';
 import 'package:munturai/screens/settings.dart';
 import 'package:munturai/utils/sized_extension.dart';
@@ -72,6 +76,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       translator.searchTitle,
       translator.newsTitle,
       translator.forumsTitle,
+      'Marketplace',
       translator.settings_title,
     ];
 
@@ -94,7 +99,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       // Tab 3 — Forums
       _ForumsTab(),
 
-      // Tab 4 — Paramètres
+      // Tab 4 — Marketplace
+      const MarketplaceHome(embedded: true),
+
+      // Tab 5 — Paramètres
       const Settings(),
     ];
 
@@ -139,6 +147,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     },
                   )
                 : SizedBox(),
+            if (_selectedIndex == 4) ...[
+              IconButton(
+                icon: const Icon(Icons.receipt_long_outlined),
+                tooltip: 'Mes commandes',
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const MarketplaceOrders())),
+              ),
+              IconButton(
+                icon: const Icon(Icons.storefront_outlined),
+                tooltip: 'Ma boutique',
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const MarketplaceVendorDashboard())),
+              ),
+            ],
             Padding(
               padding: EdgeInsets.only(right: Dimens.padding.w),
               child: GestureDetector(
@@ -212,6 +236,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               icon: _navIcon(ImageConstant.navForumOutline, colorScheme.onSurfaceVariant),
               selectedIcon: _navIcon(ImageConstant.navForumFilled, colorScheme.primary),
               label: 'Forums',
+            ),
+            NavigationDestination(
+              // No custom SVG asset for this one yet (see nav_*.svg vs the
+              // others below) — a plain Icon here matches the same
+              // color/weight convention (outline vs primary-filled) close
+              // enough until a matching asset is added.
+              icon: Icon(CupertinoIcons.bag, color: colorScheme.onSurfaceVariant),
+              selectedIcon: Icon(CupertinoIcons.bag_fill, color: colorScheme.primary),
+              label: 'Marketplace',
             ),
             NavigationDestination(
               icon: _navIcon(ImageConstant.navSettingsOutline, colorScheme.onSurfaceVariant),

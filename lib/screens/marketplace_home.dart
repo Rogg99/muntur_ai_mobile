@@ -7,10 +7,17 @@ import 'package:munturai/features/marketplace/presentation/providers/marketplace
 import 'package:munturai/screens/marketplace_part_detail.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
-/// Marketplace catalogue: search + grid of parts. Read-only — buying is
-/// gated behind phase 3b (payment/PIN), not shipped yet.
+/// Marketplace catalogue: search + grid of parts, with escrow-protected
+/// checkout from each part's detail screen.
 class MarketplaceHome extends ConsumerStatefulWidget {
-  const MarketplaceHome({super.key});
+  const MarketplaceHome({super.key, this.embedded = false});
+
+  /// true when hosted as HomeScreen's Marketplace tab — HomeScreen already
+  /// supplies the app bar (title + shortcut actions) in that case, so this
+  /// skips its own Scaffold/AppBar to avoid a doubled-up bar. false (the
+  /// default) is for when this is pushed as its own route instead (e.g.
+  /// the "Pièces compatibles" shortcut from chat).
+  final bool embedded;
 
   @override
   ConsumerState<MarketplaceHome> createState() => _MarketplaceHomeState();
@@ -34,10 +41,7 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
     final colorScheme = Theme.of(context).colorScheme;
     final partsAsync = ref.watch(marketplacePartsProvider);
 
-    return Scaffold(
-      backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Marketplace'),
-      body: Column(
+    final body = Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
@@ -94,7 +98,15 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
             ),
           ),
         ],
-      ),
+      );
+
+    if (widget.embedded) {
+      return Container(color: colorScheme.background, child: body);
+    }
+    return Scaffold(
+      backgroundColor: colorScheme.background,
+      appBar: const CustomAppBar(titleTxt: 'Marketplace'),
+      body: body,
     );
   }
 }
