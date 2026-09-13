@@ -4,9 +4,9 @@ import '../widgets/CustomAppBar.dart';
 
 /// Terms of Service & General Conditions of Use. Static legal text — see
 /// Doc/terms-of-service-gcu.docx for the source; the marketplace parts
-/// commission clause (section 5) reflects the flat 5,000 XAF/month vendor
-/// subscription / 0% parts commission model, not the doc's original 90/10
-/// split which is obsolete.
+/// commission clause (section 5) reflects the current 5,000 XAF/month
+/// vendor subscription + 5% commission (95% vendor / 5% ZEMNOVA split)
+/// model, not the doc's original 90/10 split which is obsolete.
 class CGU extends StatelessWidget {
   const CGU({super.key});
 
@@ -55,7 +55,7 @@ class CGU extends StatelessWidget {
             appStyle: appStyle,
             title: "5. Multi-Party Gateway Escrow & Split Payments",
             body:
-                "All repair bookings require an upfront 1,000 XAF deposit. The gateway separates a 300 XAF platform dispatch fee and holds 700 XAF in escrow. Funds are disbursed to the mechanic upon entry of the Buyer's 4-digit verification PIN or confirmed GPS completion metrics.\n\nFor marketplace spare-parts sales: vendors pay a flat 5,000 XAF/month subscription with 0% commission on parts sales, with guaranteed price parity against physical retail stores.",
+                "All repair bookings require an upfront 1,000 XAF deposit. The gateway separates a 300 XAF platform dispatch fee and holds 700 XAF in escrow. Funds are disbursed to the mechanic upon entry of the Buyer's 4-digit verification PIN or confirmed GPS completion metrics.\n\nFor marketplace spare-parts sales: vendors pay a flat 5,000 XAF/month subscription plus a 5% commission on each transaction (95% vendor / 5% ZEMNOVA split), with guaranteed price parity against physical retail stores.",
           ),
           _Section(
             appStyle: appStyle,

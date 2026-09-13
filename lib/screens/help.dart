@@ -4,8 +4,9 @@ import 'package:munturai/core/app_export.dart';
 /// FAQ / Help center: two intro blocks (drivers, professionals) plus an
 /// accordion of the 60-item Q&A matrix. Static content — see
 /// Doc/faqs-and-help-guide.docx for the source; Q34/Q36 (parts marketplace
-/// commission) reflect the flat 5,000 XAF/month vendor subscription / 0%
-/// parts commission model rather than the doc's original 90/10 split.
+/// commission) reflect the current 5,000 XAF/month vendor subscription +
+/// 5% commission (95% vendor / 5% ZEMNOVA split) model rather than the
+/// doc's original 90/10 split.
 class Help extends StatelessWidget {
   const Help({super.key});
 
@@ -164,11 +165,11 @@ const List<MapEntry<String, String>> _faqItems = [
   MapEntry("When are escrow funds released to the attending mechanic?",
       "Funds are released when the driver verifies repair completion via PIN token or when verified GPS metrics confirm fulfillment."),
   MapEntry("How are commissions collected from spare parts marketplace sales?",
-      "Spare-parts vendors pay a flat 5,000 XAF/month subscription (0% commission on sales), guaranteeing strict price parity with physical retail stores."),
+      "Spare-parts vendors pay a flat 5,000 XAF/month subscription plus a 5% commission on each transaction (95% vendor / 5% ZEMNOVA split), guaranteeing strict price parity with physical retail stores."),
   MapEntry("What happens if a client cancels a job request while the mechanic is traveling?",
       "The system evaluates transit logs; if the mechanic traveled significantly, a partial deposit allocation is awarded to cover travel expenses."),
   MapEntry("Are platform commission fees deducted from my raw parts inventory costs?",
-      "No — the vendor pays no commission on parts sales, only the flat monthly subscription of 5,000 XAF."),
+      "Yes — a 5% commission is deducted from each parts sale (95% goes to the vendor, 5% to ZEMNOVA), in addition to the flat 5,000 XAF/month subscription."),
   MapEntry("What is the 4-digit delivery PIN token check?",
       "A secure PIN issued to the Buyer that must be entered by the seller/courier upon physical delivery to release held marketplace escrow funds."),
   MapEntry("Can a customer refuse to share their completion token?",
