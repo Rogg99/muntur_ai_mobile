@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/auth/domain/entities/user_entity.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
+import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
+import 'package:munturai/screens/marketplace_vendor_dashboard.dart';
 import 'package:munturai/widgets/custom_filter_card.dart';
 import 'package:munturai/widgets/primary_button.dart';
 import 'package:munturai/widgets/widget_profile_tile.dart';
@@ -198,6 +200,35 @@ class ProfileState extends ConsumerState<Profile>
                 text: translator.birthDateLabel,
                 desc: user.dateNaissance ?? '—',
                 onPressed: () => setState(() => setAge = true),
+              ),
+
+              // ─── Ma boutique marketplace (vendeurs uniquement) ───
+              Consumer(
+                builder: (context, ref, _) {
+                  final vendorAsync = ref.watch(marketplaceMyVendorProvider);
+                  final vendor = vendorAsync.valueOrNull;
+                  if (vendor == null) return const SizedBox.shrink();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 28, bottom: 8),
+                        child: Text('Marketplace',
+                            style: appStyle.txtRoboto(weight: 'b', size: 22)),
+                      ),
+                      ProfileTile(
+                        icon: const Icon(Icons.storefront_outlined),
+                        text: 'Ma boutique',
+                        desc: vendor.shopName,
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const MarketplaceVendorDashboard()),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 40),
             ],

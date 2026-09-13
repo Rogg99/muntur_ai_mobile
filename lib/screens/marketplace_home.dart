@@ -9,11 +9,27 @@ import 'package:munturai/widgets/CustomAppBar.dart';
 
 /// Marketplace catalogue: search + grid of parts. Read-only — buying is
 /// gated behind phase 3b (payment/PIN), not shipped yet.
-class MarketplaceHome extends ConsumerWidget {
+class MarketplaceHome extends ConsumerStatefulWidget {
   const MarketplaceHome({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MarketplaceHome> createState() => _MarketplaceHomeState();
+}
+
+class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
+  // Pre-filled when opened from a shortcut (e.g. chat's "Pièces
+  // compatibles") that seeds marketplaceSearchProvider before pushing here.
+  late final _searchController =
+      TextEditingController(text: ref.read(marketplaceSearchProvider));
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final partsAsync = ref.watch(marketplacePartsProvider);
@@ -26,6 +42,7 @@ class MarketplaceHome extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: TextField(
+              controller: _searchController,
               onChanged: (value) =>
                   ref.read(marketplaceSearchProvider.notifier).state = value,
               decoration: InputDecoration(

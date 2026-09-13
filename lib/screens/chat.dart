@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/services/home_navigation.dart';
+import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
+import 'package:munturai/screens/marketplace_home.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/data/models/media_ref.dart';
@@ -243,6 +245,18 @@ class _ChatViewState extends ConsumerState<ChatView> {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
+  /// Opens the marketplace catalogue pre-searched with this discussion's
+  /// title (usually the car issue described, e.g. "Capteur d'oxygène HS") —
+  /// there's no backend link between an AI diagnostic reply and specific
+  /// OEM part numbers yet, so this is a search shortcut, not an automated
+  /// match.
+  void _findCompatibleParts() {
+    final seed = widget.disc?.title ?? '';
+    ref.read(marketplaceSearchProvider.notifier).state = seed;
+    Navigator.push(
+        context, MaterialPageRoute(builder: (_) => const MarketplaceHome()));
+  }
+
   /// Entirely client-side — there's no dedicated export endpoint. Renders
   /// each message as one "Sender: text" line and hands it to the OS share
   /// sheet; media-only messages (voice notes, photos) get a placeholder
@@ -334,6 +348,11 @@ class _ChatViewState extends ConsumerState<ChatView> {
             icon: const Icon(Icons.map_outlined),
             tooltip: 'Garage à proximité',
             onPressed: _goToNearbyGarages,
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Pièces compatibles',
+            onPressed: _findCompatibleParts,
           ),
           if (messages.isNotEmpty)
             IconButton(
