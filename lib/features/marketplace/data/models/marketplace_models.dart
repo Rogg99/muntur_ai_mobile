@@ -33,12 +33,14 @@ class VendorProfile {
 }
 
 class MediaRefItem {
+  final String id;
   final String file;
   final String kind;
 
-  const MediaRefItem({required this.file, this.kind = 'unknown'});
+  const MediaRefItem({required this.id, required this.file, this.kind = 'unknown'});
 
   factory MediaRefItem.fromJson(Map<String, dynamic> json) => MediaRefItem(
+        id: json['id']?.toString() ?? '',
         file: json['file']?.toString() ?? '',
         kind: json['kind']?.toString() ?? 'unknown',
       );
@@ -92,8 +94,25 @@ class PartListing {
       );
 }
 
+class BuyerInfo {
+  final String nom;
+  final String prenom;
+  final String telephone;
+
+  const BuyerInfo({this.nom = '', this.prenom = '', this.telephone = ''});
+
+  factory BuyerInfo.fromJson(Map<String, dynamic> json) => BuyerInfo(
+        nom: json['nom']?.toString() ?? '',
+        prenom: json['prenom']?.toString() ?? '',
+        telephone: json['telephone']?.toString() ?? '',
+      );
+
+  String get fullName => '$prenom $nom'.trim();
+}
+
 class MarketplaceOrder {
   final int id;
+  final BuyerInfo buyer;
   final PartListing listing;
   final VendorProfile vendor;
   final int quantity;
@@ -104,6 +123,7 @@ class MarketplaceOrder {
 
   const MarketplaceOrder({
     required this.id,
+    this.buyer = const BuyerInfo(),
     required this.listing,
     required this.vendor,
     this.quantity = 1,
@@ -116,6 +136,9 @@ class MarketplaceOrder {
   factory MarketplaceOrder.fromJson(Map<String, dynamic> json) =>
       MarketplaceOrder(
         id: json['id'] as int,
+        buyer: json['buyer'] is Map
+            ? BuyerInfo.fromJson((json['buyer'] as Map).cast<String, dynamic>())
+            : const BuyerInfo(),
         listing: PartListing.fromJson(
             (json['listing'] as Map).cast<String, dynamic>()),
         vendor: VendorProfile.fromJson(
@@ -125,5 +148,30 @@ class MarketplaceOrder {
         currency: json['currency']?.toString() ?? 'XAF',
         status: json['status']?.toString() ?? 'pending_payment',
         dateCreation: json['date_creation']?.toString() ?? '',
+      );
+}
+
+class VendorDashboard {
+  final VendorProfile vendor;
+  final List<PartListing> catalog;
+  final List<MarketplaceOrder> orders;
+
+  const VendorDashboard({
+    required this.vendor,
+    this.catalog = const [],
+    this.orders = const [],
+  });
+
+  factory VendorDashboard.fromJson(Map<String, dynamic> json) => VendorDashboard(
+        vendor: VendorProfile.fromJson(
+            (json['vendor'] as Map).cast<String, dynamic>()),
+        catalog: (json['catalog'] as List? ?? [])
+            .whereType<Map>()
+            .map((e) => PartListing.fromJson(e.cast<String, dynamic>()))
+            .toList(),
+        orders: (json['orders'] as List? ?? [])
+            .whereType<Map>()
+            .map((e) => MarketplaceOrder.fromJson(e.cast<String, dynamic>()))
+            .toList(),
       );
 }

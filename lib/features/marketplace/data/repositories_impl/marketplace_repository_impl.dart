@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+
 import '../../../../core/network/api_client.dart';
 import '../models/marketplace_models.dart';
 
@@ -53,5 +57,98 @@ class MarketplaceRepositoryImpl {
         .whereType<Map>()
         .map((j) => MarketplaceOrder.fromJson(j.cast<String, dynamic>()))
         .toList();
+  }
+
+  // ─────────────────────── VENDOR (own storefront) ───────────────────────
+
+  /// Null if this account has no vendor profile yet (404 from the server).
+  Future<VendorProfile?> getMyVendorProfile() async {
+    try {
+      final response = await _apiClient.get('/marketplace/vendors/me/');
+      final raw = response.data['data'] ?? response.data;
+      if (raw is! Map) return null;
+      return VendorProfile.fromJson(raw.cast<String, dynamic>());
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
+  }
+
+  Future<VendorDashboard?> getVendorDashboard() async {
+    try {
+      final response = await _apiClient.get('/marketplace/vendors/dashboard/');
+      final raw = response.data['data'] ?? response.data;
+      if (raw is! Map) return null;
+      return VendorDashboard.fromJson(raw.cast<String, dynamic>());
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
+  }
+
+  // ─────────────────────── CATALOG MANAGEMENT ───────────────────────
+
+  /// Uploads a local photo to the shared media store (same endpoint the
+  /// chatbot attachments use) and returns its id, to include in
+  /// [createPart]/[updatePart]'s `medias` list.
+  Future<String?> uploadPartPhoto(File file) async {
+    final form = FormData.fromMap({
+      'file': await MultipartFile.fromFile(file.path,
+          filename: file.uri.pathSegments.last),
+    });
+    final response = await _apiClient.postMultipart('/medias/', form);
+    final data = response.data['data'] ?? response.data;
+    return data is Map ? data['id']?.toString() : null;
+  }
+
+  Future<PartListing> createPart({
+    required String title,
+    required String description,
+    required String condition,
+    required double price,
+    required int stockQuantity,
+    required List<String> oemReferences,
+    required List<String> mediaIds,
+  }) async {
+    final response = await _apiClient.post('/marketplace/parts/', data: {
+      'title': title,
+      'description': description,
+      'condition': condition,
+      'price': price,
+      'stock_quantity': stockQuantity,
+      'oem_references': oemReferences,
+      'medias': mediaIds,
+    });
+    final raw = response.data['data'] ?? response.data;
+    return PartListing.fromJson((raw as Map).cast<String, dynamic>());
+  }
+
+  Future<PartListing> updatePart({
+    required int id,
+    required String title,
+    required String description,
+    required String condition,
+    required double price,
+    required int stockQuantity,
+    required List<String> oemReferences,
+    required List<String> mediaIds,
+    bool active = true,
+  }) async {
+    final response = await _apiClient.put('/marketplace/parts/$id/', data: {
+      'title': title,
+      'description': description,
+      'condition': condition,
+      'price': price,
+      'stock_quantity': stockQuantity,
+      'oem_references': oemReferences,
+      'medias': mediaIds,
+      'active': active,
+    });
+    final raw = response.data['data'] ?? response.data;
+    return PartListing.fromJson((raw as Map).cast<String, dynamic>());
+  }
+
+  Future<void> deletePart(int id) async {
+    await _apiClient.delete('/marketplace/parts/$id/');
   }
 }
