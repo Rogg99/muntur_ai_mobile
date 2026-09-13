@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
+import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
 import 'package:munturai/screens/abonnement.dart';
 import 'package:munturai/screens/coins.dart';
 import 'package:munturai/screens/profile.dart';
@@ -156,13 +157,22 @@ class Settings extends ConsumerWidget {
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const MarketplaceOrders())),
             ),
-            _SettingsTile(
-              icon: CupertinoIcons.shopping_cart,
-              label: 'Ma boutique',
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const MarketplaceVendorDashboard())),
+            // Vendor-only — hidden rather than shown-then-erroring for an
+            // account with no storefront (same gating as the Profile
+            // screen's "Ma boutique" section).
+            Consumer(
+              builder: (context, ref, _) {
+                final vendor = ref.watch(marketplaceMyVendorProvider).valueOrNull;
+                if (vendor == null) return const SizedBox.shrink();
+                return _SettingsTile(
+                  icon: CupertinoIcons.shopping_cart,
+                  label: 'Ma boutique',
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const MarketplaceVendorDashboard())),
+                );
+              },
             ),
             _SettingsTile(
               icon: CupertinoIcons.question,

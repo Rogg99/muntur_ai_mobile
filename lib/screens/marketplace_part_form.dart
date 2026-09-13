@@ -152,6 +152,42 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
+    // Defense in depth: every path that pushes this screen already checks
+    // for a vendor profile first (dashboard FAB, catalog edit tiles), but
+    // this re-checks at the screen itself so a direct/stale navigation
+    // can't reach a working-looking form for an account with no
+    // storefront — it would only fail at submit otherwise, with a raw
+    // backend error instead of a clear explanation up front.
+    final vendorAsync = ref.watch(marketplaceMyVendorProvider);
+    if (vendorAsync.isLoading) {
+      return Scaffold(
+        backgroundColor: colorScheme.background,
+        appBar: const CustomAppBar(titleTxt: ''),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    final myVendor = vendorAsync.valueOrNull;
+    final editingSomeoneElsesListing =
+        widget.existing != null && widget.existing!.vendor.id != myVendor?.id;
+    if (myVendor == null || editingSomeoneElsesListing) {
+      return Scaffold(
+        backgroundColor: colorScheme.background,
+        appBar: const CustomAppBar(titleTxt: ''),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              myVendor == null
+                  ? "Vous devez avoir une boutique marketplace pour publier une pièce."
+                  : "Vous ne pouvez modifier que les pièces de votre propre boutique.",
+              textAlign: TextAlign.center,
+              style: appStyle.H5(),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: colorScheme.background,
       resizeToAvoidBottomInset: true,

@@ -30,21 +30,30 @@ class MarketplaceVendorDashboard extends ConsumerWidget {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final dashboardAsync = ref.watch(marketplaceVendorDashboardProvider);
+    // Only offer "add a part" once we know for sure this account has a
+    // vendor storefront — otherwise a non-vendor reaching this screen
+    // (stale UI state, direct nav) would see a working-looking button that
+    // just fails at submit with a raw backend error.
+    final hasVendorProfile = dashboardAsync.valueOrNull != null;
 
     return Scaffold(
       backgroundColor: colorScheme.background,
       appBar: const CustomAppBar(titleTxt: 'Ma boutique'),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final created = await Navigator.push<bool>(
-            context,
-            MaterialPageRoute(builder: (_) => const MarketplacePartForm()),
-          );
-          if (created == true) ref.invalidate(marketplaceVendorDashboardProvider);
-        },
-        icon: const Icon(Icons.add),
-        label: const Text('Ajouter une pièce'),
-      ),
+      floatingActionButton: !hasVendorProfile
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () async {
+                final created = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(builder: (_) => const MarketplacePartForm()),
+                );
+                if (created == true) {
+                  ref.invalidate(marketplaceVendorDashboardProvider);
+                }
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Ajouter une pièce'),
+            ),
       body: dashboardAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(
