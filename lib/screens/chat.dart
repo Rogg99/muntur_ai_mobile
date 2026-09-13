@@ -66,6 +66,16 @@ class _ChatViewState extends ConsumerState<ChatView> {
   final AudioRecorder _audioRecorder = AudioRecorder();
 
   bool _sending = false;
+  // Distinct from _sending: _sending is only true for the brief HTTP POST
+  // itself (202 Accepted comes back almost instantly since the AI reply is
+  // generated in the background). The typing bubble needs to stay up until
+  // that reply actually lands as a discussion_message WS push, which can
+  // take much longer — using _sending for both made the bubble vanish
+  // right after sending, well before any reply existed. _replyTimeout is a
+  // safety net in case the push never arrives (dropped WS, backend error
+  // with no visible failure) so the bubble doesn't stay stuck forever.
+  bool _awaitingAiReply = false;
+  Timer? _replyTimeout;
   int _lastMessageCount = -1;
 
   final List<_PendingAttachment> _attachments = [];
@@ -91,6 +101,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
     _messageController.dispose();
     _scrollController.dispose();
     _recordTicker?.cancel();
+    _replyTimeout?.cancel();
     _audioRecorder.dispose();
     super.dispose();
   }
@@ -222,7 +233,12 @@ class _ChatViewState extends ConsumerState<ChatView> {
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
       _sending = true;
+      _awaitingAiReply = true;
       _attachments.clear();
+    });
+    _replyTimeout?.cancel();
+    _replyTimeout = Timer(const Duration(seconds: 60), () {
+      if (mounted) setState(() => _awaitingAiReply = false);
     });
 
     try {
@@ -401,6 +417,20 @@ class _ChatViewState extends ConsumerState<ChatView> {
     final translator = AppLocalizations.of(context)!;
     final messagesState = ref.watch(chatMessagesProvider(_discId));
 
+    // Clears the typing bubble as soon as the AI's reply actually lands
+    // (pushed via WS as a new isAI message), rather than tying it to the
+    // 202 Accepted response — see _awaitingAiReply's declaration.
+    ref.listen(chatMessagesProvider(_discId), (previous, next) {
+      if (!_awaitingAiReply) return;
+      final previousIds = (previous?.valueOrNull ?? const []).map((m) => m.id).toSet();
+      final hasNewAiMessage = (next.valueOrNull ?? const [])
+          .any((m) => m.isAI && !previousIds.contains(m.id));
+      if (hasNewAiMessage) {
+        _replyTimeout?.cancel();
+        setState(() => _awaitingAiReply = false);
+      }
+    });
+
     List<UIMessage> messages = [];
     if (messagesState is AsyncData) {
       messages = (messagesState.value ?? [])
@@ -508,7 +538,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
           controller: _scrollController,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: messages.length + (_sending ? 1 : 0),
+          itemCount: messages.length + (_awaitingAiReply ? 1 : 0),
           separatorBuilder: (_, __) => const SizedBox(height: 4),
           itemBuilder: (context, index) {
             if (index == messages.length) return const _TypingBubble();
