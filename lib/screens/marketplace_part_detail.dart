@@ -41,18 +41,40 @@ class MarketplacePartDetail extends ConsumerWidget {
   }
 }
 
-class _PartDetailContent extends StatefulWidget {
+class _PartDetailContent extends ConsumerStatefulWidget {
   const _PartDetailContent({required this.part});
 
   final PartListing part;
 
   @override
-  State<_PartDetailContent> createState() => _PartDetailContentState();
+  ConsumerState<_PartDetailContent> createState() => _PartDetailContentState();
 }
 
-class _PartDetailContentState extends State<_PartDetailContent> {
+class _PartDetailContentState extends ConsumerState<_PartDetailContent> {
   final _pageController = PageController();
   int _page = 0;
+  bool _togglingWishlist = false;
+
+  Future<void> _toggleWishlist(bool currentlySaved) async {
+    setState(() => _togglingWishlist = true);
+    try {
+      final repo = ref.read(marketplaceRepositoryProvider);
+      if (currentlySaved) {
+        await repo.removeFromWishlist(widget.part.id);
+      } else {
+        await repo.addToWishlist(widget.part.id);
+      }
+      ref.invalidate(marketplaceWishlistProvider);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _togglingWishlist = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -65,6 +87,7 @@ class _PartDetailContentState extends State<_PartDetailContent> {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final part = widget.part;
+    final isSaved = ref.watch(marketplaceIsWishlistedProvider(part.id));
 
     return CustomScrollView(
       slivers: [
@@ -82,6 +105,28 @@ class _PartDetailContentState extends State<_PartDetailContent> {
               ),
             ),
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: CircleAvatar(
+                backgroundColor: Colors.black45,
+                child: IconButton(
+                  icon: _togglingWishlist
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
+                      : Icon(
+                          isSaved ? Icons.favorite : Icons.favorite_border,
+                          color: isSaved ? Colors.redAccent : Colors.white,
+                          size: 18,
+                        ),
+                  onPressed: _togglingWishlist ? null : () => _toggleWishlist(isSaved),
+                ),
+              ),
+            ),
+          ],
           flexibleSpace: FlexibleSpaceBar(
             background: part.medias.isEmpty
                 ? Container(color: colorScheme.surfaceContainerHighest)
@@ -218,7 +263,7 @@ class _PartDetailContentState extends State<_PartDetailContent> {
                     ),
                     child: Text(part.stockQuantity < 1
                         ? 'Rupture de stock'
-                        : 'Acheter avec Escrow Protégé'),
+                        : 'Acheter'),
                   ),
                 ),
               ],

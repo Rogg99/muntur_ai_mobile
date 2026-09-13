@@ -13,6 +13,7 @@ import 'package:munturai/screens/cgu.dart';
 import 'package:munturai/screens/help.dart';
 import 'package:munturai/screens/login.dart';
 import 'package:munturai/screens/marketplace_orders.dart';
+import 'package:munturai/screens/marketplace_wishlist.dart';
 import 'package:munturai/screens/marketplace_vendor_dashboard.dart';
 import 'package:munturai/screens/privacy_policy.dart';
 import 'package:munturai/screens/courier_profile.dart';
@@ -158,6 +159,12 @@ class Settings extends ConsumerWidget {
               label: 'Mes commandes',
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const MarketplaceOrders())),
+            ),
+            _SettingsTile(
+              icon: CupertinoIcons.heart,
+              label: 'Mes favoris',
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const MarketplaceWishlist())),
             ),
             // Vendor-only — hidden rather than shown-then-erroring for an
             // account with no storefront (same gating as the Profile

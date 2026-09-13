@@ -216,3 +216,22 @@ class VendorDashboard {
             .toList(),
       );
 }
+
+class WishlistItem {
+  final String id;
+  final PartListing partListing;
+  final String dateCreation;
+
+  const WishlistItem({
+    required this.id,
+    required this.partListing,
+    this.dateCreation = '',
+  });
+
+  factory WishlistItem.fromJson(Map<String, dynamic> json) => WishlistItem(
+        id: json['id'].toString(),
+        partListing: PartListing.fromJson(
+            (json['part_listing'] as Map).cast<String, dynamic>()),
+        dateCreation: json['date_creation']?.toString() ?? '',
+      );
+}

@@ -74,3 +74,16 @@ final marketplaceVendorDashboardProvider =
     FutureProvider.autoDispose<VendorDashboard?>((ref) {
   return ref.read(marketplaceRepositoryProvider).getVendorDashboard();
 });
+
+final marketplaceWishlistProvider = FutureProvider.autoDispose<List<WishlistItem>>((ref) {
+  return ref.read(marketplaceRepositoryProvider).getWishlist();
+});
+
+/// Convenience lookup for a single part's "is this saved?" heart state,
+/// derived from the shared wishlist fetch rather than a separate request
+/// per part card.
+final marketplaceIsWishlistedProvider =
+    Provider.autoDispose.family<bool, String>((ref, partId) {
+  final wishlist = ref.watch(marketplaceWishlistProvider).valueOrNull ?? const [];
+  return wishlist.any((w) => w.partListing.id == partId);
+});

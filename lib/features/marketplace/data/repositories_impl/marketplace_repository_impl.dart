@@ -224,4 +224,30 @@ class MarketplaceRepositoryImpl {
   Future<void> deletePart(String id) async {
     await _apiClient.delete('/marketplace/parts/$id/');
   }
+
+  // ─────────────────────── WISHLIST ───────────────────────
+
+  Future<List<WishlistItem>> getWishlist() {
+    return _withCleanError(() async {
+      final response = await _apiClient.get('/marketplace/wishlist/');
+      final rawList = asResponseList(response.data);
+      return rawList
+          .whereType<Map>()
+          .map((j) => WishlistItem.fromJson(j.cast<String, dynamic>()))
+          .toList();
+    });
+  }
+
+  /// Idempotent — 201 (created) or 200 (already saved), both succeed here.
+  Future<void> addToWishlist(String partListingId) {
+    return _withCleanError(() => _apiClient.post('/marketplace/wishlist/',
+        data: {'part_listing_id': partListingId}));
+  }
+
+  /// Keyed on the part's own id, not the wishlist row's id — the client
+  /// never needs to know the row id just to un-save a part.
+  Future<void> removeFromWishlist(String partListingId) {
+    return _withCleanError(
+        () => _apiClient.delete('/marketplace/wishlist/$partListingId/'));
+  }
 }
