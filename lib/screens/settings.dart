@@ -15,6 +15,7 @@ import 'package:munturai/screens/login.dart';
 import 'package:munturai/screens/marketplace_orders.dart';
 import 'package:munturai/screens/marketplace_vendor_dashboard.dart';
 import 'package:munturai/screens/privacy_policy.dart';
+import 'package:munturai/screens/courier_profile.dart';
 import 'package:munturai/screens/support_tickets.dart';
 
 import '../core/fonctions.dart';
@@ -174,6 +175,12 @@ class Settings extends ConsumerWidget {
                           builder: (_) => const MarketplaceVendorDashboard())),
                 );
               },
+            ),
+            _SettingsTile(
+              icon: CupertinoIcons.location_north_line,
+              label: 'Livreur',
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const CourierProfileScreen())),
             ),
             _SettingsTile(
               icon: CupertinoIcons.chat_bubble_2,

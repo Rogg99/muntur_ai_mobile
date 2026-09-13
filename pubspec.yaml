@@ -44,6 +44,10 @@ dependencies:
   open_file:  ^3.3.2
   cupertino_icons: ^1.0.2
   share_plus: ^10.1.4
+  # Courier system: pickup/dropoff QR handoff (generate on the
+  # vendor/courier showing side, scan on the courier/buyer confirming side).
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.2.3
   sqflite: ^2.2.8+4
   positioned_scroll_observer: ^2.2.2
   path: ^1.8.2
