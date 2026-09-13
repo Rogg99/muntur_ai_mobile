@@ -89,7 +89,9 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.72,
+                      // Slightly taller than 0.72 to fit the title's 2nd
+                      // line without re-triggering the earlier overflow.
+                      childAspectRatio: 0.66,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
@@ -157,7 +159,7 @@ class _PartCard extends StatelessWidget {
                 children: [
                   Text(
                     part.title,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: appStyle.H6(weight: 'bold'),
                   ),
