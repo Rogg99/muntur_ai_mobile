@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import '../services/secure_storage_service.dart';
 import '../database/isar_db.dart';
@@ -46,6 +50,19 @@ class ApiClient {
     return absolute;
   }
 
+  /// SHA-256 fingerprint (lowercase hex, no colons) of the server's
+  /// self-signed leaf certificate — see
+  /// android/app/src/main/res/raw/muntur_server_cert.pem, kept in sync with
+  /// Muntur-ai-2.0/api/ssl/livekit.crt. Android additionally trusts this
+  /// same certificate at the OS level via network_security_config.xml, but
+  /// that config has no iOS equivalent — without the pinning below, iOS has
+  /// no way to trust this host at all (no public CA, no ATS exception) and
+  /// every request would simply fail TLS verification. Pinning here also
+  /// means neither platform depends on the OS-level trust store alone.
+  static const String _pinnedHost = '195.26.244.215';
+  static const String _pinnedSha256Fingerprint =
+      '9fb0f2f246a31abca13b592ddfd1dbfcfe665bce7c5b75f2a9f9c030f0255f52';
+
   late final Dio _dio;
 
   ApiClient._internal() {
@@ -59,6 +76,23 @@ class ApiClient {
           'Accept': 'application/json',
         },
       ),
+    );
+
+    // Only invoked when the platform's default verification has already
+    // rejected the certificate (true on iOS; on Android the OS-level
+    // trust-anchor above means this callback never even fires) — so this
+    // *adds* an exception for our one pinned cert rather than weakening
+    // verification for anything else.
+    _dio.httpClientAdapter = IOHttpClientAdapter(
+      createHttpClient: () {
+        final client = HttpClient();
+        client.badCertificateCallback = (cert, host, port) {
+          if (host != _pinnedHost) return false;
+          final fingerprint = sha256.convert(cert.der).toString();
+          return fingerprint == _pinnedSha256Fingerprint;
+        };
+        return client;
+      },
     );
 
     _dio.interceptors.add(
