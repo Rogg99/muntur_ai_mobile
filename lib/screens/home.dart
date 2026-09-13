@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/services/home_navigation.dart';
 import 'package:munturai/core/services/home_refresh.dart';
 import 'package:munturai/core/theming/dimens.dart';
 import 'package:munturai/features/chatbot/presentation/providers/chatbot_provider.dart';
@@ -57,6 +58,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final translator = AppLocalizations.of(context)!;
+
+    // A screen pushed on top of Home (e.g. the "garage near me" chat
+    // shortcut) sets this before popping back — pick it up here instead of
+    // only reading it once, since Home stays mounted underneath.
+    ref.listen<int>(homeTabIndexProvider, (previous, next) {
+      if (next != _selectedIndex) setState(() => _selectedIndex = next);
+    });
 
     // ── Titres onglets ─────────────────────────────────────────────────
     final titles = [
@@ -180,7 +188,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: _selectedIndex,
-          onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+          onDestinationSelected: (i) {
+            setState(() => _selectedIndex = i);
+            ref.read(homeTabIndexProvider.notifier).state = i;
+          },
           destinations: [
             NavigationDestination(
               icon: _navIcon(ImageConstant.navHomeOutline, colorScheme.onSurfaceVariant),

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/services/home_navigation.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/data/models/media_ref.dart';
@@ -233,6 +234,14 @@ class _ChatViewState extends ConsumerState<ChatView> {
     await _handleSend();
   }
 
+  /// Pure client-side navigation shortcut — no chat message is sent. Home
+  /// stays mounted underneath this pushed route, so switching its tab index
+  /// then popping back to it is enough to land on the Carte tab.
+  void _goToNearbyGarages() {
+    ref.read(homeTabIndexProvider.notifier).state = 1;
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
   Widget _buildSuggestions(BuildContext context) {
     final translator = AppLocalizations.of(context)!;
     final suggestions = [
@@ -246,12 +255,17 @@ class _ChatViewState extends ConsumerState<ChatView> {
         alignment: WrapAlignment.center,
         spacing: 8,
         runSpacing: 8,
-        children: suggestions
-            .map((text) => _SuggestionChip(
-                  text: text,
-                  onTap: () => _sendSuggestion(text),
-                ))
-            .toList(),
+        children: [
+          ...suggestions.map((text) => _SuggestionChip(
+                text: text,
+                onTap: () => _sendSuggestion(text),
+              )),
+          _SuggestionChip(
+            text: 'Garage à proximité',
+            icon: Icons.map_outlined,
+            onTap: _goToNearbyGarages,
+          ),
+        ],
       ),
     );
   }
@@ -299,6 +313,13 @@ class _ChatViewState extends ConsumerState<ChatView> {
       resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(
         titleTxt: widget.disc?.title ?? translator.newDiscussion,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.map_outlined),
+            tooltip: 'Garage à proximité',
+            onPressed: _goToNearbyGarages,
+          ),
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -680,10 +701,11 @@ class _TypingBubbleState extends State<_TypingBubble>
 /// welcome message so a new discussion has a one-tap on-ramp instead of a
 /// blank composer.
 class _SuggestionChip extends StatelessWidget {
-  const _SuggestionChip({required this.text, required this.onTap});
+  const _SuggestionChip({required this.text, required this.onTap, this.icon});
 
   final String text;
   final VoidCallback onTap;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -698,9 +720,18 @@ class _SuggestionChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: colorScheme.outlineVariant),
         ),
-        child: Text(
-          text,
-          style: AppStyle.of(context).H6(color: colorScheme.onSurface),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 16, color: colorScheme.onSurface),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              text,
+              style: AppStyle.of(context).H6(color: colorScheme.onSurface),
+            ),
+          ],
         ),
       ),
     );

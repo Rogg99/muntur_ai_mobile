@@ -7,12 +7,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? showBack;
   final String titleTxt;
   final Color? bgColor;
+  final List<Widget>? actions;
 
   const CustomAppBar({
     super.key,
     required this.titleTxt,
     this.showBack = true,
     this.bgColor,
+    this.actions,
   });
 
   @override
@@ -37,6 +39,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         style: appStyle.H3(weight: 'bold'),
       ),
       backgroundColor: effectiveBgColor,
+      actions: actions,
     );
   }
 
