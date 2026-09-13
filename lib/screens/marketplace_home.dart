@@ -88,7 +88,10 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: 0.72,
+                      // 0.72 was too tight for real data: a verified vendor
+                      // with the price-parity badge wraps the badges Wrap
+                      // onto 2 lines, overflowing the fixed-height cell.
+                      childAspectRatio: 0.62,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
@@ -177,7 +180,7 @@ class _PartCard extends StatelessWidget {
                             : Colors.orange,
                       ),
                       if (part.vendor.pricePartyAgreed)
-                        const _Badge(text: 'Prix boutique garanti', color: Colors.blue),
+                        const _Badge(text: 'Prix garanti', color: Colors.blue),
                     ],
                   ),
                   const SizedBox(height: 4),
