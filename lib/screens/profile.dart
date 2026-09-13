@@ -25,6 +25,7 @@ class ProfileState extends ConsumerState<Profile>
   bool setAge = false;
   bool setLocation = false;
   bool setPassword = false;
+  bool setPhone = false;
 
   String birth = '2000-01-01';
 
@@ -32,6 +33,7 @@ class ProfileState extends ConsumerState<Profile>
   final prenomcontroller = TextEditingController();
   final villecontroller = TextEditingController();
   final pwdcontroller = TextEditingController();
+  final phonecontroller = TextEditingController();
 
   @override
   void dispose() {
@@ -39,6 +41,7 @@ class ProfileState extends ConsumerState<Profile>
     prenomcontroller.dispose();
     villecontroller.dispose();
     pwdcontroller.dispose();
+    phonecontroller.dispose();
     super.dispose();
   }
 
@@ -155,13 +158,24 @@ class ProfileState extends ConsumerState<Profile>
                 icon: const Icon(Icons.email),
                 text: translator.email_label,
                 desc: user.email,
-                onPressed: () {},
+                // The Profile model backing this data has no email field
+                // (only Django's User model does, which has no update
+                // endpoint exposed yet) — nothing to open here until that
+                // exists server-side, so say so instead of doing nothing.
+                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content:
+                          Text("La modification de l'email n'est pas encore disponible.")),
+                ),
               ),
               ProfileTile(
                 icon: const Icon(Icons.phone),
                 text: translator.hint_phone,
                 desc: user.phone ?? '—',
-                onPressed: () {},
+                onPressed: () {
+                  phonecontroller.text = user.phone ?? '';
+                  setState(() => setPhone = true);
+                },
               ),
               ProfileTile(
                 icon: const Icon(Icons.password),
@@ -356,6 +370,41 @@ class ProfileState extends ConsumerState<Profile>
               ],
             ),
             onClose: () => setState(() => setLocation = false),
+          ),
+
+        // ─── Overlay : modifier téléphone ───
+        if (setPhone)
+          CustomFilterCard(
+            title: translator.hint_phone,
+            desc: '',
+            body: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: phonecontroller,
+                  keyboardType: TextInputType.phone,
+                  style: appStyle.H6(),
+                  decoration: InputDecoration(
+                    hintText: translator.phoneHint,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                PrimaryButton(
+                  text: translator.save,
+                  padding: 50,
+                  radius: 50,
+                  onPressed: () async {
+                    await ref
+                        .read(authStateProvider.notifier)
+                        .updateProfile({'telephone': phonecontroller.text});
+                    if (mounted) setState(() => setPhone = false);
+                  },
+                ),
+              ],
+            ),
+            onClose: () => setState(() => setPhone = false),
           ),
 
         // ─── Overlay : changer mot de passe ───
