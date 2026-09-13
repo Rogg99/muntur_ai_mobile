@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/colors/colors.dart';
+import 'package:munturai/screens/forgot_password.dart';
 import 'package:munturai/screens/home.dart';
 import 'package:munturai/screens/register.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
@@ -135,7 +136,22 @@ class _loginState extends ConsumerState<Login> with TickerProviderStateMixin {
                   style: appStyle.txtArimoHebrewSubset(size: 16).copyWith(
                       fontStyle: FontStyle.italic, color: textFieldColor),
                 ),
-                Padding(padding: getPadding(top: 15)),
+                Padding(padding: getPadding(top: 10)),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const ForgotPasswordScreen())),
+                    child: Text(
+                      'Mot de passe oublié ?',
+                      style: appStyle.H6(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                  ),
+                ),
+                Padding(padding: getPadding(top: 5)),
                 PrimaryButton(
                   text: translator.login_button,
                   onPressed: () {

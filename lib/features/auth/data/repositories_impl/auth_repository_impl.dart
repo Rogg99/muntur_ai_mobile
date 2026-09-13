@@ -168,6 +168,67 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  // ────────── FORGOT PASSWORD (unauthenticated OTP flow) ──────────
+  // Distinct from resetPassword() above, which changes the password of an
+  // already-authenticated session. This is the "I can't log in at all" flow:
+  // phone → SMS OTP → uid/reset_token → new password. Contract from a4,
+  // commit 13392fc.
+
+  Future<void> requestPasswordResetOtp(String phone) async {
+    try {
+      final response = await _apiClient
+          .post('/auth/password-reset/request/', data: {'phone': phone});
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('OTP request failed: ${response.data}');
+      }
+    } catch (e) {
+      throw Exception('OTP request failed: ${e.toString()}');
+    }
+  }
+
+  /// Returns the `{uid, reset_token}` pair to carry into
+  /// [confirmPasswordReset].
+  Future<Map<String, String>> verifyPasswordResetOtp(
+      String phone, String otp) async {
+    try {
+      final response = await _apiClient.post('/auth/password-reset/verify/',
+          data: {'phone': phone, 'otp': otp});
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data['data'] ?? response.data;
+        return {
+          'uid': data['uid'].toString(),
+          'reset_token': data['reset_token'].toString(),
+        };
+      }
+      throw Exception('OTP verification failed: ${response.data}');
+    } catch (e) {
+      throw Exception('OTP verification failed: ${e.toString()}');
+    }
+  }
+
+  Future<void> confirmPasswordReset({
+    required String uid,
+    required String resetToken,
+    required String newPassword,
+  }) async {
+    try {
+      final response = await _apiClient.post(
+        '/auth/password-reset/confirm/',
+        data: {
+          'uid': uid,
+          'reset_token': resetToken,
+          'new_password': newPassword,
+          'confirm_new_password': newPassword,
+        },
+      );
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Password reset failed: ${response.data}');
+      }
+    } catch (e) {
+      throw Exception('Password reset failed: ${e.toString()}');
+    }
+  }
+
   // ─────────────────────── LOGOUT ──────────────────────────
 
   @override

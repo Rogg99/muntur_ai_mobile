@@ -11,6 +11,7 @@ import 'package:munturai/screens/about.dart';
 import 'package:munturai/screens/cgu.dart';
 import 'package:munturai/screens/help.dart';
 import 'package:munturai/screens/login.dart';
+import 'package:munturai/screens/privacy_policy.dart';
 
 import '../core/fonctions.dart';
 import '../core/theming/theme.dart';
@@ -137,13 +138,19 @@ class Settings extends ConsumerWidget {
               icon: CupertinoIcons.question,
               label: translator.help,
               onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => Help())),
+                  context, MaterialPageRoute(builder: (_) => const Help())),
             ),
             _SettingsTile(
               icon: CupertinoIcons.doc_text_search,
               label: translator.termsConditions,
               onTap: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => CGU())),
+                  context, MaterialPageRoute(builder: (_) => const CGU())),
+            ),
+            _SettingsTile(
+              icon: CupertinoIcons.lock_shield,
+              label: 'Confidentialité & sécurité',
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const PrivacyPolicy())),
             ),
             _SettingsTile(
               icon: CupertinoIcons.arrowshape_turn_up_right,
