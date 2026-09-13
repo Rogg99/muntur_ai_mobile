@@ -15,6 +15,7 @@ import 'package:munturai/model/message.dart';
 import 'package:munturai/widgets/widget_message2.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../widgets/CustomAppBar.dart';
 
@@ -242,6 +243,21 @@ class _ChatViewState extends ConsumerState<ChatView> {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
+  /// Entirely client-side — there's no dedicated export endpoint. Renders
+  /// each message as one "Sender: text" line and hands it to the OS share
+  /// sheet; media-only messages (voice notes, photos) get a placeholder
+  /// since attachment files aren't bundled into the share.
+  void _shareConversation(List<UIMessage> messages) {
+    if (messages.isEmpty) return;
+    final lines = messages.map((m) {
+      final sender = m.isAI ? 'Autosynx' : (m.emetteur == _userId ? 'Moi' : m.emetteurName);
+      final text = m.contenu.trim().isNotEmpty ? m.contenu.trim() : '[pièce jointe]';
+      return '$sender : $text';
+    }).join('\n\n');
+    final title = widget.disc?.title ?? 'Conversation Autosynx';
+    Share.share('$title\n\n$lines');
+  }
+
   Widget _buildSuggestions(BuildContext context) {
     final translator = AppLocalizations.of(context)!;
     final suggestions = [
@@ -319,6 +335,12 @@ class _ChatViewState extends ConsumerState<ChatView> {
             tooltip: 'Garage à proximité',
             onPressed: _goToNearbyGarages,
           ),
+          if (messages.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.share_outlined),
+              tooltip: 'Partager la conversation',
+              onPressed: () => _shareConversation(messages),
+            ),
         ],
       ),
       body: SafeArea(
