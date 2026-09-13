@@ -174,6 +174,7 @@ class _SupportTicketThreadState extends ConsumerState<SupportTicketThread> {
                         Expanded(
                           child: TextField(
                             controller: _messageController,
+                            style: appStyle.H5(),
                             minLines: 1,
                             maxLines: 4,
                             decoration: InputDecoration(

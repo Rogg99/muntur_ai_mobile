@@ -117,6 +117,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
           const SizedBox(height: 20),
           TextField(
             controller: _phoneController,
+            style: appStyle.H6(),
             keyboardType: TextInputType.phone,
             decoration: const InputDecoration(
               labelText: 'Numéro Mobile Money',

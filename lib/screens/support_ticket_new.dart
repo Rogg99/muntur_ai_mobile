@@ -107,11 +107,13 @@ class _SupportTicketNewState extends ConsumerState<SupportTicketNew> {
             ),
           TextField(
             controller: _subjectController,
+            style: appStyle.H6(),
             decoration: const InputDecoration(labelText: 'Sujet'),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _messageController,
+            style: appStyle.H6(),
             maxLines: 5,
             decoration: const InputDecoration(
               labelText: 'Message',

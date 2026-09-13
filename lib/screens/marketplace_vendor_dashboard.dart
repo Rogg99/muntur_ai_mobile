@@ -243,6 +243,7 @@ class _ReceivedOrderTile extends ConsumerWidget {
         title: const Text('Confirmer la livraison'),
         content: TextField(
           controller: pinController,
+          style: AppStyle.of(ctx).H6(),
           keyboardType: TextInputType.number,
           maxLength: 4,
           decoration: const InputDecoration(labelText: 'Code PIN du client'),

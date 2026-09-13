@@ -51,6 +51,7 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
             child: TextField(
               controller: _searchController,
               onChanged: (value) => setState(() => _query = value),
+              style: appStyle.H6(),
               decoration: InputDecoration(
                 hintText: 'Rechercher une pièce...',
                 prefixIcon: const Icon(Icons.search),

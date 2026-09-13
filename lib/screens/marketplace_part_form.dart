@@ -197,11 +197,13 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
         children: [
           TextField(
             controller: _titleController,
+            style: appStyle.H6(),
             decoration: const InputDecoration(labelText: 'Titre'),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _descriptionController,
+            style: appStyle.H6(),
             maxLines: 3,
             decoration: const InputDecoration(labelText: 'Description'),
           ),
@@ -221,6 +223,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
               Expanded(
                 child: TextField(
                   controller: _priceController,
+                  style: appStyle.H6(),
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(labelText: 'Prix (XAF)'),
                 ),
@@ -229,6 +232,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
               Expanded(
                 child: TextField(
                   controller: _stockController,
+                  style: appStyle.H6(),
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(labelText: 'Stock'),
                 ),
@@ -254,6 +258,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
               Expanded(
                 child: TextField(
                   controller: _oemController,
+                  style: appStyle.H6(),
                   decoration: const InputDecoration(hintText: 'Ajouter une référence OEM'),
                   onSubmitted: (_) => _addOem(),
                 ),
@@ -280,6 +285,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
               Expanded(
                 child: TextField(
                   controller: _vehicleController,
+                  style: appStyle.H6(),
                   decoration:
                       const InputDecoration(hintText: 'Ex: Toyota Corolla'),
                   onSubmitted: (_) => _addVehicle(),
