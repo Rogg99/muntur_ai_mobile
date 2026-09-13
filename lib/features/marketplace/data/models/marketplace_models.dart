@@ -56,6 +56,7 @@ class PartListing {
   final String currency;
   final int stockQuantity;
   final List<String> oemReferences;
+  final List<String> compatibleVehicles;
   final List<MediaRefItem> medias;
   final bool active;
 
@@ -69,6 +70,7 @@ class PartListing {
     this.currency = 'XAF',
     this.stockQuantity = 0,
     this.oemReferences = const [],
+    this.compatibleVehicles = const [],
     this.medias = const [],
     this.active = true,
   });
@@ -84,6 +86,9 @@ class PartListing {
         currency: json['currency']?.toString() ?? 'XAF',
         stockQuantity: (json['stock_quantity'] as num?)?.toInt() ?? 0,
         oemReferences: (json['oem_references'] as List? ?? [])
+            .map((e) => e.toString())
+            .toList(),
+        compatibleVehicles: (json['compatible_vehicles'] as List? ?? [])
             .map((e) => e.toString())
             .toList(),
         medias: (json['medias'] as List? ?? [])

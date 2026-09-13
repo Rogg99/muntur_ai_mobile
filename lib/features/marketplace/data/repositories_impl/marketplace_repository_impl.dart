@@ -108,6 +108,7 @@ class MarketplaceRepositoryImpl {
     required double price,
     required int stockQuantity,
     required List<String> oemReferences,
+    required List<String> compatibleVehicles,
     required List<String> mediaIds,
   }) async {
     final response = await _apiClient.post('/marketplace/parts/', data: {
@@ -117,6 +118,7 @@ class MarketplaceRepositoryImpl {
       'price': price,
       'stock_quantity': stockQuantity,
       'oem_references': oemReferences,
+      'compatible_vehicles': compatibleVehicles,
       'medias': mediaIds,
     });
     final raw = response.data['data'] ?? response.data;
@@ -131,6 +133,7 @@ class MarketplaceRepositoryImpl {
     required double price,
     required int stockQuantity,
     required List<String> oemReferences,
+    required List<String> compatibleVehicles,
     required List<String> mediaIds,
     bool active = true,
   }) async {
@@ -141,6 +144,7 @@ class MarketplaceRepositoryImpl {
       'price': price,
       'stock_quantity': stockQuantity,
       'oem_references': oemReferences,
+      'compatible_vehicles': compatibleVehicles,
       'medias': mediaIds,
       'active': active,
     });

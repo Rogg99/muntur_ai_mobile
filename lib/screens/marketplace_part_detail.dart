@@ -73,6 +73,17 @@ class MarketplacePartDetail extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text(part.description, style: appStyle.H5()),
               ],
+              if (part.compatibleVehicles.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Text('Véhicules compatibles', style: appStyle.H5(weight: 'bold')),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children:
+                      part.compatibleVehicles.map((v) => _Chip(text: v)).toList(),
+                ),
+              ],
               if (part.oemReferences.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 Text('Références OEM', style: appStyle.H5(weight: 'bold')),

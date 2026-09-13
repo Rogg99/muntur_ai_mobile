@@ -35,8 +35,11 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
   late final _stockController = TextEditingController(
       text: widget.existing?.stockQuantity.toString() ?? '1');
   late final _oemController = TextEditingController();
+  late final _vehicleController = TextEditingController();
   String _condition = '';
   late final List<String> _oemReferences = List.of(widget.existing?.oemReferences ?? []);
+  late final List<String> _compatibleVehicles =
+      List.of(widget.existing?.compatibleVehicles ?? []);
 
   // Existing remote photos (kept unless removed) + newly picked local files
   // (uploaded on submit). Their ids must be resent on update — PUT replaces
@@ -61,6 +64,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
     _priceController.dispose();
     _stockController.dispose();
     _oemController.dispose();
+    _vehicleController.dispose();
     super.dispose();
   }
 
@@ -76,6 +80,15 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
     setState(() {
       _oemReferences.add(value);
       _oemController.clear();
+    });
+  }
+
+  void _addVehicle() {
+    final value = _vehicleController.text.trim();
+    if (value.isEmpty) return;
+    setState(() {
+      _compatibleVehicles.add(value);
+      _vehicleController.clear();
     });
   }
 
@@ -107,6 +120,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
           price: price,
           stockQuantity: stock,
           oemReferences: _oemReferences,
+          compatibleVehicles: _compatibleVehicles,
           mediaIds: mediaIds,
         );
       } else {
@@ -117,6 +131,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
           price: price,
           stockQuantity: stock,
           oemReferences: _oemReferences,
+          compatibleVehicles: _compatibleVehicles,
           mediaIds: mediaIds,
         );
       }
@@ -208,6 +223,33 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
                 ),
               ),
               IconButton(icon: const Icon(Icons.add), onPressed: _addOem),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text('Véhicules compatibles', style: appStyle.H5(weight: 'bold')),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              for (final vehicle in _compatibleVehicles)
+                Chip(
+                  label: Text(vehicle),
+                  onDeleted: () => setState(() => _compatibleVehicles.remove(vehicle)),
+                ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _vehicleController,
+                  decoration:
+                      const InputDecoration(hintText: 'Ex: Toyota Corolla'),
+                  onSubmitted: (_) => _addVehicle(),
+                ),
+              ),
+              IconButton(icon: const Icon(Icons.add), onPressed: _addVehicle),
             ],
           ),
           const SizedBox(height: 16),
