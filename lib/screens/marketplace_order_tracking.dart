@@ -3,9 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/features/courier/data/models/courier_models.dart';
+import 'package:munturai/features/courier/presentation/providers/courier_provider.dart';
 import 'package:munturai/features/marketplace/data/models/marketplace_models.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
+import 'package:munturai/screens/courier_qr_scan.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
+
+const Map<String, String> _deliveryStatusLabels = {
+  'pending': 'En attente d\'un livreur',
+  'assigned': 'Livreur en route pour le retrait',
+  'picked_up': 'Récupérée par le livreur',
+  'in_transit': 'En route vers vous',
+  'delivered': 'Livrée',
+  'failed': 'Échouée',
+};
 
 const Map<String, String> _statusLabels = {
   'pending_payment': 'Paiement en attente',
@@ -90,6 +102,34 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
     }
   }
 
+  Future<void> _scanDropoff(Delivery delivery) async {
+    final token = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const CourierQrScan(
+          title: 'Confirmer la réception',
+          instructions: 'Scannez le QR affiché par le livreur pour confirmer la réception.',
+        ),
+      ),
+    );
+    if (token == null || !mounted) return;
+    try {
+      await ref.read(courierRepositoryProvider).confirmDropoff(delivery.id, token);
+      ref.invalidate(myDeliveriesProvider);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Réception confirmée !')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        );
+      }
+    }
+  }
+
   bool _canReturn(MarketplaceOrder order) {
     if (order.status != 'escrow_held') return false;
     final expiresAt = order.returnWindowExpiresAt;
@@ -103,6 +143,14 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final orderAsync = ref.watch(marketplaceOrderDetailProvider(widget.orderId));
+    final deliveries = ref.watch(myDeliveriesProvider).valueOrNull ?? const <Delivery>[];
+    Delivery? delivery;
+    for (final d in deliveries) {
+      if (d.orderId == widget.orderId) {
+        delivery = d;
+        break;
+      }
+    }
 
     return Scaffold(
       backgroundColor: colorScheme.background,
@@ -138,6 +186,38 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                 const SizedBox(height: 8),
                 Text('${order.priceTotal.toStringAsFixed(0)} ${order.currency}',
                     style: appStyle.H4(weight: 'bold')),
+                if (delivery != null) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.local_shipping_outlined, size: 18, color: colorScheme.primary),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _deliveryStatusLabels[delivery.status] ?? delivery.status,
+                            style: appStyle.H6(weight: 'bold'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (delivery.status == 'picked_up' || delivery.status == 'in_transit') ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => _scanDropoff(delivery!),
+                        child: const Text('Scanner le QR du livreur'),
+                      ),
+                    ),
+                  ],
+                ],
                 if (order.status == 'pending_payment') ...[
                   const SizedBox(height: 16),
                   Text(
