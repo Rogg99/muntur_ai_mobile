@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/network/api_client.dart';
 import 'package:munturai/features/chatbot/data/models/suggested_part_listing.dart';
 import 'package:munturai/model/message.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -435,7 +436,7 @@ class _RelatedArticleCard extends StatelessWidget {
               if (photoUrl != null && photoUrl.isNotEmpty)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
-                  child: Image.network(photoUrl,
+                  child: Image.network(ApiClient.resolveMediaUrl(photoUrl),
                       width: 40, height: 40, fit: BoxFit.cover),
                 ),
               if (photoUrl != null && photoUrl.isNotEmpty)
