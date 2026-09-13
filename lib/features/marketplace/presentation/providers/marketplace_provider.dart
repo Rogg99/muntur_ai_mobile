@@ -11,11 +11,15 @@ final marketplaceRepositoryProvider = Provider<MarketplaceRepositoryImpl>(
   (ref) => MarketplaceRepositoryImpl(ApiClient()),
 );
 
-/// Search text driving [marketplacePartsProvider] — set from the search bar.
-final marketplaceSearchProvider = StateProvider<String>((ref) => '');
-
-final marketplacePartsProvider = FutureProvider.autoDispose<List<PartListing>>((ref) {
-  final search = ref.watch(marketplaceSearchProvider);
+/// Keyed by the search text itself rather than a shared StateProvider —
+/// the main Marketplace tab (always mounted, embedded in HomeScreen's
+/// IndexedStack) and the standalone screen pushed from chat's "Pièces
+/// compatibles" shortcut used to both read/write one global search
+/// provider, so using the shortcut once left the tab permanently filtered
+/// by that leftover query (looked like "the catalogue doesn't load").
+/// Each MarketplaceHome instance now owns its own search text locally.
+final marketplacePartsProvider =
+    FutureProvider.autoDispose.family<List<PartListing>, String>((ref, search) {
   return ref.read(marketplaceRepositoryProvider).getParts(search: search);
 });
 

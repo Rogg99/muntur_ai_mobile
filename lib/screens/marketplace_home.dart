@@ -10,7 +10,7 @@ import 'package:munturai/widgets/CustomAppBar.dart';
 /// Marketplace catalogue: search + grid of parts, with escrow-protected
 /// checkout from each part's detail screen.
 class MarketplaceHome extends ConsumerStatefulWidget {
-  const MarketplaceHome({super.key, this.embedded = false});
+  const MarketplaceHome({super.key, this.embedded = false, this.initialQuery});
 
   /// true when hosted as HomeScreen's Marketplace tab — HomeScreen already
   /// supplies the app bar (title + shortcut actions) in that case, so this
@@ -19,15 +19,18 @@ class MarketplaceHome extends ConsumerStatefulWidget {
   /// the "Pièces compatibles" shortcut from chat).
   final bool embedded;
 
+  /// Pre-fills the search box — used by the chat shortcut. Each instance
+  /// owns its own search text locally (not a shared provider), so this
+  /// never leaks into the main tab's default view.
+  final String? initialQuery;
+
   @override
   ConsumerState<MarketplaceHome> createState() => _MarketplaceHomeState();
 }
 
 class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
-  // Pre-filled when opened from a shortcut (e.g. chat's "Pièces
-  // compatibles") that seeds marketplaceSearchProvider before pushing here.
-  late final _searchController =
-      TextEditingController(text: ref.read(marketplaceSearchProvider));
+  late final _searchController = TextEditingController(text: widget.initialQuery ?? '');
+  late String _query = widget.initialQuery ?? '';
 
   @override
   void dispose() {
@@ -39,7 +42,7 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-    final partsAsync = ref.watch(marketplacePartsProvider);
+    final partsAsync = ref.watch(marketplacePartsProvider(_query));
 
     final body = Column(
         children: [
@@ -47,8 +50,7 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
             padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _searchController,
-              onChanged: (value) =>
-                  ref.read(marketplaceSearchProvider.notifier).state = value,
+              onChanged: (value) => setState(() => _query = value),
               decoration: InputDecoration(
                 hintText: 'Rechercher une pièce...',
                 prefixIcon: const Icon(Icons.search),
@@ -81,7 +83,7 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
                   );
                 }
                 return RefreshIndicator(
-                  onRefresh: () async => ref.invalidate(marketplacePartsProvider),
+                  onRefresh: () async => ref.invalidate(marketplacePartsProvider(_query)),
                   child: GridView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

@@ -8,7 +8,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/services/home_navigation.dart';
-import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
 import 'package:munturai/screens/marketplace_home.dart';
 import 'package:munturai/screens/support_ticket_new.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
@@ -254,9 +253,10 @@ class _ChatViewState extends ConsumerState<ChatView> {
   /// match.
   void _findCompatibleParts() {
     final seed = widget.disc?.title ?? '';
-    ref.read(marketplaceSearchProvider.notifier).state = seed;
     Navigator.push(
-        context, MaterialPageRoute(builder: (_) => const MarketplaceHome()));
+        context,
+        MaterialPageRoute(
+            builder: (_) => MarketplaceHome(initialQuery: seed)));
   }
 
   /// Dispatches the AI's suggested next action (Message.suggested_action,
@@ -273,9 +273,10 @@ class _ChatViewState extends ConsumerState<ChatView> {
         break;
       case 'marketplace_search':
         final query = params['query']?.toString() ?? '';
-        ref.read(marketplaceSearchProvider.notifier).state = query;
-        Navigator.push(context,
-            MaterialPageRoute(builder: (_) => const MarketplaceHome()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => MarketplaceHome(initialQuery: query)));
         break;
       case 'share_location':
         _shareLocation();
