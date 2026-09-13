@@ -40,6 +40,15 @@ class MessageModel {
   /// 'not_useful' / 'none'. Drives which thumb renders as active.
   String userFeedback = 'none';
 
+  /// '' or one of 'book_mechanic' / 'marketplace_search' / 'share_location'
+  /// / 'escalate_human' — AI-suggested next action (Gemini/OpenAI function
+  /// calling server-side, see Message.suggested_action).
+  String suggestedAction = '';
+
+  /// JSON-encoded params object for [suggestedAction] (e.g.
+  /// `{"query": "..."}` for marketplace_search), '{}' when none.
+  String suggestedActionParams = '{}';
+
   MessageModel();
 
   static MessageModel create({
@@ -61,6 +70,8 @@ class MessageModel {
     required DateTime dateEnvoi,
     String relatedArticle = 'null',
     String userFeedback = 'none',
+    String suggestedAction = '',
+    String suggestedActionParams = '{}',
   }) {
     final m = MessageModel();
     m.id = id;
@@ -81,6 +92,8 @@ class MessageModel {
     m.dateEnvoi = dateEnvoi;
     m.relatedArticle = relatedArticle;
     m.userFeedback = userFeedback;
+    m.suggestedAction = suggestedAction;
+    m.suggestedActionParams = suggestedActionParams;
     return m;
   }
 
@@ -158,6 +171,10 @@ class MessageModel {
       pendingSync: json['pendingSync'] ?? false,
       relatedArticle: _encodeRelatedArticle(json),
       userFeedback: json['user_feedback']?.toString() ?? 'none',
+      suggestedAction: json['suggested_action']?.toString() ?? '',
+      suggestedActionParams: json['suggested_action_params'] is Map
+          ? jsonEncode(json['suggested_action_params'])
+          : '{}',
       // The WS discussion_message/forum_message push and the raw
       // MessageSerializer/MessageReadSerializer payloads (fields='__all__')
       // date-stamp as "date_creation" — only the ask-question 202 echo uses
@@ -188,6 +205,8 @@ class MessageModel {
     DateTime? dateEnvoi,
     String? relatedArticle,
     String? userFeedback,
+    String? suggestedAction,
+    String? suggestedActionParams,
   }) {
     return MessageModel.create(
       id: id ?? this.id,
@@ -208,6 +227,9 @@ class MessageModel {
       dateEnvoi: dateEnvoi ?? this.dateEnvoi,
       relatedArticle: relatedArticle ?? this.relatedArticle,
       userFeedback: userFeedback ?? this.userFeedback,
+      suggestedAction: suggestedAction ?? this.suggestedAction,
+      suggestedActionParams:
+          suggestedActionParams ?? this.suggestedActionParams,
     );
   }
 }

@@ -28,19 +28,28 @@ class MessageWidget2 extends StatefulWidget {
   /// Called with the chosen feedback (true=useful, false=not useful) when
   /// the user taps a thumb. Only ever passed for AI messages.
   final void Function(bool useful)? onFeedback;
+  /// Called with (action, params) when the suggested-action chip is
+  /// tapped — action is one of 'book_mechanic' / 'marketplace_search' /
+  /// 'share_location' / 'escalate_human'. Only ever passed for AI messages.
+  final void Function(String action, Map<String, dynamic> params)? onSuggestedAction;
   MessageWidget2({
     Key? key,
     required this.message,
     this.sender = true,
     this.head = false,
     this.onFeedback,
+    this.onSuggestedAction,
   }) : super(
           key: key,
         );
 
   @override
   State<MessageWidget2> createState() => MessageWidget2_(
-      message: message, sender: sender, head: head, onFeedback: onFeedback);
+      message: message,
+      sender: sender,
+      head: head,
+      onFeedback: onFeedback,
+      onSuggestedAction: onSuggestedAction);
 }
 
 class MessageWidget2_ extends State<MessageWidget2> {
@@ -48,12 +57,14 @@ class MessageWidget2_ extends State<MessageWidget2> {
   bool sender;
   bool head;
   final void Function(bool useful)? onFeedback;
+  final void Function(String action, Map<String, dynamic> params)? onSuggestedAction;
 
   MessageWidget2_({
     required this.message,
     required this.sender,
     required this.head,
     this.onFeedback,
+    this.onSuggestedAction,
   });
 
   Color _color = Colors.transparent;
@@ -194,6 +205,14 @@ class MessageWidget2_ extends State<MessageWidget2> {
                             _RelatedArticleCard(
                               raw: message!.relatedArticle,
                               foreground: bubbleTextColor,
+                            ),
+                          if (onSuggestedAction != null &&
+                              message!.suggestedAction.isNotEmpty)
+                            _SuggestedActionChip(
+                              action: message!.suggestedAction,
+                              paramsRaw: message!.suggestedActionParams,
+                              foreground: bubbleTextColor,
+                              onTap: onSuggestedAction!,
                             ),
                           if (onFeedback != null)
                             _FeedbackRow(
@@ -420,6 +439,77 @@ class _RelatedArticleCard extends StatelessWidget {
                 ),
               ),
               Icon(Icons.chevron_right, size: 18, color: foreground),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+const Map<String, ({IconData icon, String label})> _suggestedActionMeta = {
+  'book_mechanic': (icon: Icons.build_outlined, label: 'Trouver un garage'),
+  'marketplace_search': (icon: Icons.search, label: 'Chercher la pièce'),
+  'share_location': (icon: Icons.location_on_outlined, label: 'Partager ma position'),
+  'escalate_human': (icon: Icons.support_agent_outlined, label: 'Parler à un humain'),
+};
+
+/// A single tappable chip surfacing the AI's suggested next action
+/// (Message.suggested_action / suggested_action_params — Gemini/OpenAI
+/// function calling server-side). [paramsRaw] is the JSON-encoded params
+/// object, decoded here rather than upstream so this stays a dumb render +
+/// callback like [_RelatedArticleCard]/[_FeedbackRow].
+class _SuggestedActionChip extends StatelessWidget {
+  final String action;
+  final String paramsRaw;
+  final Color foreground;
+  final void Function(String action, Map<String, dynamic> params) onTap;
+
+  const _SuggestedActionChip({
+    required this.action,
+    required this.paramsRaw,
+    required this.foreground,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final meta = _suggestedActionMeta[action];
+    if (meta == null) return const SizedBox.shrink();
+    Map<String, dynamic> params = const {};
+    try {
+      final decoded = jsonDecode(paramsRaw);
+      if (decoded is Map) params = decoded.cast<String, dynamic>();
+    } catch (_) {}
+    final query = params['query']?.toString();
+    final label = action == 'marketplace_search' && query != null && query.isNotEmpty
+        ? '${meta.label} : $query'
+        : meta.label;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () => onTap(action, params),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: foreground.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(meta.icon, size: 16, color: foreground),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: foreground, fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+              ),
             ],
           ),
         ),

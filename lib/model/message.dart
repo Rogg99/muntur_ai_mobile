@@ -18,6 +18,8 @@ class UIMessage {
   bool isAI;
   String relatedArticle;
   String userFeedback;
+  String suggestedAction;
+  String suggestedActionParams;
 
   UIMessage({
     this.id = "auto",
@@ -37,6 +39,8 @@ class UIMessage {
     this.isAI = false,
     this.relatedArticle = "null",
     this.userFeedback = "none",
+    this.suggestedAction = "",
+    this.suggestedActionParams = "{}",
   });
 
   factory UIMessage.fromJson(Map<String, dynamic> json) {

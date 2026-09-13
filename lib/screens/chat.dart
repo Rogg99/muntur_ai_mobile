@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/services/home_navigation.dart';
@@ -257,6 +258,59 @@ class _ChatViewState extends ConsumerState<ChatView> {
         context, MaterialPageRoute(builder: (_) => const MarketplaceHome()));
   }
 
+  /// Dispatches the AI's suggested next action (Message.suggested_action,
+  /// server-side function calling — see the _SuggestedActionChip that calls
+  /// this). book_mechanic/marketplace_search reuse the exact shortcuts
+  /// already on this screen; share_location and escalate_human are new.
+  void _handleSuggestedAction(String action, Map<String, dynamic> params) {
+    switch (action) {
+      case 'book_mechanic':
+        _goToNearbyGarages();
+        break;
+      case 'marketplace_search':
+        final query = params['query']?.toString() ?? '';
+        ref.read(marketplaceSearchProvider.notifier).state = query;
+        Navigator.push(context,
+            MaterialPageRoute(builder: (_) => const MarketplaceHome()));
+        break;
+      case 'share_location':
+        _shareLocation();
+        break;
+      case 'escalate_human':
+        // No human-support channel exists in the app yet (no contact
+        // number/email on file, no live-agent screen) — say so rather than
+        // pretend this does something.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Support humain — bientôt disponible.')),
+        );
+        break;
+    }
+  }
+
+  Future<void> _shareLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) throw Exception('location service disabled');
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        throw Exception('location permission denied');
+      }
+      final pos = await Geolocator.getCurrentPosition();
+      Share.share(
+          'Ma position : https://www.google.com/maps/search/?api=1&query=${pos.latitude},${pos.longitude}');
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Impossible de récupérer votre position.')),
+      );
+    }
+  }
+
   /// Entirely client-side — there's no dedicated export endpoint. Renders
   /// each message as one "Sender: text" line and hands it to the OS share
   /// sheet; media-only messages (voice notes, photos) get a placeholder
@@ -326,6 +380,8 @@ class _ChatViewState extends ConsumerState<ChatView> {
                 isAI: m.isAI,
                 relatedArticle: m.relatedArticle,
                 userFeedback: m.userFeedback,
+                suggestedAction: m.suggestedAction,
+                suggestedActionParams: m.suggestedActionParams,
               ))
           .toList()
         ..sort((a, b) =>
@@ -424,6 +480,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
                       .read(chatMessagesProvider(_discId).notifier)
                       .setMessageFeedback(message.id, useful)
                   : null,
+              onSuggestedAction: message.isAI ? _handleSuggestedAction : null,
             );
           },
         ),
