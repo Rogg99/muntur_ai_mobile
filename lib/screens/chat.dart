@@ -10,6 +10,7 @@ import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/services/home_navigation.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
 import 'package:munturai/screens/marketplace_home.dart';
+import 'package:munturai/screens/support_ticket_new.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/data/models/media_ref.dart';
@@ -262,6 +263,9 @@ class _ChatViewState extends ConsumerState<ChatView> {
   /// server-side function calling — see the _SuggestedActionChip that calls
   /// this). book_mechanic/marketplace_search reuse the exact shortcuts
   /// already on this screen; share_location and escalate_human are new.
+  /// escalate_human opens a new support ticket pre-linked to this
+  /// discussion (source_discussion) so the backend can snapshot its
+  /// context_summary onto the ticket automatically.
   void _handleSuggestedAction(String action, Map<String, dynamic> params) {
     switch (action) {
       case 'book_mechanic':
@@ -277,12 +281,14 @@ class _ChatViewState extends ConsumerState<ChatView> {
         _shareLocation();
         break;
       case 'escalate_human':
-        // No human-support channel exists in the app yet (no contact
-        // number/email on file, no live-agent screen) — say so rather than
-        // pretend this does something.
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Support humain — bientôt disponible.')),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SupportTicketNew(
+              sourceDiscussionId: _discId != 'new' ? _discId : null,
+              initialSubject: 'Escalade depuis le chat',
+            ),
+          ),
         );
         break;
     }

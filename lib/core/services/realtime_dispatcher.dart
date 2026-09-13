@@ -12,6 +12,7 @@ import '../../features/chatbot/data/models/message_model.dart';
 import '../../features/chatbot/presentation/providers/chatbot_provider.dart';
 import '../../features/notifications/presentation/providers/notification_provider.dart';
 import '../../features/subscriptions/presentation/providers/subscription_provider.dart';
+import '../../features/support/presentation/providers/support_provider.dart';
 
 part 'realtime_dispatcher.g.dart';
 
@@ -93,6 +94,20 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
           }
         }
         _notify(_senderLabel(data, fallback: 'Forum'), _messageBody(data));
+        break;
+
+      // Minimal payload ({ticket_id, message_id, contenu, emetteur} —
+      // not the full MessageReadSerializer shape discussion_message uses),
+      // so this just invalidates rather than trying to merge a partial
+      // message in. Fires whether the reply came via the API or the Django
+      // admin (staff has no dedicated agent UI yet, see signals.py).
+      case 'support_ticket_message':
+        final ticketId = data is Map ? data['ticket_id']?.toString() : null;
+        if (ticketId != null) {
+          ref.invalidate(supportTicketDetailProvider(ticketId));
+        }
+        ref.invalidate(supportTicketsProvider);
+        _notify('Assistance', _messageBody(data));
         break;
 
       case 'notification':
