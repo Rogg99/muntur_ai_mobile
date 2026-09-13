@@ -178,14 +178,27 @@ class _PartCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // Distance was asked for here too, but neither
-                  // /marketplace/parts/ nor VendorProfileReadSerializer
-                  // expose a vendor location (only lat/lng, added
-                  // server-side only for suggest_part_purchase, not on this
-                  // endpoint) — nothing to show until that's exposed.
-                  if (part.vendor.verified) ...[
+                  if (part.vendor.ville.isNotEmpty || part.vendor.verified) ...[
                     const SizedBox(height: 4),
-                    Icon(Icons.verified, size: 14, color: colorScheme.primary),
+                    Row(
+                      children: [
+                        if (part.vendor.verified) ...[
+                          Icon(Icons.verified, size: 14, color: colorScheme.primary),
+                          const SizedBox(width: 4),
+                        ],
+                        if (part.vendor.ville.isNotEmpty)
+                          Expanded(
+                            child: Text(
+                              part.vendor.distanceKm != null
+                                  ? '${part.vendor.ville} · ${part.vendor.distanceKm!.toStringAsFixed(1)} km'
+                                  : part.vendor.ville,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: appStyle.H6(color: Colors.grey),
+                            ),
+                          ),
+                      ],
+                    ),
                   ],
                 ],
               ),

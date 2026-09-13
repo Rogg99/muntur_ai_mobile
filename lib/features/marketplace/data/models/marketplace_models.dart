@@ -15,6 +15,12 @@ double _parseDecimal(dynamic value) {
   return double.tryParse(value.toString()) ?? 0;
 }
 
+double? _parseDecimalOrNull(dynamic value) {
+  if (value == null) return null;
+  if (value is num) return value.toDouble();
+  return double.tryParse(value.toString());
+}
+
 class VendorProfile {
   final String id;
   final String shopName;
@@ -22,6 +28,11 @@ class VendorProfile {
   final bool pricePartyAgreed;
   final bool subscriptionActive;
   final int catalogCount;
+  final String ville;
+  /// null unless the request included ?latitude=&longitude= AND this
+  /// vendor has a location on file (most don't yet) — not an error either
+  /// way, just "unknown", so render its absence quietly.
+  final double? distanceKm;
 
   const VendorProfile({
     required this.id,
@@ -30,6 +41,8 @@ class VendorProfile {
     this.pricePartyAgreed = false,
     this.subscriptionActive = false,
     this.catalogCount = 0,
+    this.ville = '',
+    this.distanceKm,
   });
 
   factory VendorProfile.fromJson(Map<String, dynamic> json) => VendorProfile(
@@ -41,6 +54,8 @@ class VendorProfile {
         pricePartyAgreed: json['price_parity_agreed'] == true,
         subscriptionActive: json['subscription_active'] == true,
         catalogCount: (json['catalog_count'] as num?)?.toInt() ?? 0,
+        ville: json['ville']?.toString() ?? '',
+        distanceKm: _parseDecimalOrNull(json['distance_km']),
       );
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../../core/network/api_client.dart';
 import '../../data/models/marketplace_models.dart';
 import '../../data/repositories_impl/marketplace_repository_impl.dart';
@@ -18,9 +19,26 @@ final marketplaceRepositoryProvider = Provider<MarketplaceRepositoryImpl>(
 /// provider, so using the shortcut once left the tab permanently filtered
 /// by that leftover query (looked like "the catalogue doesn't load").
 /// Each MarketplaceHome instance now owns its own search text locally.
+/// Best-effort, last-known fix only — never blocks the catalogue on
+/// acquiring a fresh GPS lock or a permission prompt. Feeds distance
+/// sort/display in [marketplacePartsProvider]; absence just means no
+/// distance annotation, not an error.
+final marketplaceLastKnownPositionProvider = FutureProvider.autoDispose<Position?>((ref) async {
+  try {
+    return await Geolocator.getLastKnownPosition();
+  } catch (_) {
+    return null;
+  }
+});
+
 final marketplacePartsProvider =
-    FutureProvider.autoDispose.family<List<PartListing>, String>((ref, search) {
-  return ref.read(marketplaceRepositoryProvider).getParts(search: search);
+    FutureProvider.autoDispose.family<List<PartListing>, String>((ref, search) async {
+  final position = await ref.watch(marketplaceLastKnownPositionProvider.future);
+  return ref.read(marketplaceRepositoryProvider).getParts(
+        search: search,
+        latitude: position?.latitude,
+        longitude: position?.longitude,
+      );
 });
 
 final marketplacePartDetailProvider =

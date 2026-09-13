@@ -26,10 +26,21 @@ class MarketplaceRepositoryImpl {
 
   MarketplaceRepositoryImpl(this._apiClient);
 
-  Future<List<PartListing>> getParts({String search = ''}) async {
+  Future<List<PartListing>> getParts({
+    String search = '',
+    double? latitude,
+    double? longitude,
+  }) async {
+    final query = {
+      if (search.isNotEmpty) 'search': search,
+      // Also sorts server-side by vendor.distance_km when given (nulls —
+      // vendors with no location on file — sorted last).
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+    };
     final response = await _apiClient.get(
       '/marketplace/parts/',
-      queryParameters: search.isNotEmpty ? {'search': search} : null,
+      queryParameters: query.isNotEmpty ? query : null,
     );
     final rawList = asResponseList(response.data);
     return rawList
