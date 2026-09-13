@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/courier/presentation/providers/courier_provider.dart';
 import 'package:munturai/screens/courier_job_board.dart';
+import 'package:munturai/screens/courier_my_deliveries.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 import 'package:munturai/widgets/primary_button.dart';
 
@@ -109,6 +110,15 @@ class _CourierProfileScreenState extends ConsumerState<CourierProfileScreen> {
                     ? null
                     : () => Navigator.push(context,
                         MaterialPageRoute(builder: (_) => const CourierJobBoard())),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton(
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const CourierMyDeliveries())),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                ),
+                child: const Text('Mes courses'),
               ),
             ],
           );

@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/network/api_client.dart';
 import 'package:munturai/features/marketplace/data/models/marketplace_models.dart';
+import 'package:munturai/features/courier/presentation/providers/courier_provider.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
+import 'package:munturai/screens/courier_vendor_delivery.dart';
 import 'package:munturai/screens/marketplace_part_form.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
@@ -273,6 +275,27 @@ class _ReceivedOrderTile extends ConsumerWidget {
     }
   }
 
+  /// Idempotent server-side (returns the existing Delivery if already
+  /// marked ready) — safe to tap more than once.
+  Future<void> _markReady(BuildContext context, WidgetRef ref) async {
+    try {
+      final delivery =
+          await ref.read(courierRepositoryProvider).markOrderReady(order.id);
+      if (!context.mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => CourierVendorDelivery(deliveryId: delivery.id)),
+      );
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
@@ -299,9 +322,22 @@ class _ReceivedOrderTile extends ConsumerWidget {
               style: appStyle.H6(color: colorScheme.primary)),
           if (order.status == 'escrow_held') ...[
             const SizedBox(height: 8),
-            OutlinedButton(
-              onPressed: () => _confirmDeliveryDialog(context, ref),
-              child: const Text('Confirmer livraison (PIN)'),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => _confirmDeliveryDialog(context, ref),
+                    child: const Text('Confirmer livraison (PIN)'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => _markReady(context, ref),
+                    child: const Text('Livraison'),
+                  ),
+                ),
+              ],
             ),
           ],
         ],
