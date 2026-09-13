@@ -81,7 +81,7 @@ class AboutState extends State<About>  with TickerProviderStateMixin{
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Flexible(child: Text(
-                    'Copyright © 2025 by \n AUTOSYNX Inc.',
+                    'Copyright © 2025 \nAUTOSYNX BY ZEMNOVA',
                   textAlign: TextAlign.center,
                   style: appStyle.H4(),
                 ))
