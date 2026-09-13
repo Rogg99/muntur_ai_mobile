@@ -8,11 +8,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/services/home_navigation.dart';
+import 'package:munturai/features/marketplace/data/models/marketplace_models.dart';
+import 'package:munturai/screens/marketplace_checkout.dart';
 import 'package:munturai/screens/marketplace_home.dart';
 import 'package:munturai/screens/support_ticket_new.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/chatbot/data/models/discussion_model.dart';
 import 'package:munturai/features/chatbot/data/models/media_ref.dart';
+import 'package:munturai/features/chatbot/data/models/suggested_part_listing.dart';
 import 'package:munturai/features/chatbot/presentation/providers/chatbot_provider.dart';
 import 'package:munturai/model/message.dart';
 import 'package:munturai/widgets/widget_message2.dart';
@@ -223,9 +226,20 @@ class _ChatViewState extends ConsumerState<ChatView> {
     });
 
     try {
-      await ref
-          .read(chatMessagesProvider(_discId).notifier)
-          .askQuestion(text, media: uploaded);
+      // Best-effort, last-known fix only — never blocks/delays sending on
+      // acquiring a fresh GPS lock or a permission prompt. Lets
+      // suggest_part_purchase sort/annotate its listings by distance when
+      // available; entirely optional server-side.
+      Position? position;
+      try {
+        position = await Geolocator.getLastKnownPosition();
+      } catch (_) {}
+      await ref.read(chatMessagesProvider(_discId).notifier).askQuestion(
+            text,
+            media: uploaded,
+            latitude: position?.latitude,
+            longitude: position?.longitude,
+          );
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -293,6 +307,27 @@ class _ChatViewState extends ConsumerState<ChatView> {
         );
         break;
     }
+  }
+
+  /// Opens checkout pre-filled on one of the AI's recommended listings
+  /// (_PartPurchaseCard's "Acheter" button). suggest_part_purchase only
+  /// hands over a summary (no medias/description/stock), so this builds a
+  /// minimal PartListing from it rather than the full catalogue detail —
+  /// stockQuantity is a soft placeholder since the real figure isn't in
+  /// that summary; createOrder still validates real availability
+  /// server-side regardless of what the quantity stepper here allows.
+  void _handleBuyListing(SuggestedPartListing listing) {
+    final part = PartListing(
+      id: listing.partListingId,
+      vendor: VendorProfile(id: listing.vendorId, shopName: listing.vendorShopName),
+      title: listing.title,
+      condition: listing.condition,
+      price: listing.price,
+      currency: listing.currency,
+      stockQuantity: 99,
+    );
+    Navigator.push(context,
+        MaterialPageRoute(builder: (_) => MarketplaceCheckout(part: part)));
   }
 
   Future<void> _shareLocation() async {
@@ -488,6 +523,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
                       .setMessageFeedback(message.id, useful)
                   : null,
               onSuggestedAction: message.isAI ? _handleSuggestedAction : null,
+              onBuyListing: message.isAI ? _handleBuyListing : null,
             );
           },
         ),

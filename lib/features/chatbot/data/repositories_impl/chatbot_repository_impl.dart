@@ -167,7 +167,9 @@ class ChatbotRepositoryImpl {
       {String query = '',
       String? discussionId,
       List<MediaRef> media = const [],
-      String senderId = 'user'}) async {
+      String senderId = 'user',
+      double? latitude,
+      double? longitude}) async {
     final isar = IsarDb.instance;
     final tempMessage = MessageModel.create(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -188,6 +190,11 @@ class ChatbotRepositoryImpl {
         'contenu': query,
         'discussion': discussionId ?? 'auto',
         if (media.isNotEmpty) 'media': media.map((m) => m.id).toList(),
+        // Lets suggest_part_purchase sort/annotate results by distance —
+        // best-effort, omitted entirely when unavailable rather than
+        // blocking the send on a location fix.
+        if (latitude != null) 'latitude': latitude,
+        if (longitude != null) 'longitude': longitude,
       });
 
       if (response.statusCode == 200 || response.statusCode == 202) {

@@ -201,7 +201,12 @@ class ChatMessages extends _$ChatMessages {
   /// reply in the background, delivering it as a `discussion_message` WS
   /// event (see RealtimeDispatcher), which invalidates this provider and
   /// refetches the thread once the reply lands.
-  Future<void> askQuestion(String query, {List<MediaRef> media = const []}) async {
+  Future<void> askQuestion(
+    String query, {
+    List<MediaRef> media = const [],
+    double? latitude,
+    double? longitude,
+  }) async {
     final trimmed = query.trim();
     if (trimmed.isEmpty && media.isEmpty) return;
 
@@ -231,6 +236,8 @@ class ChatMessages extends _$ChatMessages {
             discussionId: discussionId != 'new' ? discussionId : null,
             media: media,
             senderId: myId,
+            latitude: latitude,
+            longitude: longitude,
           );
 
       if (result != null) {

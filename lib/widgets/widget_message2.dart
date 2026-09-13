@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/features/chatbot/data/models/suggested_part_listing.dart';
 import 'package:munturai/model/message.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -32,6 +33,9 @@ class MessageWidget2 extends StatefulWidget {
   /// tapped — action is one of 'book_mechanic' / 'marketplace_search' /
   /// 'share_location' / 'escalate_human'. Only ever passed for AI messages.
   final void Function(String action, Map<String, dynamic> params)? onSuggestedAction;
+  /// Called when "Acheter" is tapped on a part_purchase recommendation
+  /// card. Only ever passed for AI messages.
+  final void Function(SuggestedPartListing listing)? onBuyListing;
   MessageWidget2({
     Key? key,
     required this.message,
@@ -39,6 +43,7 @@ class MessageWidget2 extends StatefulWidget {
     this.head = false,
     this.onFeedback,
     this.onSuggestedAction,
+    this.onBuyListing,
   }) : super(
           key: key,
         );
@@ -49,7 +54,8 @@ class MessageWidget2 extends StatefulWidget {
       sender: sender,
       head: head,
       onFeedback: onFeedback,
-      onSuggestedAction: onSuggestedAction);
+      onSuggestedAction: onSuggestedAction,
+      onBuyListing: onBuyListing);
 }
 
 class MessageWidget2_ extends State<MessageWidget2> {
@@ -58,6 +64,7 @@ class MessageWidget2_ extends State<MessageWidget2> {
   bool head;
   final void Function(bool useful)? onFeedback;
   final void Function(String action, Map<String, dynamic> params)? onSuggestedAction;
+  final void Function(SuggestedPartListing listing)? onBuyListing;
 
   MessageWidget2_({
     required this.message,
@@ -65,6 +72,7 @@ class MessageWidget2_ extends State<MessageWidget2> {
     required this.head,
     this.onFeedback,
     this.onSuggestedAction,
+    this.onBuyListing,
   });
 
   Color _color = Colors.transparent;
@@ -206,7 +214,14 @@ class MessageWidget2_ extends State<MessageWidget2> {
                               raw: message!.relatedArticle,
                               foreground: bubbleTextColor,
                             ),
-                          if (onSuggestedAction != null &&
+                          if (message!.suggestedAction == 'part_purchase' &&
+                              onBuyListing != null)
+                            _PartPurchaseCard(
+                              paramsRaw: message!.suggestedActionParams,
+                              foreground: bubbleTextColor,
+                              onBuy: onBuyListing!,
+                            )
+                          else if (onSuggestedAction != null &&
                               message!.suggestedAction.isNotEmpty)
                             _SuggestedActionChip(
                               action: message!.suggestedAction,
@@ -453,6 +468,116 @@ const Map<String, ({IconData icon, String label})> _suggestedActionMeta = {
   'share_location': (icon: Icons.location_on_outlined, label: 'Partager ma position'),
   'escalate_human': (icon: Icons.support_agent_outlined, label: 'Parler à un humain'),
 };
+
+/// "Pièce recommandée" — up to 3 nearby-catalog matches the AI found for a
+/// diagnosed part need (suggest_part_purchase function call). Each row is
+/// its own mini-card with a direct "Acheter" button, distinct from the
+/// generic _SuggestedActionChip since there can be several options to
+/// choose between rather than one single next step.
+class _PartPurchaseCard extends StatelessWidget {
+  final String paramsRaw;
+  final Color foreground;
+  final void Function(SuggestedPartListing listing) onBuy;
+
+  const _PartPurchaseCard({
+    required this.paramsRaw,
+    required this.foreground,
+    required this.onBuy,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final listings = SuggestedPartListing.listFromParamsJson(paramsRaw);
+    if (listings.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Pièce recommandée',
+              style: TextStyle(
+                  color: foreground, fontSize: 12, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          for (final listing in listings) ...[
+            _PartPurchaseRow(listing: listing, foreground: foreground, onBuy: onBuy),
+            const SizedBox(height: 6),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _PartPurchaseRow extends StatelessWidget {
+  final SuggestedPartListing listing;
+  final Color foreground;
+  final void Function(SuggestedPartListing listing) onBuy;
+
+  const _PartPurchaseRow({
+    required this.listing,
+    required this.foreground,
+    required this.onBuy,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: foreground.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(listing.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: foreground, fontSize: 12, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 2),
+                Text(
+                  '${listing.price.toStringAsFixed(0)} ${listing.currency} · ${listing.vendorShopName}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: foreground.withValues(alpha: 0.85), fontSize: 11),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  [
+                    if (listing.distanceKm != null)
+                      '${listing.distanceKm!.toStringAsFixed(1)} km',
+                    'livraison ~${listing.deliveryFeeEstimateXaf.toStringAsFixed(0)} XAF (estimation)',
+                  ].join(' · '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: foreground.withValues(alpha: 0.7), fontSize: 10),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: foreground,
+              side: BorderSide(color: foreground.withValues(alpha: 0.4)),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            onPressed: () => onBuy(listing),
+            child: const Text('Acheter', style: TextStyle(fontSize: 12)),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 /// A single tappable chip surfacing the AI's suggested next action
 /// (Message.suggested_action / suggested_action_params — Gemini/OpenAI
