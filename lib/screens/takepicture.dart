@@ -81,15 +81,10 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       Scaffold(
       appBar: AppBar(
         backgroundColor: UIColors.primaryAccent,
-        title:
-        Padding(
-          padding: getPadding(left: 90),
-          child:
-          Text("Camera",
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.left,
-            style: appStyle.H4(color: Colors.black, weight: 'regular'),
-          ),
+        centerTitle: true,
+        title: Text("Camera",
+          overflow: TextOverflow.ellipsis,
+          style: appStyle.H4(color: Colors.black, weight: 'regular'),
         ),
         leading: Builder(
             builder: (BuildContext context) {
@@ -188,15 +183,10 @@ class DisplayPictureScreen extends StatelessWidget {
                 onPressed: () { Navigator.of(context).pop(); },
               );
             }) ,
-        title:
-        Padding(
-          padding: getPadding(left: 20),
-          child:
-          Text("Capture",
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.left,
-            style: appStyle.H4(color: Colors.black, weight: 'regular'),
-          ),
+        centerTitle: true,
+        title: Text("Capture",
+          overflow: TextOverflow.ellipsis,
+          style: appStyle.H4(color: Colors.black, weight: 'regular'),
         ),
         actions: [
           GestureDetector(

@@ -109,15 +109,12 @@ class InfoView_ extends State<InfoView> with TickerProviderStateMixin {
             },
           );
         }),
-        title: Padding(
-          padding: getPadding(left: 100),
-          child: Text(
-            info!.title,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.left,
-            style: appStyle.H3(),
-          ),
+        title: Text(
+          info!.title,
+          overflow: TextOverflow.ellipsis,
+          style: appStyle.H3(),
         ),
+        centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 0,
       ),

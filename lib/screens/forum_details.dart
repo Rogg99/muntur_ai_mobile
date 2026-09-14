@@ -39,6 +39,7 @@ class ForumDetailsScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: colorScheme.surface,
         elevation: 0,
+        centerTitle: true,
         title: Text('Détails du groupe', style: appStyle.H4(weight: 'bold')),
       ),
       body: ListView(

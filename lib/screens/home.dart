@@ -192,12 +192,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           destinations: [
             NavigationDestination(
               icon: _navIcon(ImageConstant.navHomeOutline, colorScheme.onSurfaceVariant),
-              selectedIcon: _navIcon(ImageConstant.navHomeFilled, colorScheme.primary),
+              selectedIcon: _navIcon(ImageConstant.navHomeFilled, colorScheme.primary, size: 28),
               label: 'Home',
             ),
             NavigationDestination(
               icon: _navIcon(ImageConstant.navMapOutline, colorScheme.onSurfaceVariant),
-              selectedIcon: _navIcon(ImageConstant.navMapFilled, colorScheme.primary),
+              selectedIcon: _navIcon(ImageConstant.navMapFilled, colorScheme.primary, size: 28),
               label: 'Search',
             ),
             NavigationDestination(
@@ -206,17 +206,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               // color/weight convention (outline vs primary-filled) close
               // enough until a matching asset is added.
               icon: Icon(CupertinoIcons.bag, color: colorScheme.onSurfaceVariant),
-              selectedIcon: Icon(CupertinoIcons.bag_fill, color: colorScheme.primary),
+              selectedIcon: Icon(CupertinoIcons.bag_fill, color: colorScheme.primary, size: 28),
               label: 'Marketplace',
             ),
             NavigationDestination(
               icon: _navIcon(ImageConstant.navNewsOutline, colorScheme.onSurfaceVariant),
-              selectedIcon: _navIcon(ImageConstant.navNewsFilled, colorScheme.primary),
+              selectedIcon: _navIcon(ImageConstant.navNewsFilled, colorScheme.primary, size: 28),
               label: 'News',
             ),
             NavigationDestination(
               icon: _navIcon(ImageConstant.navForumOutline, colorScheme.onSurfaceVariant),
-              selectedIcon: _navIcon(ImageConstant.navForumFilled, colorScheme.primary),
+              selectedIcon: _navIcon(ImageConstant.navForumFilled, colorScheme.primary, size: 28),
               label: 'Forums',
             ),
           ],
@@ -230,12 +230,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   // Icon does, so the selected/unselected color has to be applied here
   // explicitly, matching navigationBarTheme() in theme.dart. flutter_svg
   // 1.1.6's SvgPicture.asset takes color/colorBlendMode, not colorFilter
-  // (that param was added in a later major version).
-  Widget _navIcon(String asset, Color color) {
+  // (that param was added in a later major version). [size] defaults
+  // slightly larger for the selected variant, so the active tab stands out
+  // beyond just its color/fill change.
+  Widget _navIcon(String asset, Color color, {double size = 24}) {
     return SvgPicture.asset(
       asset,
-      width: 24,
-      height: 24,
+      width: size,
+      height: size,
       color: color,
       colorBlendMode: BlendMode.srcIn,
     );
