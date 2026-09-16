@@ -201,14 +201,19 @@ class ChatMessages extends _$ChatMessages {
   /// reply in the background, delivering it as a `discussion_message` WS
   /// event (see RealtimeDispatcher), which invalidates this provider and
   /// refetches the thread once the reply lands.
-  Future<void> askQuestion(
+  /// Returns the discussion's real backend id once the send completes (which
+  /// may differ from [discussionId] when this was 'new' — see the note
+  /// below), or null if the send never completed. The caller needs this to
+  /// re-key onto the discussion that will actually receive the AI's WS-pushed
+  /// reply.
+  Future<String?> askQuestion(
     String query, {
     List<MediaRef> media = const [],
     double? latitude,
     double? longitude,
   }) async {
     final trimmed = query.trim();
-    if (trimmed.isEmpty && media.isEmpty) return;
+    if (trimmed.isEmpty && media.isEmpty) return null;
 
     // Was hardcoded to the literal string 'user' — since rendering decides
     // which side a bubble goes on by comparing this against the real
@@ -247,17 +252,19 @@ class ChatMessages extends _$ChatMessages {
         state = AsyncValue.data(updatedList);
 
         // A brand-new AI discussion got a real id from the backend — refresh
-        // the discussion list so it shows up. Note: this screen instance
-        // stays keyed on 'new', so the AI reply (delivered via WS against the
-        // real id) won't appear here until the user reopens the discussion
-        // by its real id.
+        // the discussion list so it shows up. The caller (ChatView) is
+        // responsible for re-keying itself onto result.discId so the AI's
+        // WS-pushed reply (delivered against the real id) lands on the
+        // provider instance it's actually watching.
         if (discussionId == 'new' && result.discId != 'new') {
           ref.invalidate(discussionsProvider);
         }
+        return result.discId;
       }
     } catch (e) {
       // Message stays as pendingSync=true — SyncService will retry
     }
+    return null;
   }
 
   /// Sends a message to a forum discussion (no AI response expected).

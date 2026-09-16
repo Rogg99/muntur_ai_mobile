@@ -83,7 +83,13 @@ class _ChatViewState extends ConsumerState<ChatView> {
   int _recordSeconds = 0;
   Timer? _recordTicker;
 
-  String get _discId => widget.disc?.id ?? 'new';
+  // Starts as widget.disc?.id ?? 'new' but can be re-keyed once a first
+  // message on a brand-new discussion gets a real backend id (see
+  // _handleSend) — otherwise this screen instance would stay watching
+  // chatMessagesProvider('new') forever, and the AI's WS-pushed reply
+  // (delivered against the real id) would merge into an unwatched provider
+  // instance instead of appearing here.
+  late String _discId = widget.disc?.id ?? 'new';
 
   // Must be ref.watch, not ref.read: authStateProvider is a plain (autoDispose)
   // provider, so a bare read() drops it the moment this call returns and the
@@ -250,12 +256,25 @@ class _ChatViewState extends ConsumerState<ChatView> {
       try {
         position = await Geolocator.getLastKnownPosition();
       } catch (_) {}
-      await ref.read(chatMessagesProvider(_discId).notifier).askQuestion(
+      final sentDiscId = _discId;
+      final realDiscId = await ref
+          .read(chatMessagesProvider(_discId).notifier)
+          .askQuestion(
             text,
             media: uploaded,
             latitude: position?.latitude,
             longitude: position?.longitude,
           );
+      // Re-key onto the real discussion so the AI's WS-pushed reply (sent
+      // against that id) merges into the provider instance this screen is
+      // actually watching, instead of an orphaned chatMessagesProvider('new').
+      if (mounted &&
+          sentDiscId == 'new' &&
+          realDiscId != null &&
+          realDiscId != 'new' &&
+          _discId == 'new') {
+        setState(() => _discId = realDiscId);
+      }
     } finally {
       if (mounted) setState(() => _sending = false);
     }
