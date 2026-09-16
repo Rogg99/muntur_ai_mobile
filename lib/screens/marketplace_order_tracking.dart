@@ -88,18 +88,80 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
       _returning = true;
       _returnError = null;
     });
+    final repo = ref.read(marketplaceRepositoryProvider);
     try {
-      await ref.read(marketplaceRepositoryProvider).returnOrder(widget.orderId);
+      await repo.returnOrder(widget.orderId);
       ref.invalidate(marketplaceOrderDetailProvider(widget.orderId));
       if (!mounted) return;
       setState(() => _returning = false);
     } catch (e) {
+      final message = e.toString().replaceFirst('Exception: ', '');
+      // Orders paid by card have no MoMo number on file for the refund, so
+      // the backend rejects the plain return/ call and asks for one
+      // explicitly — detected loosely (no dedicated error code from the
+      // API), rather than trying to know the payment method up front.
+      final needsPhone = message.toLowerCase().contains('phone') ||
+          message.toLowerCase().contains('numéro') ||
+          message.toLowerCase().contains('momo');
+      if (needsPhone && mounted) {
+        final phone = await _promptRefundPhone();
+        if (phone != null && phone.isNotEmpty) {
+          try {
+            await repo.returnOrder(widget.orderId, phone: phone);
+            ref.invalidate(marketplaceOrderDetailProvider(widget.orderId));
+            if (!mounted) return;
+            setState(() => _returning = false);
+            return;
+          } catch (e2) {
+            if (!mounted) return;
+            setState(() {
+              _returning = false;
+              _returnError = e2.toString().replaceFirst('Exception: ', '');
+            });
+            return;
+          }
+        }
+      }
       if (!mounted) return;
       setState(() {
         _returning = false;
-        _returnError = e.toString().replaceFirst('Exception: ', '');
+        _returnError = message;
       });
     }
+  }
+
+  /// Asked only when the backend rejects a return/ call for lack of a MoMo
+  /// number to refund to — cards paid through Campay's hosted widget never
+  /// give us one up front.
+  Future<String?> _promptRefundPhone() {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Numéro pour le remboursement'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+                'Cette commande a été payée par carte : indiquez un numéro Mobile Money pour recevoir le remboursement.'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.phone,
+              decoration: const InputDecoration(hintText: '2376XXXXXXXX'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+              child: const Text('Confirmer')),
+        ],
+      ),
+    );
   }
 
   Future<void> _scanDropoff(Delivery delivery) async {

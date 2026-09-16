@@ -114,6 +114,30 @@ class MarketplaceRepositoryImpl {
         .post('/marketplace/orders/$orderId/pay/', data: {'phone': phone}));
   }
 
+  /// Card payment alternative to [payOrder]: gets a Campay-hosted payment
+  /// link to open in a webview (Campay shows its own MoMo/card widget, no
+  /// card data ever transits through us). [redirectUrl]/[failureRedirectUrl]
+  /// are only a UI signal to close the webview — the real order status still
+  /// arrives via the `marketplace_order_updated` WS push once Campay's
+  /// webhook confirms server-side, same as [payOrder].
+  Future<String> payOrderByLink(
+    String orderId, {
+    required String redirectUrl,
+    required String failureRedirectUrl,
+  }) {
+    return _withCleanError(() async {
+      final response = await _apiClient.post(
+        '/marketplace/orders/$orderId/pay-by-link/',
+        data: {
+          'redirect_url': redirectUrl,
+          'failure_redirect_url': failureRedirectUrl,
+        },
+      );
+      final raw = response.data['data'] ?? response.data;
+      return (raw as Map)['payment_link'].toString();
+    });
+  }
+
   /// Vendor-side: redeems the buyer's PIN and starts the 95% payout.
   Future<void> confirmDelivery(String orderId, String pin) {
     return _withCleanError(() => _apiClient
