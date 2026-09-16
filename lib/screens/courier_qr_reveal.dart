@@ -76,7 +76,9 @@ class _CourierQrRevealState extends State<CourierQrReveal> {
                       children: [
                         Text(_error!, textAlign: TextAlign.center, style: appStyle.H5()),
                         const SizedBox(height: 16),
-                        TextButton(onPressed: _load, child: const Text('Réessayer')),
+                        TextButton(
+                            onPressed: _load,
+                            child: Text(AppLocalizations.of(context)!.retry)),
                       ],
                     )
                   : Column(

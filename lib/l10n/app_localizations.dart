@@ -2977,6 +2977,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Code'**
   String get register_phone_code_label;
+
+  /// No description provided for @settings_my_orders.
+  ///
+  /// In en, this message translates to:
+  /// **'My Orders'**
+  String get settings_my_orders;
+
+  /// No description provided for @settings_my_wishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'My Wishlist'**
+  String get settings_my_wishlist;
+
+  /// No description provided for @settings_my_shop.
+  ///
+  /// In en, this message translates to:
+  /// **'My Shop'**
+  String get settings_my_shop;
+
+  /// No description provided for @settings_courier.
+  ///
+  /// In en, this message translates to:
+  /// **'Courier'**
+  String get settings_courier;
+
+  /// No description provided for @settings_contact_support.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get settings_contact_support;
+
+  /// No description provided for @settings_privacy_security.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Security'**
+  String get settings_privacy_security;
+
+  /// No description provided for @error_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error_prefix;
+
+  String get courier_available_title;
+  String get courier_no_jobs;
+  String get courier_job_claimed;
+  String get courier_claiming;
+  String get courier_claim_job;
+  String get courier_my_deliveries_title;
+  String get courier_load_error;
+  String get courier_no_claimed;
+  String get courier_status_pending;
+  String get courier_status_assigned;
+  String get courier_status_picked_up;
+  String get courier_status_in_transit;
+  String get courier_status_delivered;
+  String get courier_status_failed;
+  String get courier_scan_vendor_title;
+  String get courier_scan_vendor_instructions;
+  String get courier_dropoff_qr_title;
+  String get courier_dropoff_qr_instructions;
+  String get courier_scan_pickup_button;
+  String get courier_start_transit_button;
+  String get courier_dropoff_qr_button;
+  String get courier_show_dropoff_qr_button;
+  String get vendor_status_pending;
+  String get vendor_status_assigned;
+  String get vendor_status_picked_up;
+  String get vendor_delivery_title;
+  String get vendor_delivery_load_error;
+  String get vendor_pickup_qr_title;
+  String get vendor_pickup_qr_instructions;
+  String get vendor_show_pickup_qr_button;
+  String get courier_status_load_error;
+  String get courier_become_courier_pitch;
+  String get courier_register_button;
+  String get courier_verified_label;
+  String get courier_pending_verification_label;
+  String get courier_available_label;
+  String get courier_unavailable_label;
+  String get courier_verification_pending_notice;
+  String get courier_view_available_button;
+
+  String get support_status_open;
+  String get support_status_in_progress;
+  String get support_status_resolved;
+  String get support_status_closed;
+  String get support_tickets_title;
+  String get support_new_ticket;
+  String get support_load_error;
+  String get support_no_tickets;
+  String get support_send_failed;
+  String get support_ticket_default_title;
+  String get support_load_ticket_error;
+  String get support_no_messages;
+  String get support_message_hint;
+  String get support_staff_label;
+  String get support_missing_fields;
+  String get support_contact_title;
+  String get support_context_notice;
+  String get support_subject_label;
+  String get support_message_label;
 }
 
 class _AppLocalizationsDelegate

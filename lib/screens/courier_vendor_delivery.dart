@@ -5,13 +5,13 @@ import 'package:munturai/features/courier/presentation/providers/courier_provide
 import 'package:munturai/screens/courier_qr_reveal.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
-const Map<String, String> _statusLabels = {
-  'pending': 'En attente d\'un livreur',
-  'assigned': 'Livreur assigné — prêt pour le retrait',
-  'picked_up': 'Récupérée par le livreur',
-  'in_transit': 'En route',
-  'delivered': 'Livrée',
-  'failed': 'Échouée',
+Map<String, String> _statusLabels(AppLocalizations t) => {
+  'pending': t.vendor_status_pending,
+  'assigned': t.vendor_status_assigned,
+  'picked_up': t.vendor_status_picked_up,
+  'in_transit': t.courier_status_in_transit,
+  'delivered': t.courier_status_delivered,
+  'failed': t.courier_status_failed,
 };
 
 /// Vendor-side delivery status for one order, opened after "Marquer prêt".
@@ -25,16 +25,17 @@ class CourierVendorDelivery extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final deliveryAsync = ref.watch(deliveryDetailProvider(deliveryId));
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Livraison'),
+      appBar: CustomAppBar(titleTxt: translator.vendor_delivery_title),
       body: deliveryAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) =>
-            Center(child: Text('Impossible de charger la livraison.', style: appStyle.H5())),
+            Center(child: Text(translator.vendor_delivery_load_error, style: appStyle.H5())),
         data: (delivery) {
           return RefreshIndicator(
             onRefresh: () async => ref.invalidate(deliveryDetailProvider(deliveryId)),
@@ -44,7 +45,7 @@ class CourierVendorDelivery extends ConsumerWidget {
               children: [
                 Text(delivery.partTitle, style: appStyle.H4(weight: 'bold')),
                 const SizedBox(height: 8),
-                Text(_statusLabels[delivery.status] ?? delivery.status,
+                Text(_statusLabels(translator)[delivery.status] ?? delivery.status,
                     style: appStyle.H5(color: colorScheme.primary, weight: 'bold')),
                 if (delivery.status == 'assigned') ...[
                   const SizedBox(height: 24),
@@ -53,16 +54,15 @@ class CourierVendorDelivery extends ConsumerWidget {
                       context,
                       MaterialPageRoute(
                         builder: (_) => CourierQrReveal(
-                          title: 'QR de retrait',
-                          instructions:
-                              'Montrez ce QR au livreur pour confirmer qu\'il récupère bien la pièce.',
+                          title: translator.vendor_pickup_qr_title,
+                          instructions: translator.vendor_pickup_qr_instructions,
                           fetchToken: () => ref
                               .read(courierRepositoryProvider)
                               .getPickupQrToken(deliveryId),
                         ),
                       ),
                     ),
-                    child: const Text('Afficher le QR de retrait'),
+                    child: Text(translator.vendor_show_pickup_qr_button),
                   ),
                 ],
               ],

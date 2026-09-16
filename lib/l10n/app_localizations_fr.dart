@@ -1517,4 +1517,150 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get register_phone_code_label => 'Indicatif';
+
+  @override
+  String get settings_my_orders => 'Mes commandes';
+
+  @override
+  String get settings_my_wishlist => 'Mes favoris';
+
+  @override
+  String get settings_my_shop => 'Ma boutique';
+
+  @override
+  String get settings_courier => 'Livreur';
+
+  @override
+  String get settings_contact_support => "Contacter l'assistance";
+
+  @override
+  String get settings_privacy_security => 'Confidentialité & sécurité';
+
+  @override
+  String get error_prefix => 'Erreur';
+
+  @override
+  String get courier_available_title => 'Courses disponibles';
+  @override
+  String get courier_no_jobs => 'Aucune course disponible pour le moment.';
+  @override
+  String get courier_job_claimed => 'Course réclamée !';
+  @override
+  String get courier_claiming => 'Réclamation...';
+  @override
+  String get courier_claim_job => 'Réclamer cette course';
+  @override
+  String get courier_my_deliveries_title => 'Mes courses';
+  @override
+  String get courier_load_error => 'Impossible de charger vos courses.';
+  @override
+  String get courier_no_claimed => 'Aucune course réclamée.';
+  @override
+  String get courier_status_pending => 'En attente';
+  @override
+  String get courier_status_assigned => 'Réclamée — à récupérer';
+  @override
+  String get courier_status_picked_up => 'Récupérée';
+  @override
+  String get courier_status_in_transit => 'En route';
+  @override
+  String get courier_status_delivered => 'Livrée';
+  @override
+  String get courier_status_failed => 'Échouée';
+  @override
+  String get courier_scan_vendor_title => 'Scanner le QR du vendeur';
+  @override
+  String get courier_scan_vendor_instructions =>
+      'Scannez le QR affiché par le vendeur pour confirmer la récupération.';
+  @override
+  String get courier_dropoff_qr_title => 'QR de remise';
+  @override
+  String get courier_dropoff_qr_instructions =>
+      "Montrez ce QR à l'acheteur pour confirmer la livraison.";
+  @override
+  String get courier_scan_pickup_button => 'Scanner (retrait)';
+  @override
+  String get courier_start_transit_button => 'En route';
+  @override
+  String get courier_dropoff_qr_button => 'QR remise';
+  @override
+  String get courier_show_dropoff_qr_button => 'Afficher le QR de remise';
+  @override
+  String get vendor_status_pending => "En attente d'un livreur";
+  @override
+  String get vendor_status_assigned =>
+      'Livreur assigné — prêt pour le retrait';
+  @override
+  String get vendor_status_picked_up => 'Récupérée par le livreur';
+  @override
+  String get vendor_delivery_title => 'Livraison';
+  @override
+  String get vendor_delivery_load_error => 'Impossible de charger la livraison.';
+  @override
+  String get vendor_pickup_qr_title => 'QR de retrait';
+  @override
+  String get vendor_pickup_qr_instructions =>
+      "Montrez ce QR au livreur pour confirmer qu'il récupère bien la pièce.";
+  @override
+  String get vendor_show_pickup_qr_button => 'Afficher le QR de retrait';
+  @override
+  String get courier_status_load_error => 'Impossible de charger votre statut.';
+  @override
+  String get courier_become_courier_pitch =>
+      'Devenez livreur pour AUTOSYNX et récupérez des courses de livraison de pièces détachées.';
+  @override
+  String get courier_register_button => "S'inscrire comme livreur";
+  @override
+  String get courier_verified_label => 'Vérifié';
+  @override
+  String get courier_pending_verification_label => 'En attente de vérification';
+  @override
+  String get courier_available_label => 'Disponible';
+  @override
+  String get courier_unavailable_label => 'Indisponible';
+  @override
+  String get courier_verification_pending_notice =>
+      'Votre compte est en cours de vérification par notre équipe. Vous pourrez accepter des courses une fois validé.';
+  @override
+  String get courier_view_available_button => 'Voir les courses disponibles';
+
+  @override
+  String get support_status_open => 'Ouvert';
+  @override
+  String get support_status_in_progress => 'En cours';
+  @override
+  String get support_status_resolved => 'Résolu';
+  @override
+  String get support_status_closed => 'Fermé';
+  @override
+  String get support_tickets_title => 'Assistance';
+  @override
+  String get support_new_ticket => 'Nouveau ticket';
+  @override
+  String get support_load_error => 'Impossible de charger vos tickets.';
+  @override
+  String get support_no_tickets => "Aucun ticket d'assistance pour le moment.";
+  @override
+  String get support_send_failed => "Échec de l'envoi.";
+  @override
+  String get support_ticket_default_title => 'Ticket';
+  @override
+  String get support_load_ticket_error => 'Impossible de charger ce ticket.';
+  @override
+  String get support_no_messages => 'Aucun message.';
+  @override
+  String get support_message_hint => 'Message ...';
+  @override
+  String get support_staff_label => 'Assistance';
+  @override
+  String get support_missing_fields => 'Renseignez un sujet et un message.';
+  @override
+  String get support_contact_title => "Contacter l'assistance";
+  @override
+  String get support_context_notice =>
+      "Le contexte de votre conversation avec Autosynx sera transmis automatiquement à l'assistance.";
+  @override
+  String get support_subject_label => 'Sujet';
+  @override
+  String get support_message_label => 'Message';
 }

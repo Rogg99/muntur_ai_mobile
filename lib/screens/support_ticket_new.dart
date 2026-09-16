@@ -49,7 +49,7 @@ class _SupportTicketNewState extends ConsumerState<SupportTicketNew> {
     final subject = _subjectController.text.trim();
     final message = _messageController.text.trim();
     if (subject.isEmpty || message.isEmpty) {
-      setState(() => _error = 'Renseignez un sujet et un message.');
+      setState(() => _error = AppLocalizations.of(context)!.support_missing_fields);
       return;
     }
     setState(() {
@@ -88,12 +88,13 @@ class _SupportTicketNewState extends ConsumerState<SupportTicketNew> {
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       backgroundColor: colorScheme.background,
       resizeToAvoidBottomInset: true,
-      appBar: const CustomAppBar(titleTxt: 'Contacter l\'assistance'),
+      appBar: CustomAppBar(titleTxt: translator.support_contact_title),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -101,22 +102,22 @@ class _SupportTicketNewState extends ConsumerState<SupportTicketNew> {
             Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Text(
-                "Le contexte de votre conversation avec Autosynx sera transmis automatiquement à l'assistance.",
+                translator.support_context_notice,
                 style: appStyle.H6(color: Colors.grey),
               ),
             ),
           TextField(
             controller: _subjectController,
             style: appStyle.H6(),
-            decoration: const InputDecoration(labelText: 'Sujet'),
+            decoration: InputDecoration(labelText: translator.support_subject_label),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _messageController,
             style: appStyle.H6(),
             maxLines: 5,
-            decoration: const InputDecoration(
-              labelText: 'Message',
+            decoration: InputDecoration(
+              labelText: translator.support_message_label,
               alignLabelWithHint: true,
             ),
           ),
@@ -150,7 +151,7 @@ class _SupportTicketNewState extends ConsumerState<SupportTicketNew> {
           ],
           const SizedBox(height: 24),
           PrimaryButton(
-            text: 'Envoyer',
+            text: translator.send,
             loading: _submitting,
             onPressed: _submit,
           ),

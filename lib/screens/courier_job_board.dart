@@ -14,12 +14,13 @@ class CourierJobBoard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final deliveriesAsync = ref.watch(availableDeliveriesProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Courses disponibles'),
+      appBar: CustomAppBar(titleTxt: translator.courier_available_title),
       body: deliveriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(
@@ -35,7 +36,7 @@ class CourierJobBoard extends ConsumerWidget {
         data: (deliveries) {
           if (deliveries.isEmpty) {
             return Center(
-                child: Text('Aucune course disponible pour le moment.', style: appStyle.H5()));
+                child: Text(translator.courier_no_jobs, style: appStyle.H5()));
           }
           return RefreshIndicator(
             onRefresh: () async => ref.invalidate(availableDeliveriesProvider),
@@ -73,7 +74,7 @@ class _JobTileState extends ConsumerState<_JobTile> {
       ref.invalidate(myDeliveriesProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Course réclamée !')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.courier_job_claimed)),
         );
       }
     } catch (e) {
@@ -91,6 +92,7 @@ class _JobTileState extends ConsumerState<_JobTile> {
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final delivery = widget.delivery;
 
@@ -118,7 +120,7 @@ class _JobTileState extends ConsumerState<_JobTile> {
             width: double.infinity,
             child: OutlinedButton(
               onPressed: _claiming ? null : _claim,
-              child: Text(_claiming ? 'Réclamation...' : 'Réclamer cette course'),
+              child: Text(_claiming ? translator.courier_claiming : translator.courier_claim_job),
             ),
           ),
         ],

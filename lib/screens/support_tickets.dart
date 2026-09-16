@@ -7,11 +7,11 @@ import 'package:munturai/screens/support_ticket_new.dart';
 import 'package:munturai/screens/support_ticket_thread.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
-const Map<String, String> _statusLabels = {
-  'open': 'Ouvert',
-  'in_progress': 'En cours',
-  'resolved': 'Résolu',
-  'closed': 'Fermé',
+Map<String, String> _statusLabels(AppLocalizations t) => {
+  'open': t.support_status_open,
+  'in_progress': t.support_status_in_progress,
+  'resolved': t.support_status_resolved,
+  'closed': t.support_status_closed,
 };
 
 const Map<String, Color> _statusColors = {
@@ -29,29 +29,30 @@ class SupportTickets extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final ticketsAsync = ref.watch(supportTicketsProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Assistance'),
+      appBar: CustomAppBar(titleTxt: translator.support_tickets_title),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(context,
             MaterialPageRoute(builder: (_) => const SupportTicketNew())),
         icon: const Icon(Icons.add),
-        label: const Text('Nouveau ticket'),
+        label: Text(translator.support_new_ticket),
       ),
       body: ticketsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) =>
-            Center(child: Text('Impossible de charger vos tickets.', style: appStyle.H5())),
+            Center(child: Text(translator.support_load_error, style: appStyle.H5())),
         data: (tickets) {
           if (tickets.isEmpty) {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
-                  "Aucun ticket d'assistance pour le moment.",
+                  translator.support_no_tickets,
                   textAlign: TextAlign.center,
                   style: appStyle.H5(),
                 ),
@@ -116,7 +117,7 @@ class _TicketTile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    _statusLabels[ticket.status] ?? ticket.status,
+                    _statusLabels(AppLocalizations.of(context)!)[ticket.status] ?? ticket.status,
                     style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.w600),
                   ),
                 ),

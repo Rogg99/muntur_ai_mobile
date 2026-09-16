@@ -41,16 +41,17 @@ class _CourierProfileScreenState extends ConsumerState<CourierProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final courierAsync = ref.watch(myCourierProfileProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Livreur'),
+      appBar: CustomAppBar(titleTxt: translator.settings_courier),
       body: courierAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) =>
-            Center(child: Text('Impossible de charger votre statut.', style: appStyle.H5())),
+            Center(child: Text(translator.courier_status_load_error, style: appStyle.H5())),
         data: (courier) {
           if (courier == null) {
             return Padding(
@@ -61,7 +62,7 @@ class _CourierProfileScreenState extends ConsumerState<CourierProfileScreen> {
                   Icon(Icons.local_shipping_outlined, size: 56, color: colorScheme.primary),
                   const SizedBox(height: 16),
                   Text(
-                    "Devenez livreur pour AUTOSYNX et récupérez des courses de livraison de pièces détachées.",
+                    translator.courier_become_courier_pitch,
                     textAlign: TextAlign.center,
                     style: appStyle.H5(),
                   ),
@@ -71,7 +72,7 @@ class _CourierProfileScreenState extends ConsumerState<CourierProfileScreen> {
                   ],
                   const SizedBox(height: 20),
                   PrimaryButton(
-                    text: "S'inscrire comme livreur",
+                    text: translator.courier_register_button,
                     loading: _registering,
                     onPressed: _register,
                   ),
@@ -86,12 +87,16 @@ class _CourierProfileScreenState extends ConsumerState<CourierProfileScreen> {
               Row(
                 children: [
                   _StatusPill(
-                    label: courier.verified ? 'Vérifié' : 'En attente de vérification',
+                    label: courier.verified
+                        ? translator.courier_verified_label
+                        : translator.courier_pending_verification_label,
                     color: courier.verified ? Colors.green : Colors.orange,
                   ),
                   const SizedBox(width: 8),
                   _StatusPill(
-                    label: courier.active ? 'Disponible' : 'Indisponible',
+                    label: courier.active
+                        ? translator.courier_available_label
+                        : translator.courier_unavailable_label,
                     color: courier.active ? Colors.green : Colors.grey,
                   ),
                 ],
@@ -99,13 +104,13 @@ class _CourierProfileScreenState extends ConsumerState<CourierProfileScreen> {
               if (!courier.verified) ...[
                 const SizedBox(height: 16),
                 Text(
-                  "Votre compte est en cours de vérification par notre équipe. Vous pourrez accepter des courses une fois validé.",
+                  translator.courier_verification_pending_notice,
                   style: appStyle.H6(color: Colors.grey),
                 ),
               ],
               const SizedBox(height: 24),
               PrimaryButton(
-                text: 'Voir les courses disponibles',
+                text: translator.courier_view_available_button,
                 onPressed: !courier.verified || !courier.active
                     ? null
                     : () => Navigator.push(context,
@@ -118,7 +123,7 @@ class _CourierProfileScreenState extends ConsumerState<CourierProfileScreen> {
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(48),
                 ),
-                child: const Text('Mes courses'),
+                child: Text(translator.courier_my_deliveries_title),
               ),
             ],
           );

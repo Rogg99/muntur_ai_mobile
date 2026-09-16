@@ -10,11 +10,11 @@ import 'package:munturai/features/support/data/models/support_models.dart';
 import 'package:munturai/features/support/presentation/providers/support_provider.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
-const Map<String, String> _statusLabels = {
-  'open': 'Ouvert',
-  'in_progress': 'En cours',
-  'resolved': 'Résolu',
-  'closed': 'Fermé',
+Map<String, String> _statusLabels(AppLocalizations t) => {
+  'open': t.support_status_open,
+  'in_progress': t.support_status_in_progress,
+  'resolved': t.support_status_resolved,
+  'closed': t.support_status_closed,
 };
 
 /// One ticket's thread — chat-style bubbles (mine vs. support staff),
@@ -71,7 +71,7 @@ class _SupportTicketThreadState extends ConsumerState<SupportTicketThread> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Échec de l'envoi.")),
+          SnackBar(content: Text(AppLocalizations.of(context)!.support_send_failed)),
         );
       }
     } finally {
@@ -82,6 +82,7 @@ class _SupportTicketThreadState extends ConsumerState<SupportTicketThread> {
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final ticketAsync = ref.watch(supportTicketDetailProvider(widget.ticketId));
     final myId = ref.watch(authStateProvider).valueOrNull?.id ?? '';
@@ -90,12 +91,12 @@ class _SupportTicketThreadState extends ConsumerState<SupportTicketThread> {
       backgroundColor: colorScheme.background,
       resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(
-        titleTxt: ticketAsync.valueOrNull?.subject ?? 'Ticket',
+        titleTxt: ticketAsync.valueOrNull?.subject ?? translator.support_ticket_default_title,
       ),
       body: ticketAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) =>
-            Center(child: Text('Impossible de charger ce ticket.', style: appStyle.H5())),
+            Center(child: Text(translator.support_load_ticket_error, style: appStyle.H5())),
         data: (ticket) => Column(
           children: [
             Padding(
@@ -103,14 +104,14 @@ class _SupportTicketThreadState extends ConsumerState<SupportTicketThread> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  _statusLabels[ticket.status] ?? ticket.status,
+                  _statusLabels(translator)[ticket.status] ?? ticket.status,
                   style: appStyle.H6(color: colorScheme.primary, weight: 'bold'),
                 ),
               ),
             ),
             Expanded(
               child: ticket.messages.isEmpty
-                  ? Center(child: Text('Aucun message.', style: appStyle.H5()))
+                  ? Center(child: Text(translator.support_no_messages, style: appStyle.H5()))
                   : ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       itemCount: ticket.messages.length,
@@ -178,7 +179,7 @@ class _SupportTicketThreadState extends ConsumerState<SupportTicketThread> {
                             minLines: 1,
                             maxLines: 4,
                             decoration: InputDecoration(
-                              hintText: 'Message ...',
+                              hintText: translator.support_message_hint,
                               filled: true,
                               fillColor: colorScheme.surfaceContainer,
                               contentPadding:
@@ -243,7 +244,7 @@ class _TicketMessageBubble extends StatelessWidget {
               if (!mine)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 4),
-                  child: Text('Assistance',
+                  child: Text(AppLocalizations.of(context)!.support_staff_label,
                       style: appStyle.H6(weight: 'bold', color: colorScheme.primary)),
                 ),
               for (final media in message.medias) ...[

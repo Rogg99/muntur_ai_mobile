@@ -1504,4 +1504,150 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get register_phone_code_label => 'Code';
+
+  @override
+  String get settings_my_orders => 'My Orders';
+
+  @override
+  String get settings_my_wishlist => 'My Wishlist';
+
+  @override
+  String get settings_my_shop => 'My Shop';
+
+  @override
+  String get settings_courier => 'Courier';
+
+  @override
+  String get settings_contact_support => 'Contact Support';
+
+  @override
+  String get settings_privacy_security => 'Privacy & Security';
+
+  @override
+  String get error_prefix => 'Error';
+
+  @override
+  String get courier_available_title => 'Available jobs';
+  @override
+  String get courier_no_jobs => 'No job available right now.';
+  @override
+  String get courier_job_claimed => 'Job claimed!';
+  @override
+  String get courier_claiming => 'Claiming...';
+  @override
+  String get courier_claim_job => 'Claim this job';
+  @override
+  String get courier_my_deliveries_title => 'My deliveries';
+  @override
+  String get courier_load_error => "Couldn't load your deliveries.";
+  @override
+  String get courier_no_claimed => 'No job claimed yet.';
+  @override
+  String get courier_status_pending => 'Pending';
+  @override
+  String get courier_status_assigned => 'Claimed — to pick up';
+  @override
+  String get courier_status_picked_up => 'Picked up';
+  @override
+  String get courier_status_in_transit => 'On the way';
+  @override
+  String get courier_status_delivered => 'Delivered';
+  @override
+  String get courier_status_failed => 'Failed';
+  @override
+  String get courier_scan_vendor_title => "Scan the vendor's QR";
+  @override
+  String get courier_scan_vendor_instructions =>
+      'Scan the QR code shown by the vendor to confirm pickup.';
+  @override
+  String get courier_dropoff_qr_title => 'Drop-off QR';
+  @override
+  String get courier_dropoff_qr_instructions =>
+      'Show this QR code to the buyer to confirm delivery.';
+  @override
+  String get courier_scan_pickup_button => 'Scan (pickup)';
+  @override
+  String get courier_start_transit_button => 'On the way';
+  @override
+  String get courier_dropoff_qr_button => 'Drop-off QR';
+  @override
+  String get courier_show_dropoff_qr_button => 'Show drop-off QR';
+  @override
+  String get vendor_status_pending => 'Waiting for a courier';
+  @override
+  String get vendor_status_assigned =>
+      'Courier assigned — ready for pickup';
+  @override
+  String get vendor_status_picked_up => 'Picked up by the courier';
+  @override
+  String get vendor_delivery_title => 'Delivery';
+  @override
+  String get vendor_delivery_load_error => "Couldn't load the delivery.";
+  @override
+  String get vendor_pickup_qr_title => 'Pickup QR';
+  @override
+  String get vendor_pickup_qr_instructions =>
+      "Show this QR code to the courier to confirm they're picking up the part.";
+  @override
+  String get vendor_show_pickup_qr_button => 'Show pickup QR';
+  @override
+  String get courier_status_load_error => "Couldn't load your status.";
+  @override
+  String get courier_become_courier_pitch =>
+      'Become a courier for AUTOSYNX and pick up spare-part delivery jobs.';
+  @override
+  String get courier_register_button => 'Register as a courier';
+  @override
+  String get courier_verified_label => 'Verified';
+  @override
+  String get courier_pending_verification_label => 'Pending verification';
+  @override
+  String get courier_available_label => 'Available';
+  @override
+  String get courier_unavailable_label => 'Unavailable';
+  @override
+  String get courier_verification_pending_notice =>
+      "Your account is being reviewed by our team. You'll be able to accept jobs once approved.";
+  @override
+  String get courier_view_available_button => 'View available jobs';
+
+  @override
+  String get support_status_open => 'Open';
+  @override
+  String get support_status_in_progress => 'In progress';
+  @override
+  String get support_status_resolved => 'Resolved';
+  @override
+  String get support_status_closed => 'Closed';
+  @override
+  String get support_tickets_title => 'Support';
+  @override
+  String get support_new_ticket => 'New ticket';
+  @override
+  String get support_load_error => "Couldn't load your tickets.";
+  @override
+  String get support_no_tickets => 'No support ticket yet.';
+  @override
+  String get support_send_failed => "Couldn't send the message.";
+  @override
+  String get support_ticket_default_title => 'Ticket';
+  @override
+  String get support_load_ticket_error => "Couldn't load this ticket.";
+  @override
+  String get support_no_messages => 'No messages.';
+  @override
+  String get support_message_hint => 'Message ...';
+  @override
+  String get support_staff_label => 'Support';
+  @override
+  String get support_missing_fields => 'Please fill in a subject and a message.';
+  @override
+  String get support_contact_title => 'Contact Support';
+  @override
+  String get support_context_notice =>
+      'Your conversation context with Autosynx will be automatically shared with support.';
+  @override
+  String get support_subject_label => 'Subject';
+  @override
+  String get support_message_label => 'Message';
 }

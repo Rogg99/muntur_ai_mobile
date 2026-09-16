@@ -54,7 +54,7 @@ class Settings extends ConsumerWidget {
       body: userAsync.when(
         loading: () => Center(
             child: CircularProgressIndicator(color: colorScheme.primary)),
-        error: (e, _) => Center(child: Text('Erreur: $e')),
+        error: (e, _) => Center(child: Text('${translator.error_prefix}: $e')),
         data: (user) => ListView(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           children: [
@@ -156,13 +156,13 @@ class Settings extends ConsumerWidget {
             ),
             _SettingsTile(
               icon: CupertinoIcons.cart,
-              label: 'Mes commandes',
+              label: translator.settings_my_orders,
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const MarketplaceOrders())),
             ),
             _SettingsTile(
               icon: CupertinoIcons.heart,
-              label: 'Mes favoris',
+              label: translator.settings_my_wishlist,
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const MarketplaceWishlist())),
             ),
@@ -175,7 +175,7 @@ class Settings extends ConsumerWidget {
                 if (vendor == null) return const SizedBox.shrink();
                 return _SettingsTile(
                   icon: CupertinoIcons.shopping_cart,
-                  label: 'Ma boutique',
+                  label: AppLocalizations.of(context)!.settings_my_shop,
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -185,13 +185,13 @@ class Settings extends ConsumerWidget {
             ),
             _SettingsTile(
               icon: CupertinoIcons.location_north_line,
-              label: 'Livreur',
+              label: translator.settings_courier,
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const CourierProfileScreen())),
             ),
             _SettingsTile(
               icon: CupertinoIcons.chat_bubble_2,
-              label: "Contacter l'assistance",
+              label: translator.settings_contact_support,
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const SupportTickets())),
             ),
@@ -209,7 +209,7 @@ class Settings extends ConsumerWidget {
             ),
             _SettingsTile(
               icon: CupertinoIcons.lock_shield,
-              label: 'Confidentialité & sécurité',
+              label: translator.settings_privacy_security,
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const PrivacyPolicy())),
             ),
@@ -242,7 +242,7 @@ class Settings extends ConsumerWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Annuler')),
+              child: Text(translator.cancel)),
           TextButton(
             onPressed: () async {
               Navigator.pop(context);

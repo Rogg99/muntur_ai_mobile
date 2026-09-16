@@ -7,13 +7,13 @@ import 'package:munturai/screens/courier_qr_reveal.dart';
 import 'package:munturai/screens/courier_qr_scan.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
-const Map<String, String> _statusLabels = {
-  'pending': 'En attente',
-  'assigned': 'Réclamée — à récupérer',
-  'picked_up': 'Récupérée',
-  'in_transit': 'En route',
-  'delivered': 'Livrée',
-  'failed': 'Échouée',
+Map<String, String> _statusLabels(AppLocalizations t) => {
+  'pending': t.courier_status_pending,
+  'assigned': t.courier_status_assigned,
+  'picked_up': t.courier_status_picked_up,
+  'in_transit': t.courier_status_in_transit,
+  'delivered': t.courier_status_delivered,
+  'failed': t.courier_status_failed,
 };
 
 /// Courier's own deliveries (claimed job-board rows) — same
@@ -25,19 +25,20 @@ class CourierMyDeliveries extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final deliveriesAsync = ref.watch(myDeliveriesProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Mes courses'),
+      appBar: CustomAppBar(titleTxt: translator.courier_my_deliveries_title),
       body: deliveriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) =>
-            Center(child: Text('Impossible de charger vos courses.', style: appStyle.H5())),
+            Center(child: Text(translator.courier_load_error, style: appStyle.H5())),
         data: (deliveries) {
           if (deliveries.isEmpty) {
-            return Center(child: Text('Aucune course réclamée.', style: appStyle.H5()));
+            return Center(child: Text(translator.courier_no_claimed, style: appStyle.H5()));
           }
           return RefreshIndicator(
             onRefresh: () async => ref.invalidate(myDeliveriesProvider),
@@ -68,12 +69,13 @@ class _DeliveryTileState extends ConsumerState<_DeliveryTile> {
   bool _busy = false;
 
   Future<void> _scanForPickup() async {
+    final translator = AppLocalizations.of(context)!;
     final token = await Navigator.push<String>(
       context,
       MaterialPageRoute(
-        builder: (_) => const CourierQrScan(
-          title: 'Scanner le QR du vendeur',
-          instructions: 'Scannez le QR affiché par le vendeur pour confirmer la récupération.',
+        builder: (_) => CourierQrScan(
+          title: translator.courier_scan_vendor_title,
+          instructions: translator.courier_scan_vendor_instructions,
         ),
       ),
     );
@@ -112,12 +114,13 @@ class _DeliveryTileState extends ConsumerState<_DeliveryTile> {
   }
 
   void _showDropoffQr() {
+    final translator = AppLocalizations.of(context)!;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => CourierQrReveal(
-          title: 'QR de remise',
-          instructions: "Montrez ce QR à l'acheteur pour confirmer la livraison.",
+          title: translator.courier_dropoff_qr_title,
+          instructions: translator.courier_dropoff_qr_instructions,
           fetchToken: () =>
               ref.read(courierRepositoryProvider).getDropoffQrToken(widget.delivery.id),
         ),
@@ -128,6 +131,7 @@ class _DeliveryTileState extends ConsumerState<_DeliveryTile> {
   @override
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final delivery = widget.delivery;
 
@@ -147,7 +151,7 @@ class _DeliveryTileState extends ConsumerState<_DeliveryTile> {
             style: appStyle.H6(color: Colors.grey),
           ),
           const SizedBox(height: 6),
-          Text(_statusLabels[delivery.status] ?? delivery.status,
+          Text(_statusLabels(translator)[delivery.status] ?? delivery.status,
               style: appStyle.H6(color: colorScheme.primary, weight: 'bold')),
           if (delivery.status == 'assigned' || delivery.status == 'picked_up') ...[
             const SizedBox(height: 10),
@@ -157,21 +161,21 @@ class _DeliveryTileState extends ConsumerState<_DeliveryTile> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: _busy ? null : _scanForPickup,
-                      child: const Text('Scanner (retrait)'),
+                      child: Text(translator.courier_scan_pickup_button),
                     ),
                   ),
                 if (delivery.status == 'picked_up') ...[
                   Expanded(
                     child: OutlinedButton(
                       onPressed: _busy ? null : _startTransit,
-                      child: const Text('En route'),
+                      child: Text(translator.courier_start_transit_button),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: _busy ? null : _showDropoffQr,
-                      child: const Text('QR remise'),
+                      child: Text(translator.courier_dropoff_qr_button),
                     ),
                   ),
                 ],
@@ -184,7 +188,7 @@ class _DeliveryTileState extends ConsumerState<_DeliveryTile> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: _busy ? null : _showDropoffQr,
-                child: const Text('Afficher le QR de remise'),
+                child: Text(translator.courier_show_dropoff_qr_button),
               ),
             ),
           ],
