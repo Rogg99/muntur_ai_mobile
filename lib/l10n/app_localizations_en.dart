@@ -1528,126 +1528,539 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get courier_available_title => 'Available jobs';
+
   @override
   String get courier_no_jobs => 'No job available right now.';
+
   @override
   String get courier_job_claimed => 'Job claimed!';
+
   @override
   String get courier_claiming => 'Claiming...';
+
   @override
   String get courier_claim_job => 'Claim this job';
+
   @override
   String get courier_my_deliveries_title => 'My deliveries';
+
   @override
-  String get courier_load_error => "Couldn't load your deliveries.";
+  String get courier_load_error => 'Couldn\'t load your deliveries.';
+
   @override
   String get courier_no_claimed => 'No job claimed yet.';
+
   @override
   String get courier_status_pending => 'Pending';
+
   @override
   String get courier_status_assigned => 'Claimed — to pick up';
+
   @override
   String get courier_status_picked_up => 'Picked up';
+
   @override
   String get courier_status_in_transit => 'On the way';
+
   @override
   String get courier_status_delivered => 'Delivered';
+
   @override
   String get courier_status_failed => 'Failed';
+
   @override
-  String get courier_scan_vendor_title => "Scan the vendor's QR";
+  String get courier_scan_vendor_title => 'Scan the vendor\'s QR';
+
   @override
   String get courier_scan_vendor_instructions =>
       'Scan the QR code shown by the vendor to confirm pickup.';
+
   @override
   String get courier_dropoff_qr_title => 'Drop-off QR';
+
   @override
   String get courier_dropoff_qr_instructions =>
       'Show this QR code to the buyer to confirm delivery.';
+
   @override
   String get courier_scan_pickup_button => 'Scan (pickup)';
+
   @override
   String get courier_start_transit_button => 'On the way';
+
   @override
   String get courier_dropoff_qr_button => 'Drop-off QR';
+
   @override
   String get courier_show_dropoff_qr_button => 'Show drop-off QR';
+
   @override
   String get vendor_status_pending => 'Waiting for a courier';
+
   @override
-  String get vendor_status_assigned =>
-      'Courier assigned — ready for pickup';
+  String get vendor_status_assigned => 'Courier assigned — ready for pickup';
+
   @override
   String get vendor_status_picked_up => 'Picked up by the courier';
+
   @override
   String get vendor_delivery_title => 'Delivery';
+
   @override
-  String get vendor_delivery_load_error => "Couldn't load the delivery.";
+  String get vendor_delivery_load_error => 'Couldn\'t load the delivery.';
+
   @override
   String get vendor_pickup_qr_title => 'Pickup QR';
+
   @override
   String get vendor_pickup_qr_instructions =>
-      "Show this QR code to the courier to confirm they're picking up the part.";
+      'Show this QR code to the courier to confirm they\'re picking up the part.';
+
   @override
   String get vendor_show_pickup_qr_button => 'Show pickup QR';
+
   @override
-  String get courier_status_load_error => "Couldn't load your status.";
+  String get courier_status_load_error => 'Couldn\'t load your status.';
+
   @override
   String get courier_become_courier_pitch =>
       'Become a courier for AUTOSYNX and pick up spare-part delivery jobs.';
+
   @override
   String get courier_register_button => 'Register as a courier';
+
   @override
   String get courier_verified_label => 'Verified';
+
   @override
   String get courier_pending_verification_label => 'Pending verification';
+
   @override
   String get courier_available_label => 'Available';
+
   @override
   String get courier_unavailable_label => 'Unavailable';
+
   @override
   String get courier_verification_pending_notice =>
-      "Your account is being reviewed by our team. You'll be able to accept jobs once approved.";
+      'Your account is being reviewed by our team. You\'ll be able to accept jobs once approved.';
+
   @override
   String get courier_view_available_button => 'View available jobs';
 
   @override
   String get support_status_open => 'Open';
+
   @override
   String get support_status_in_progress => 'In progress';
+
   @override
   String get support_status_resolved => 'Resolved';
+
   @override
   String get support_status_closed => 'Closed';
+
   @override
   String get support_tickets_title => 'Support';
+
   @override
   String get support_new_ticket => 'New ticket';
+
   @override
-  String get support_load_error => "Couldn't load your tickets.";
+  String get support_load_error => 'Couldn\'t load your tickets.';
+
   @override
   String get support_no_tickets => 'No support ticket yet.';
+
   @override
-  String get support_send_failed => "Couldn't send the message.";
+  String get support_send_failed => 'Couldn\'t send the message.';
+
   @override
   String get support_ticket_default_title => 'Ticket';
+
   @override
-  String get support_load_ticket_error => "Couldn't load this ticket.";
+  String get support_load_ticket_error => 'Couldn\'t load this ticket.';
+
   @override
   String get support_no_messages => 'No messages.';
+
   @override
   String get support_message_hint => 'Message ...';
+
   @override
   String get support_staff_label => 'Support';
+
   @override
-  String get support_missing_fields => 'Please fill in a subject and a message.';
+  String get support_missing_fields =>
+      'Please fill in a subject and a message.';
+
   @override
   String get support_contact_title => 'Contact Support';
+
   @override
   String get support_context_notice =>
       'Your conversation context with Autosynx will be automatically shared with support.';
+
   @override
   String get support_subject_label => 'Subject';
+
   @override
   String get support_message_label => 'Message';
+
+  @override
+  String get marketplace_search_hint => 'Search for a part...';
+
+  @override
+  String get marketplace_catalog_load_error =>
+      'Couldn\'t load the catalog right now.';
+
+  @override
+  String get marketplace_no_parts_found => 'No parts found.';
+
+  @override
+  String get condition_new => 'Brand new';
+
+  @override
+  String get condition_used => 'Used';
+
+  @override
+  String get marketplace_part_load_error => 'Couldn\'t load this part.';
+
+  @override
+  String get marketplace_part_not_found => 'Part not found.';
+
+  @override
+  String get marketplace_in_stock_suffix => 'in stock';
+
+  @override
+  String get marketplace_compatible_vehicles => 'Compatible vehicles';
+
+  @override
+  String get marketplace_oem_references => 'OEM references';
+
+  @override
+  String get marketplace_shop_price_guaranteed => 'Guaranteed shop price';
+
+  @override
+  String get marketplace_out_of_stock => 'Out of stock';
+
+  @override
+  String get marketplace_buy => 'Buy';
+
+  @override
+  String get marketplace_shop_title => 'Shop';
+
+  @override
+  String get marketplace_shop_load_error => 'Couldn\'t load this shop.';
+
+  @override
+  String get marketplace_shop_not_found => 'Shop not found.';
+
+  @override
+  String get marketplace_vendor_active => 'Active seller';
+
+  @override
+  String get marketplace_subscription_inactive => 'Inactive subscription';
+
+  @override
+  String get marketplace_parts_in_catalog_suffix => 'parts in catalog';
+
+  @override
+  String get marketplace_catalog => 'Catalog';
+
+  @override
+  String get marketplace_vendor_catalog_load_error =>
+      'Couldn\'t load the catalog.';
+
+  @override
+  String get marketplace_no_parts_online => 'No parts online yet.';
+
+  @override
+  String get marketplace_my_shop => 'My shop';
+
+  @override
+  String get marketplace_add_part => 'Add a part';
+
+  @override
+  String get marketplace_dashboard_load_error =>
+      'Couldn\'t load your shop. Have you already created a seller profile?';
+
+  @override
+  String get marketplace_no_vendor_profile =>
+      'No seller profile for this account.';
+
+  @override
+  String get marketplace_subscription_active => 'Active subscription';
+
+  @override
+  String get marketplace_subscription_inactive_hidden =>
+      'Inactive subscription — catalog hidden from the marketplace';
+
+  @override
+  String get marketplace_my_catalog => 'My catalog';
+
+  @override
+  String get marketplace_no_parts_published => 'No parts published yet.';
+
+  @override
+  String get marketplace_orders_received => 'Orders received';
+
+  @override
+  String get marketplace_no_orders_yet => 'No orders yet.';
+
+  @override
+  String get marketplace_delete_part_confirm_title => 'Delete this part?';
+
+  @override
+  String get marketplace_delete_failed => 'Couldn\'t delete.';
+
+  @override
+  String get marketplace_confirm_delivery_title => 'Confirm delivery';
+
+  @override
+  String get marketplace_client_pin_label => 'Customer\'s PIN code';
+
+  @override
+  String get marketplace_validate => 'Confirm';
+
+  @override
+  String get marketplace_delivery_confirmed_payout =>
+      'Delivery confirmed, payout in progress.';
+
+  @override
+  String get marketplace_confirm_delivery_pin_button =>
+      'Confirm delivery (PIN)';
+
+  @override
+  String get marketplace_delivery => 'Delivery';
+
+  @override
+  String get marketplace_customer_fallback => 'Customer';
+
+  @override
+  String get marketplace_qty_label => 'Qty';
+
+  @override
+  String get status_pending_payment => 'Payment pending';
+
+  @override
+  String get status_escrow_held => 'Paid — in escrow';
+
+  @override
+  String get status_delivered_pending_pin => 'Delivered — awaiting PIN';
+
+  @override
+  String get status_completed => 'Completed';
+
+  @override
+  String get status_returned => 'Returned';
+
+  @override
+  String get status_cancelled => 'Cancelled';
+
+  @override
+  String get status_disputed => 'Disputed';
+
+  @override
+  String get delivery_status_pending => 'Waiting for a courier';
+
+  @override
+  String get delivery_status_assigned => 'Courier en route to pick up';
+
+  @override
+  String get delivery_status_picked_up => 'Picked up by courier';
+
+  @override
+  String get delivery_status_in_transit => 'On the way to you';
+
+  @override
+  String get delivery_status_delivered => 'Delivered';
+
+  @override
+  String get delivery_status_failed => 'Failed';
+
+  @override
+  String get marketplace_order_tracking_title => 'Order tracking';
+
+  @override
+  String get marketplace_order_load_error => 'Couldn\'t load this order.';
+
+  @override
+  String get marketplace_scan_courier_qr => 'Scan the courier\'s QR code';
+
+  @override
+  String get marketplace_payment_pending_notice =>
+      'Waiting for Mobile Money payment confirmation. This page updates automatically.';
+
+  @override
+  String get marketplace_delivery_code_title => 'Delivery code';
+
+  @override
+  String get marketplace_delivery_code_warning =>
+      'Only share it with the courier/seller at the moment of handover.';
+
+  @override
+  String get marketplace_return_possible_until => 'Return possible until';
+
+  @override
+  String get marketplace_returning_in_progress => 'Returning...';
+
+  @override
+  String get marketplace_report_problem_return => 'Report a problem / Return';
+
+  @override
+  String get marketplace_return_confirm_title => 'Return this order?';
+
+  @override
+  String get marketplace_return_confirm_body =>
+      'The amount paid will be refunded to your Mobile Money number. This action cannot be undone.';
+
+  @override
+  String get marketplace_return_action => 'Return';
+
+  @override
+  String get marketplace_refund_phone_title => 'Refund phone number';
+
+  @override
+  String get marketplace_refund_phone_body =>
+      'This order was paid by card: enter a Mobile Money number to receive the refund.';
+
+  @override
+  String get marketplace_confirm_button => 'Confirm';
+
+  @override
+  String get marketplace_confirm_reception_title => 'Confirm reception';
+
+  @override
+  String get marketplace_confirm_reception_instructions =>
+      'Scan the QR code shown by the courier to confirm reception.';
+
+  @override
+  String get marketplace_reception_confirmed => 'Reception confirmed!';
+
+  @override
+  String get marketplace_my_orders_title => 'My orders';
+
+  @override
+  String get marketplace_orders_load_error => 'Couldn\'t load your orders.';
+
+  @override
+  String get marketplace_no_orders => 'No marketplace orders yet.';
+
+  @override
+  String get marketplace_edit_part_title => 'Edit part';
+
+  @override
+  String get marketplace_new_part_title => 'New part';
+
+  @override
+  String get marketplace_title_label => 'Title';
+
+  @override
+  String get marketplace_description_label => 'Description';
+
+  @override
+  String get marketplace_condition_label => 'Condition';
+
+  @override
+  String get marketplace_price_xaf_label => 'Price (XAF)';
+
+  @override
+  String get marketplace_stock_label => 'Stock';
+
+  @override
+  String get marketplace_add_oem_hint => 'Add an OEM reference';
+
+  @override
+  String get marketplace_vehicle_example_hint => 'E.g: Toyota Corolla';
+
+  @override
+  String get marketplace_photos_label => 'Photos';
+
+  @override
+  String get marketplace_check_fields_error =>
+      'Check the title, price and stock.';
+
+  @override
+  String get marketplace_publish_part => 'Publish the part';
+
+  @override
+  String get marketplace_need_shop_to_publish =>
+      'You need a marketplace shop to publish a part.';
+
+  @override
+  String get marketplace_can_only_edit_own_shop =>
+      'You can only edit parts from your own shop.';
+
+  @override
+  String get marketplace_my_favorites_title => 'My favorites';
+
+  @override
+  String get marketplace_favorites_load_error =>
+      'Couldn\'t load your favorites.';
+
+  @override
+  String get marketplace_no_saved_parts => 'No saved parts yet.';
+
+  @override
+  String get marketplace_escrow_payment_title => 'Escrow payment';
+
+  @override
+  String get marketplace_quantity_label => 'Quantity';
+
+  @override
+  String get marketplace_total_to_pay => 'Total to pay';
+
+  @override
+  String get marketplace_payment_method_label => 'Payment method';
+
+  @override
+  String get marketplace_mobile_money => 'Mobile Money';
+
+  @override
+  String get marketplace_bank_card => 'Bank card';
+
+  @override
+  String get marketplace_mobile_money_number_label => 'Mobile Money number';
+
+  @override
+  String get marketplace_card_redirect_explainer =>
+      'You\'ll be redirected to a secure Campay payment page to enter your card.';
+
+  @override
+  String get marketplace_escrow_explainer =>
+      'The amount stays held in escrow until you confirm delivery with the PIN code you\'ll receive. Return window: 48h.';
+
+  @override
+  String get marketplace_pay_button => 'Pay';
+
+  @override
+  String get marketplace_enter_momo_number =>
+      'Enter the Mobile Money number to debit.';
+  @override
+  String get chat_take_photo => 'Take a photo';
+  @override
+  String get chat_choose_photo => 'Choose a photo';
+  @override
+  String get chat_nearby_garage_tooltip => 'Nearby garage';
+  @override
+  String get chat_compatible_parts_tooltip => 'Compatible parts';
+  @override
+  String get chat_share_conversation_tooltip => 'Share the conversation';
+  @override
+  String get chat_escalate_subject => 'Escalation from chat';
+  @override
+  String get chat_location_error => "Couldn't get your location.";
+  @override
+  String get chat_load_error => "Couldn't load the conversation";
+  @override
+  String get chat_attachment_placeholder => '[attachment]';
+  @override
+  String get chat_typing_stage_1 => 'Analyzing...';
+  @override
+  String get chat_typing_stage_2 => 'Checking the information...';
+  @override
+  String get chat_typing_stage_3 => 'Just a moment, almost done...';
+  @override
+  String get chat_you_label => 'Me';
 }

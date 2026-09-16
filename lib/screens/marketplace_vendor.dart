@@ -17,19 +17,20 @@ class MarketplaceVendor extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final vendorAsync = ref.watch(marketplaceVendorProvider(vendorId));
     final listingsAsync = ref.watch(marketplaceVendorListingsProvider(vendorId));
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Boutique'),
+      appBar: CustomAppBar(titleTxt: l10n.marketplace_shop_title),
       body: vendorAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) =>
-            Center(child: Text('Impossible de charger cette boutique.', style: appStyle.H5())),
+            Center(child: Text(l10n.marketplace_shop_load_error, style: appStyle.H5())),
         data: (vendor) {
           if (vendor == null) {
-            return Center(child: Text('Boutique introuvable.', style: appStyle.H5()));
+            return Center(child: Text(l10n.marketplace_shop_not_found, style: appStyle.H5()));
           }
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -49,26 +50,29 @@ class MarketplaceVendor extends ConsumerWidget {
                 runSpacing: 8,
                 children: [
                   if (vendor.pricePartyAgreed)
-                    const _Badge(text: 'Prix boutique garanti', color: Colors.blue),
+                    _Badge(text: l10n.marketplace_shop_price_guaranteed, color: Colors.blue),
                   _Badge(
                     text: vendor.subscriptionActive
-                        ? 'Vendeur actif'
-                        : 'Abonnement inactif',
+                        ? l10n.marketplace_vendor_active
+                        : l10n.marketplace_subscription_inactive,
                     color: vendor.subscriptionActive ? Colors.green : Colors.grey,
                   ),
-                  _Badge(text: '${vendor.catalogCount} pièces au catalogue', color: Colors.orange),
+                  _Badge(
+                      text:
+                          '${vendor.catalogCount} ${l10n.marketplace_parts_in_catalog_suffix}',
+                      color: Colors.orange),
                 ],
               ),
               const SizedBox(height: 20),
-              Text('Catalogue', style: appStyle.H4(weight: 'bold')),
+              Text(l10n.marketplace_catalog, style: appStyle.H4(weight: 'bold')),
               const SizedBox(height: 12),
               listingsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (err, _) =>
-                    Text('Impossible de charger le catalogue.', style: appStyle.H5()),
+                    Text(l10n.marketplace_vendor_catalog_load_error, style: appStyle.H5()),
                 data: (listings) {
                   if (listings.isEmpty) {
-                    return Text('Aucune pièce en ligne pour le moment.', style: appStyle.H5());
+                    return Text(l10n.marketplace_no_parts_online, style: appStyle.H5());
                   }
                   return Column(
                     children:

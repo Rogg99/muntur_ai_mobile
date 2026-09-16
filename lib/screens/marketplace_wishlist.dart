@@ -16,19 +16,20 @@ class MarketplaceWishlist extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final wishlistAsync = ref.watch(marketplaceWishlistProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Mes favoris'),
+      appBar: CustomAppBar(titleTxt: l10n.marketplace_my_favorites_title),
       body: wishlistAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) =>
-            Center(child: Text('Impossible de charger vos favoris.', style: appStyle.H5())),
+            Center(child: Text(l10n.marketplace_favorites_load_error, style: appStyle.H5())),
         data: (items) {
           if (items.isEmpty) {
             return Center(
-              child: Text('Aucune pièce enregistrée pour le moment.', style: appStyle.H5()),
+              child: Text(l10n.marketplace_no_saved_parts, style: appStyle.H5()),
             );
           }
           return RefreshIndicator(

@@ -21,6 +21,7 @@ class MarketplacePartDetail extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final partAsync = ref.watch(marketplacePartDetailProvider(partId));
 
     return Scaffold(
@@ -28,11 +29,11 @@ class MarketplacePartDetail extends ConsumerWidget {
       body: partAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(
-          child: Text('Impossible de charger cette pièce.', style: appStyle.H5()),
+          child: Text(l10n.marketplace_part_load_error, style: appStyle.H5()),
         ),
         data: (part) {
           if (part == null) {
-            return Center(child: Text('Pièce introuvable.', style: appStyle.H5()));
+            return Center(child: Text(l10n.marketplace_part_not_found, style: appStyle.H5()));
           }
           return _PartDetailContent(part: part);
         },
@@ -86,6 +87,7 @@ class _PartDetailContentState extends ConsumerState<_PartDetailContent> {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final part = widget.part;
     final isSaved = ref.watch(marketplaceIsWishlistedProvider(part.id));
 
@@ -184,12 +186,15 @@ class _PartDetailContentState extends ConsumerState<_PartDetailContent> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    _Chip(text: part.condition == 'brand_new' ? 'Neuf' : 'Occasion'),
+                    _Chip(
+                        text: part.condition == 'brand_new'
+                            ? l10n.condition_new
+                            : l10n.condition_used),
                     const SizedBox(width: 8),
-                    _Chip(text: '${part.stockQuantity} en stock'),
+                    _Chip(text: '${part.stockQuantity} ${l10n.marketplace_in_stock_suffix}'),
                     if (part.vendor.pricePartyAgreed) ...[
                       const SizedBox(width: 8),
-                      const _Chip(text: 'Prix boutique garanti', color: Colors.blue),
+                      _Chip(text: l10n.marketplace_shop_price_guaranteed, color: Colors.blue),
                     ],
                   ],
                 ),
@@ -199,7 +204,7 @@ class _PartDetailContentState extends ConsumerState<_PartDetailContent> {
                 ],
                 if (part.compatibleVehicles.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  Text('Véhicules compatibles', style: appStyle.H5(weight: 'bold')),
+                  Text(l10n.marketplace_compatible_vehicles, style: appStyle.H5(weight: 'bold')),
                   const SizedBox(height: 6),
                   Wrap(
                     spacing: 6,
@@ -210,7 +215,7 @@ class _PartDetailContentState extends ConsumerState<_PartDetailContent> {
                 ],
                 if (part.oemReferences.isNotEmpty) ...[
                   const SizedBox(height: 16),
-                  Text('Références OEM', style: appStyle.H5(weight: 'bold')),
+                  Text(l10n.marketplace_oem_references, style: appStyle.H5(weight: 'bold')),
                   const SizedBox(height: 6),
                   Wrap(
                     spacing: 6,
@@ -262,8 +267,8 @@ class _PartDetailContentState extends ConsumerState<_PartDetailContent> {
                       foregroundColor: colorScheme.onPrimary,
                     ),
                     child: Text(part.stockQuantity < 1
-                        ? 'Rupture de stock'
-                        : 'Acheter'),
+                        ? l10n.marketplace_out_of_stock
+                        : l10n.marketplace_buy),
                   ),
                 ),
               ],

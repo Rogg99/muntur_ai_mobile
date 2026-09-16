@@ -50,7 +50,8 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
   Future<void> _submitByMomo() async {
     final phone = _phoneController.text.trim();
     if (phone.isEmpty) {
-      setState(() => _error = 'Entrez le numéro Mobile Money à débiter.');
+      setState(() =>
+          _error = AppLocalizations.of(context)!.marketplace_enter_momo_number);
       return;
     }
     setState(() {
@@ -118,12 +119,13 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final part = widget.part;
 
     return Scaffold(
       backgroundColor: colorScheme.background,
       resizeToAvoidBottomInset: true,
-      appBar: const CustomAppBar(titleTxt: 'Paiement escrow'),
+      appBar: CustomAppBar(titleTxt: l10n.marketplace_escrow_payment_title),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -133,7 +135,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Quantité', style: appStyle.H5()),
+              Text(l10n.marketplace_quantity_label, style: appStyle.H5()),
               Row(
                 children: [
                   IconButton(
@@ -157,19 +159,19 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Total à payer', style: appStyle.H4(weight: 'bold')),
+              Text(l10n.marketplace_total_to_pay, style: appStyle.H4(weight: 'bold')),
               Text('${_total.toStringAsFixed(0)} ${part.currency}',
                   style: appStyle.H4(weight: 'bold', color: colorScheme.primary)),
             ],
           ),
           const SizedBox(height: 20),
-          Text('Moyen de paiement', style: appStyle.H5()),
+          Text(l10n.marketplace_payment_method_label, style: appStyle.H5()),
           const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
                 child: _PaymentMethodChip(
-                  label: 'Mobile Money',
+                  label: l10n.marketplace_mobile_money,
                   icon: Icons.phone_android,
                   selected: _method == _PaymentMethod.momo,
                   onTap: () => setState(() => _method = _PaymentMethod.momo),
@@ -178,7 +180,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
               const SizedBox(width: 12),
               Expanded(
                 child: _PaymentMethodChip(
-                  label: 'Carte bancaire',
+                  label: l10n.marketplace_bank_card,
                   icon: Icons.credit_card,
                   selected: _method == _PaymentMethod.card,
                   onTap: () => setState(() => _method = _PaymentMethod.card),
@@ -192,8 +194,8 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
               controller: _phoneController,
               style: appStyle.H6(),
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Numéro Mobile Money',
+              decoration: InputDecoration(
+                labelText: l10n.marketplace_mobile_money_number_label,
                 hintText: '2376XXXXXXXX',
               ),
             )
@@ -205,7 +207,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                'Vous serez redirigé vers une page de paiement sécurisée Campay pour saisir votre carte.',
+                l10n.marketplace_card_redirect_explainer,
                 style: appStyle.H6(color: Colors.grey),
               ),
             ),
@@ -217,7 +219,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
-              "Le montant reste bloqué en séquestre (escrow) jusqu'à ce que vous confirmiez la livraison avec le code PIN qui vous sera transmis. Fenêtre de retour : 48h.",
+              l10n.marketplace_escrow_explainer,
               style: appStyle.H6(color: Colors.grey),
             ),
           ),
@@ -227,7 +229,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
           ],
           const SizedBox(height: 24),
           PrimaryButton(
-            text: 'Payer ${_total.toStringAsFixed(0)} ${part.currency}',
+            text: '${l10n.marketplace_pay_button} ${_total.toStringAsFixed(0)} ${part.currency}',
             loading: _submitting,
             onPressed: _submit,
           ),

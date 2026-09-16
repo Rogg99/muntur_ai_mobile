@@ -42,6 +42,7 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final partsAsync = ref.watch(marketplacePartsProvider(_query));
 
     final body = Column(
@@ -53,7 +54,7 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
               onChanged: (value) => setState(() => _query = value),
               style: appStyle.H6(),
               decoration: InputDecoration(
-                hintText: 'Rechercher une pièce...',
+                hintText: l10n.marketplace_search_hint,
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: colorScheme.surfaceContainer,
@@ -71,7 +72,7 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Text(
-                    "Impossible de charger le catalogue pour l'instant.",
+                    l10n.marketplace_catalog_load_error,
                     textAlign: TextAlign.center,
                     style: appStyle.H5(),
                   ),
@@ -80,7 +81,7 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
               data: (parts) {
                 if (parts.isEmpty) {
                   return Center(
-                    child: Text('Aucune pièce trouvée.', style: appStyle.H5()),
+                    child: Text(l10n.marketplace_no_parts_found, style: appStyle.H5()),
                   );
                 }
                 return RefreshIndicator(
@@ -125,6 +126,7 @@ class _PartCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final photo = part.medias.isNotEmpty ? part.medias.first.file : null;
 
     return GestureDetector(
@@ -174,7 +176,9 @@ class _PartCard extends StatelessWidget {
                     runSpacing: 4,
                     children: [
                       _Badge(
-                        text: part.condition == 'brand_new' ? 'Neuf' : 'Occasion',
+                        text: part.condition == 'brand_new'
+                            ? l10n.condition_new
+                            : l10n.condition_used,
                         color: part.condition == 'brand_new'
                             ? Colors.green
                             : Colors.orange,

@@ -113,6 +113,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
   }
 
   Future<void> _showAttachSheet() async {
+    final l10n = AppLocalizations.of(context)!;
     final choice = await showModalBottomSheet<_AttachSheetChoice>(
       context: context,
       builder: (sheetContext) => SafeArea(
@@ -120,12 +121,12 @@ class _ChatViewState extends ConsumerState<ChatView> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Prendre une photo'),
+              title: Text(l10n.chat_take_photo),
               onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choisir une photo'),
+              title: Text(l10n.chat_choose_photo),
               onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.gallery),
             ),
           ],
@@ -332,7 +333,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
           MaterialPageRoute(
             builder: (_) => SupportTicketNew(
               sourceDiscussionId: _discId != 'new' ? _discId : null,
-              initialSubject: 'Escalade depuis le chat',
+              initialSubject: AppLocalizations.of(context)!.chat_escalate_subject,
             ),
           ),
         );
@@ -379,7 +380,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Impossible de récupérer votre position.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.chat_location_error)),
       );
     }
   }
@@ -390,9 +391,10 @@ class _ChatViewState extends ConsumerState<ChatView> {
   /// since attachment files aren't bundled into the share.
   void _shareConversation(List<UIMessage> messages) {
     if (messages.isEmpty) return;
+    final l10n = AppLocalizations.of(context)!;
     final lines = messages.map((m) {
-      final sender = m.isAI ? 'Autosynx' : (m.emetteur == _userId ? 'Moi' : m.emetteurName);
-      final text = m.contenu.trim().isNotEmpty ? m.contenu.trim() : '[pièce jointe]';
+      final sender = m.isAI ? 'Autosynx' : (m.emetteur == _userId ? l10n.chat_you_label : m.emetteurName);
+      final text = m.contenu.trim().isNotEmpty ? m.contenu.trim() : l10n.chat_attachment_placeholder;
       return '$sender : $text';
     }).join('\n\n');
     final title = widget.disc?.title ?? 'Conversation Autosynx';
@@ -418,7 +420,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
                 onTap: () => _sendSuggestion(text),
               )),
           _SuggestionChip(
-            text: 'Garage à proximité',
+            text: translator.chat_nearby_garage_tooltip,
             icon: Icons.map_outlined,
             onTap: _goToNearbyGarages,
           ),
@@ -488,18 +490,18 @@ class _ChatViewState extends ConsumerState<ChatView> {
         actions: [
           IconButton(
             icon: const Icon(Icons.map_outlined),
-            tooltip: 'Garage à proximité',
+            tooltip: translator.chat_nearby_garage_tooltip,
             onPressed: _goToNearbyGarages,
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            tooltip: 'Pièces compatibles',
+            tooltip: translator.chat_compatible_parts_tooltip,
             onPressed: _findCompatibleParts,
           ),
           if (messages.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.share_outlined),
-              tooltip: 'Partager la conversation',
+              tooltip: translator.chat_share_conversation_tooltip,
               onPressed: () => _shareConversation(messages),
             ),
         ],
@@ -577,6 +579,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
 
   Widget _buildError(BuildContext context) {
     final appStyle = AppStyle.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -587,14 +590,14 @@ class _ChatViewState extends ConsumerState<ChatView> {
                 size: 40, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 12),
             Text(
-              'Impossible de charger la conversation',
+              l10n.chat_load_error,
               textAlign: TextAlign.center,
               style: appStyle.H5(),
             ),
             const SizedBox(height: 12),
             TextButton(
               onPressed: () => ref.invalidate(chatMessagesProvider(_discId)),
-              child: const Text('Réessayer'),
+              child: Text(l10n.retry),
             ),
           ],
         ),
@@ -635,7 +638,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
                             textCapitalization: TextCapitalization.sentences,
                             style: AppStyle.of(context).H5(),
                             decoration: InputDecoration(
-                              hintText: 'Message ...',
+                              hintText: AppLocalizations.of(context)!.support_message_hint,
                               filled: true,
                               fillColor: colorScheme.surfaceContainer,
                               contentPadding: const EdgeInsets.symmetric(
@@ -836,11 +839,11 @@ class _TypingBubble extends StatefulWidget {
 // moving rather than a generic stuck-looking loader, which matters most
 // for someone in an actually urgent situation). Times are from when the
 // bubble first mounts, i.e. right after sending.
-const List<(Duration, String)> _typingBubbleStages = [
-  (Duration.zero, 'Analyse en cours...'),
-  (Duration(seconds: 8), 'Je vérifie les informations...'),
-  (Duration(seconds: 20), 'Encore un instant, presque fini...'),
-];
+List<(Duration, String)> _typingBubbleStages(AppLocalizations l10n) => [
+      (Duration.zero, l10n.chat_typing_stage_1),
+      (const Duration(seconds: 8), l10n.chat_typing_stage_2),
+      (const Duration(seconds: 20), l10n.chat_typing_stage_3),
+    ];
 
 class _TypingBubbleState extends State<_TypingBubble>
     with SingleTickerProviderStateMixin {
@@ -851,23 +854,28 @@ class _TypingBubbleState extends State<_TypingBubble>
 
   late final Stopwatch _elapsed = Stopwatch()..start();
   Timer? _stageTimer;
-  String _stageText = _typingBubbleStages.first.$2;
+  String? _stageText;
+  bool _scheduled = false;
 
   @override
-  void initState() {
-    super.initState();
-    _scheduleNextStage();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final stages = _typingBubbleStages(AppLocalizations.of(context)!);
+    _stageText ??= stages.first.$2;
+    if (!_scheduled) {
+      _scheduled = true;
+      _scheduleNextStage(stages);
+    }
   }
 
-  void _scheduleNextStage() {
-    final nextIndex =
-        _typingBubbleStages.indexWhere((s) => s.$2 == _stageText) + 1;
-    if (nextIndex >= _typingBubbleStages.length) return;
-    final delay = _typingBubbleStages[nextIndex].$1 - _elapsed.elapsed;
+  void _scheduleNextStage(List<(Duration, String)> stages) {
+    final nextIndex = stages.indexWhere((s) => s.$2 == _stageText) + 1;
+    if (nextIndex >= stages.length) return;
+    final delay = stages[nextIndex].$1 - _elapsed.elapsed;
     _stageTimer = Timer(delay.isNegative ? Duration.zero : delay, () {
       if (!mounted) return;
-      setState(() => _stageText = _typingBubbleStages[nextIndex].$2);
-      _scheduleNextStage();
+      setState(() => _stageText = stages[nextIndex].$2);
+      _scheduleNextStage(stages);
     });
   }
 
@@ -919,7 +927,7 @@ class _TypingBubbleState extends State<_TypingBubble>
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: Text(
-                _stageText,
+                _stageText ?? '',
                 key: ValueKey(_stageText),
                 style: const TextStyle(color: Colors.white, fontSize: 13),
               ),

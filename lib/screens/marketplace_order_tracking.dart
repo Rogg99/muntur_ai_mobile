@@ -10,24 +10,24 @@ import 'package:munturai/features/marketplace/presentation/providers/marketplace
 import 'package:munturai/screens/courier_qr_scan.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
-const Map<String, String> _deliveryStatusLabels = {
-  'pending': 'En attente d\'un livreur',
-  'assigned': 'Livreur en route pour le retrait',
-  'picked_up': 'Récupérée par le livreur',
-  'in_transit': 'En route vers vous',
-  'delivered': 'Livrée',
-  'failed': 'Échouée',
-};
+Map<String, String> _deliveryStatusLabels(AppLocalizations l10n) => {
+      'pending': l10n.delivery_status_pending,
+      'assigned': l10n.delivery_status_assigned,
+      'picked_up': l10n.delivery_status_picked_up,
+      'in_transit': l10n.delivery_status_in_transit,
+      'delivered': l10n.delivery_status_delivered,
+      'failed': l10n.delivery_status_failed,
+    };
 
-const Map<String, String> _statusLabels = {
-  'pending_payment': 'Paiement en attente',
-  'escrow_held': 'Payé — en séquestre',
-  'delivered_pending_pin': 'Livré — en attente de PIN',
-  'completed': 'Terminée',
-  'returned': 'Retournée',
-  'cancelled': 'Annulée',
-  'disputed': 'Litige',
-};
+Map<String, String> _statusLabels(AppLocalizations l10n) => {
+      'pending_payment': l10n.status_pending_payment,
+      'escrow_held': l10n.status_escrow_held,
+      'delivered_pending_pin': l10n.status_delivered_pending_pin,
+      'completed': l10n.status_completed,
+      'returned': l10n.status_returned,
+      'cancelled': l10n.status_cancelled,
+      'disputed': l10n.status_disputed,
+    };
 
 const List<String> _terminalStatuses = ['completed', 'returned', 'cancelled', 'disputed'];
 
@@ -71,15 +71,17 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
   }
 
   Future<void> _returnOrder() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Retourner cette commande ?'),
-        content: const Text(
-            'Le montant payé sera remboursé sur votre numéro Mobile Money. Cette action est irréversible.'),
+        title: Text(l10n.marketplace_return_confirm_title),
+        content: Text(l10n.marketplace_return_confirm_body),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Annuler')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Retourner')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l10n.marketplace_return_action)),
         ],
       ),
     );
@@ -134,16 +136,16 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
   /// number to refund to — cards paid through Campay's hosted widget never
   /// give us one up front.
   Future<String?> _promptRefundPhone() {
+    final l10n = AppLocalizations.of(context)!;
     final controller = TextEditingController();
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Numéro pour le remboursement'),
+        title: Text(l10n.marketplace_refund_phone_title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-                'Cette commande a été payée par carte : indiquez un numéro Mobile Money pour recevoir le remboursement.'),
+            Text(l10n.marketplace_refund_phone_body),
             const SizedBox(height: 12),
             TextField(
               controller: controller,
@@ -155,22 +157,23 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Annuler')),
+              child: Text(l10n.cancel)),
           TextButton(
               onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-              child: const Text('Confirmer')),
+              child: Text(l10n.marketplace_confirm_button)),
         ],
       ),
     );
   }
 
   Future<void> _scanDropoff(Delivery delivery) async {
+    final l10n = AppLocalizations.of(context)!;
     final token = await Navigator.push<String>(
       context,
       MaterialPageRoute(
-        builder: (_) => const CourierQrScan(
-          title: 'Confirmer la réception',
-          instructions: 'Scannez le QR affiché par le livreur pour confirmer la réception.',
+        builder: (_) => CourierQrScan(
+          title: l10n.marketplace_confirm_reception_title,
+          instructions: l10n.marketplace_confirm_reception_instructions,
         ),
       ),
     );
@@ -180,7 +183,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
       ref.invalidate(myDeliveriesProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Réception confirmée !')),
+          SnackBar(content: Text(l10n.marketplace_reception_confirmed)),
         );
       }
     } catch (e) {
@@ -204,6 +207,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final orderAsync = ref.watch(marketplaceOrderDetailProvider(widget.orderId));
     final deliveries = ref.watch(myDeliveriesProvider).valueOrNull ?? const <Delivery>[];
     Delivery? delivery;
@@ -216,11 +220,11 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Suivi de commande'),
+      appBar: CustomAppBar(titleTxt: l10n.marketplace_order_tracking_title),
       body: orderAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) =>
-            Center(child: Text('Impossible de charger cette commande.', style: appStyle.H5())),
+            Center(child: Text(l10n.marketplace_order_load_error, style: appStyle.H5())),
         data: (order) {
           return RefreshIndicator(
             onRefresh: () async =>
@@ -230,7 +234,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 Text(order.listing.title, style: appStyle.H4(weight: 'bold')),
-                Text('${order.vendor.shopName} · Qté ${order.quantity}',
+                Text('${order.vendor.shopName} · ${l10n.marketplace_qty_label} ${order.quantity}',
                     style: appStyle.H6(color: Colors.grey)),
                 const SizedBox(height: 12),
                 Container(
@@ -240,7 +244,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    _statusLabels[order.status] ?? order.status,
+                    _statusLabels(l10n)[order.status] ?? order.status,
                     style: TextStyle(
                         color: colorScheme.primary, fontWeight: FontWeight.w600),
                   ),
@@ -262,7 +266,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            _deliveryStatusLabels[delivery.status] ?? delivery.status,
+                            _deliveryStatusLabels(l10n)[delivery.status] ?? delivery.status,
                             style: appStyle.H6(weight: 'bold'),
                           ),
                         ),
@@ -275,7 +279,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () => _scanDropoff(delivery!),
-                        child: const Text('Scanner le QR du livreur'),
+                        child: Text(l10n.marketplace_scan_courier_qr),
                       ),
                     ),
                   ],
@@ -283,7 +287,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                 if (order.status == 'pending_payment') ...[
                   const SizedBox(height: 16),
                   Text(
-                    "En attente de confirmation du paiement Mobile Money. Cette page se met à jour automatiquement.",
+                    l10n.marketplace_payment_pending_notice,
                     style: appStyle.H6(color: Colors.grey),
                   ),
                 ],
@@ -299,7 +303,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                     ),
                     child: Column(
                       children: [
-                        Text('Code de livraison', style: appStyle.H5(weight: 'bold')),
+                        Text(l10n.marketplace_delivery_code_title, style: appStyle.H5(weight: 'bold')),
                         const SizedBox(height: 8),
                         Text(
                           order.deliveryPinReveal!,
@@ -307,7 +311,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Ne le communiquez au livreur/vendeur qu'au moment de la remise de la pièce.",
+                          l10n.marketplace_delivery_code_warning,
                           textAlign: TextAlign.center,
                           style: appStyle.H6(color: Colors.grey),
                         ),
@@ -318,7 +322,7 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                 if (order.returnWindowExpiresAt != null && order.status == 'escrow_held') ...[
                   const SizedBox(height: 12),
                   Text(
-                    'Retour possible jusqu\'au ${order.returnWindowExpiresAt}',
+                    '${l10n.marketplace_return_possible_until} ${order.returnWindowExpiresAt}',
                     style: appStyle.H6(color: Colors.grey),
                   ),
                 ],
@@ -337,8 +341,8 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                       minimumSize: const Size.fromHeight(48),
                     ),
                     child: Text(_returning
-                        ? 'Retour en cours...'
-                        : 'Signaler un problème / Retourner'),
+                        ? l10n.marketplace_returning_in_progress
+                        : l10n.marketplace_report_problem_return),
                   ),
                 ],
               ],

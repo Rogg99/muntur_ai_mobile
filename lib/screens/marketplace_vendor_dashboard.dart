@@ -9,15 +9,15 @@ import 'package:munturai/screens/courier_vendor_delivery.dart';
 import 'package:munturai/screens/marketplace_part_form.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
-const Map<String, String> _statusLabels = {
-  'pending_payment': 'Paiement en attente',
-  'escrow_held': 'Payé — en séquestre',
-  'delivered_pending_pin': 'Livré — en attente de PIN',
-  'completed': 'Terminée',
-  'returned': 'Retournée',
-  'cancelled': 'Annulée',
-  'disputed': 'Litige',
-};
+Map<String, String> _statusLabels(AppLocalizations l10n) => {
+      'pending_payment': l10n.status_pending_payment,
+      'escrow_held': l10n.status_escrow_held,
+      'delivered_pending_pin': l10n.status_delivered_pending_pin,
+      'completed': l10n.status_completed,
+      'returned': l10n.status_returned,
+      'cancelled': l10n.status_cancelled,
+      'disputed': l10n.status_disputed,
+    };
 
 /// Vendor's own dashboard: subscription status, catalog management, and
 /// orders received against their listings. Subscribing to the marketplace
@@ -31,6 +31,7 @@ class MarketplaceVendorDashboard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final dashboardAsync = ref.watch(marketplaceVendorDashboardProvider);
     // Only offer "add a part" once we know for sure this account has a
     // vendor storefront — otherwise a non-vendor reaching this screen
@@ -40,7 +41,7 @@ class MarketplaceVendorDashboard extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Ma boutique'),
+      appBar: CustomAppBar(titleTxt: l10n.marketplace_my_shop),
       floatingActionButton: !hasVendorProfile
           ? null
           : FloatingActionButton.extended(
@@ -54,7 +55,7 @@ class MarketplaceVendorDashboard extends ConsumerWidget {
                 }
               },
               icon: const Icon(Icons.add),
-              label: const Text('Ajouter une pièce'),
+              label: Text(l10n.marketplace_add_part),
             ),
       body: dashboardAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -62,7 +63,7 @@ class MarketplaceVendorDashboard extends ConsumerWidget {
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Text(
-              "Impossible de charger votre boutique. Avez-vous déjà créé un profil vendeur ?",
+              l10n.marketplace_dashboard_load_error,
               textAlign: TextAlign.center,
               style: appStyle.H5(),
             ),
@@ -74,7 +75,7 @@ class MarketplaceVendorDashboard extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
-                  "Aucun profil vendeur pour ce compte.",
+                  l10n.marketplace_no_vendor_profile,
                   textAlign: TextAlign.center,
                   style: appStyle.H5(),
                 ),
@@ -106,8 +107,8 @@ class MarketplaceVendorDashboard extends ConsumerWidget {
                   ),
                   child: Text(
                     dashboard.vendor.subscriptionActive
-                        ? 'Abonnement actif'
-                        : 'Abonnement inactif — catalogue masqué du marketplace',
+                        ? l10n.marketplace_subscription_active
+                        : l10n.marketplace_subscription_inactive_hidden,
                     style: TextStyle(
                       color: dashboard.vendor.subscriptionActive ? Colors.green : Colors.red,
                       fontWeight: FontWeight.w600,
@@ -115,19 +116,19 @@ class MarketplaceVendorDashboard extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                Text('Mon catalogue (${dashboard.catalog.length})',
+                Text('${l10n.marketplace_my_catalog} (${dashboard.catalog.length})',
                     style: appStyle.H4(weight: 'bold')),
                 const SizedBox(height: 12),
                 if (dashboard.catalog.isEmpty)
-                  Text('Aucune pièce publiée pour le moment.', style: appStyle.H5())
+                  Text(l10n.marketplace_no_parts_published, style: appStyle.H5())
                 else
                   ...dashboard.catalog.map((part) => _CatalogTile(part: part)),
                 const SizedBox(height: 24),
-                Text('Commandes reçues (${dashboard.orders.length})',
+                Text('${l10n.marketplace_orders_received} (${dashboard.orders.length})',
                     style: appStyle.H4(weight: 'bold')),
                 const SizedBox(height: 12),
                 if (dashboard.orders.isEmpty)
-                  Text('Aucune commande pour le moment.', style: appStyle.H5())
+                  Text(l10n.marketplace_no_orders_yet, style: appStyle.H5())
                 else
                   ...dashboard.orders.map((order) => _ReceivedOrderTile(order: order)),
               ],
@@ -196,18 +197,19 @@ class _CatalogTile extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
             onPressed: () async {
+              final l10n = AppLocalizations.of(context)!;
               final confirmed = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: const Text('Supprimer cette pièce ?'),
+                  title: Text(l10n.marketplace_delete_part_confirm_title),
                   content: Text(part.title),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('Annuler')),
+                        child: Text(l10n.cancel)),
                     TextButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('Supprimer')),
+                        child: Text(l10n.delete)),
                   ],
                 ),
               );
@@ -218,7 +220,7 @@ class _CatalogTile extends ConsumerWidget {
               } catch (_) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Suppression impossible.')),
+                    SnackBar(content: Text(l10n.marketplace_delete_failed)),
                   );
                 }
               }
@@ -236,23 +238,24 @@ class _ReceivedOrderTile extends ConsumerWidget {
   final MarketplaceOrder order;
 
   Future<void> _confirmDeliveryDialog(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final pinController = TextEditingController();
     final pin = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Confirmer la livraison'),
+        title: Text(l10n.marketplace_confirm_delivery_title),
         content: TextField(
           controller: pinController,
           style: AppStyle.of(ctx).H6(),
           keyboardType: TextInputType.number,
           maxLength: 4,
-          decoration: const InputDecoration(labelText: 'Code PIN du client'),
+          decoration: InputDecoration(labelText: l10n.marketplace_client_pin_label),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
           TextButton(
             onPressed: () => Navigator.pop(ctx, pinController.text.trim()),
-            child: const Text('Valider'),
+            child: Text(l10n.marketplace_validate),
           ),
         ],
       ),
@@ -264,7 +267,7 @@ class _ReceivedOrderTile extends ConsumerWidget {
       ref.invalidate(marketplaceVendorDashboardProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Livraison confirmée, versement en cours.')),
+          SnackBar(content: Text(l10n.marketplace_delivery_confirmed_payout)),
         );
       }
     } catch (e) {
@@ -301,6 +304,7 @@ class _ReceivedOrderTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -315,11 +319,11 @@ class _ReceivedOrderTile extends ConsumerWidget {
           Text(order.listing.title, style: appStyle.H5(weight: 'bold')),
           const SizedBox(height: 4),
           Text(
-            '${order.buyer.fullName.isNotEmpty ? order.buyer.fullName : "Client"} · Qté ${order.quantity} · ${order.priceTotal.toStringAsFixed(0)} ${order.currency}',
+            '${order.buyer.fullName.isNotEmpty ? order.buyer.fullName : l10n.marketplace_customer_fallback} · ${l10n.marketplace_qty_label} ${order.quantity} · ${order.priceTotal.toStringAsFixed(0)} ${order.currency}',
             style: appStyle.H6(color: Colors.grey),
           ),
           const SizedBox(height: 4),
-          Text(_statusLabels[order.status] ?? order.status,
+          Text(_statusLabels(l10n)[order.status] ?? order.status,
               style: appStyle.H6(color: colorScheme.primary)),
           if (order.status == 'escrow_held') ...[
             const SizedBox(height: 8),
@@ -328,14 +332,14 @@ class _ReceivedOrderTile extends ConsumerWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => _confirmDeliveryDialog(context, ref),
-                    child: const Text('Confirmer livraison (PIN)'),
+                    child: Text(l10n.marketplace_confirm_delivery_pin_button),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => _markReady(context, ref),
-                    child: const Text('Livraison'),
+                    child: Text(l10n.marketplace_delivery),
                   ),
                 ),
               ],

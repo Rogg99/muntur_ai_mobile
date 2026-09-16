@@ -97,7 +97,8 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
     final price = double.tryParse(_priceController.text.trim());
     final stock = int.tryParse(_stockController.text.trim());
     if (title.isEmpty || price == null || stock == null) {
-      setState(() => _error = 'Vérifiez le titre, le prix et le stock.');
+      setState(() =>
+          _error = AppLocalizations.of(context)!.marketplace_check_fields_error);
       return;
     }
     setState(() {
@@ -151,6 +152,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     // Defense in depth: every path that pushes this screen already checks
     // for a vendor profile first (dashboard FAB, catalog edit tiles), but
@@ -178,8 +180,8 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
             padding: const EdgeInsets.all(24),
             child: Text(
               myVendor == null
-                  ? "Vous devez avoir une boutique marketplace pour publier une pièce."
-                  : "Vous ne pouvez modifier que les pièces de votre propre boutique.",
+                  ? l10n.marketplace_need_shop_to_publish
+                  : l10n.marketplace_can_only_edit_own_shop,
               textAlign: TextAlign.center,
               style: appStyle.H5(),
             ),
@@ -191,29 +193,32 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
     return Scaffold(
       backgroundColor: colorScheme.background,
       resizeToAvoidBottomInset: true,
-      appBar: CustomAppBar(titleTxt: _isEditing ? 'Modifier la pièce' : 'Nouvelle pièce'),
+      appBar: CustomAppBar(
+          titleTxt: _isEditing
+              ? l10n.marketplace_edit_part_title
+              : l10n.marketplace_new_part_title),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           TextField(
             controller: _titleController,
             style: appStyle.H6(),
-            decoration: const InputDecoration(labelText: 'Titre'),
+            decoration: InputDecoration(labelText: l10n.marketplace_title_label),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _descriptionController,
             style: appStyle.H6(),
             maxLines: 3,
-            decoration: const InputDecoration(labelText: 'Description'),
+            decoration: InputDecoration(labelText: l10n.marketplace_description_label),
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
             value: _condition,
-            decoration: const InputDecoration(labelText: 'État'),
-            items: const [
-              DropdownMenuItem(value: 'brand_new', child: Text('Neuf')),
-              DropdownMenuItem(value: 'used', child: Text('Occasion')),
+            decoration: InputDecoration(labelText: l10n.marketplace_condition_label),
+            items: [
+              DropdownMenuItem(value: 'brand_new', child: Text(l10n.condition_new)),
+              DropdownMenuItem(value: 'used', child: Text(l10n.condition_used)),
             ],
             onChanged: (v) => setState(() => _condition = v ?? 'used'),
           ),
@@ -225,7 +230,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
                   controller: _priceController,
                   style: appStyle.H6(),
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Prix (XAF)'),
+                  decoration: InputDecoration(labelText: l10n.marketplace_price_xaf_label),
                 ),
               ),
               const SizedBox(width: 12),
@@ -234,13 +239,13 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
                   controller: _stockController,
                   style: appStyle.H6(),
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Stock'),
+                  decoration: InputDecoration(labelText: l10n.marketplace_stock_label),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          Text('Références OEM', style: appStyle.H5(weight: 'bold')),
+          Text(l10n.marketplace_oem_references, style: appStyle.H5(weight: 'bold')),
           const SizedBox(height: 6),
           Wrap(
             spacing: 6,
@@ -259,7 +264,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
                 child: TextField(
                   controller: _oemController,
                   style: appStyle.H6(),
-                  decoration: const InputDecoration(hintText: 'Ajouter une référence OEM'),
+                  decoration: InputDecoration(hintText: l10n.marketplace_add_oem_hint),
                   onSubmitted: (_) => _addOem(),
                 ),
               ),
@@ -267,7 +272,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
             ],
           ),
           const SizedBox(height: 16),
-          Text('Véhicules compatibles', style: appStyle.H5(weight: 'bold')),
+          Text(l10n.marketplace_compatible_vehicles, style: appStyle.H5(weight: 'bold')),
           const SizedBox(height: 6),
           Wrap(
             spacing: 6,
@@ -287,7 +292,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
                   controller: _vehicleController,
                   style: appStyle.H6(),
                   decoration:
-                      const InputDecoration(hintText: 'Ex: Toyota Corolla'),
+                      InputDecoration(hintText: l10n.marketplace_vehicle_example_hint),
                   onSubmitted: (_) => _addVehicle(),
                 ),
               ),
@@ -295,7 +300,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
             ],
           ),
           const SizedBox(height: 16),
-          Text('Photos', style: appStyle.H5(weight: 'bold')),
+          Text(l10n.marketplace_photos_label, style: appStyle.H5(weight: 'bold')),
           const SizedBox(height: 6),
           Wrap(
             spacing: 8,
@@ -332,7 +337,7 @@ class _MarketplacePartFormState extends ConsumerState<MarketplacePartForm> {
           ],
           const SizedBox(height: 24),
           PrimaryButton(
-            text: _isEditing ? 'Enregistrer' : 'Publier la pièce',
+            text: _isEditing ? l10n.save : l10n.marketplace_publish_part,
             loading: _submitting,
             onPressed: _submit,
           ),

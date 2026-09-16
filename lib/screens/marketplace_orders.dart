@@ -6,15 +6,15 @@ import 'package:munturai/features/marketplace/presentation/providers/marketplace
 import 'package:munturai/screens/marketplace_order_tracking.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
-const Map<String, String> _statusLabels = {
-  'pending_payment': 'Paiement en attente',
-  'escrow_held': 'Payé — en séquestre',
-  'delivered_pending_pin': 'Livré — en attente de PIN',
-  'completed': 'Terminée',
-  'returned': 'Retournée',
-  'cancelled': 'Annulée',
-  'disputed': 'Litige',
-};
+Map<String, String> _statusLabels(AppLocalizations l10n) => {
+      'pending_payment': l10n.status_pending_payment,
+      'escrow_held': l10n.status_escrow_held,
+      'delivered_pending_pin': l10n.status_delivered_pending_pin,
+      'completed': l10n.status_completed,
+      'returned': l10n.status_returned,
+      'cancelled': l10n.status_cancelled,
+      'disputed': l10n.status_disputed,
+    };
 
 const Map<String, Color> _statusColors = {
   'pending_payment': Colors.orange,
@@ -35,19 +35,20 @@ class MarketplaceOrders extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final ordersAsync = ref.watch(marketplaceMyOrdersProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      appBar: const CustomAppBar(titleTxt: 'Mes commandes'),
+      appBar: CustomAppBar(titleTxt: l10n.marketplace_my_orders_title),
       body: ordersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) =>
-            Center(child: Text('Impossible de charger vos commandes.', style: appStyle.H5())),
+            Center(child: Text(l10n.marketplace_orders_load_error, style: appStyle.H5())),
         data: (orders) {
           if (orders.isEmpty) {
             return Center(
-                child: Text('Aucune commande marketplace pour le moment.',
+                child: Text(l10n.marketplace_no_orders,
                     style: appStyle.H5()));
           }
           return RefreshIndicator(
@@ -75,6 +76,7 @@ class _OrderTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final statusColor = _statusColors[order.status] ?? Colors.grey;
 
     return GestureDetector(
@@ -107,7 +109,7 @@ class _OrderTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  _statusLabels[order.status] ?? order.status,
+                  _statusLabels(l10n)[order.status] ?? order.status,
                   style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -115,7 +117,7 @@ class _OrderTile extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '${order.vendor.shopName} · Qté ${order.quantity} · ${order.priceTotal.toStringAsFixed(0)} ${order.currency}',
+            '${order.vendor.shopName} · ${l10n.marketplace_qty_label} ${order.quantity} · ${order.priceTotal.toStringAsFixed(0)} ${order.currency}',
             style: appStyle.H6(color: Colors.grey),
           ),
         ],

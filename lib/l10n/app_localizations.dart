@@ -3020,65 +3020,1003 @@ abstract class AppLocalizations {
   /// **'Error'**
   String get error_prefix;
 
+  /// No description provided for @courier_available_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Available jobs'**
   String get courier_available_title;
+
+  /// No description provided for @courier_no_jobs.
+  ///
+  /// In en, this message translates to:
+  /// **'No job available right now.'**
   String get courier_no_jobs;
+
+  /// No description provided for @courier_job_claimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Job claimed!'**
   String get courier_job_claimed;
+
+  /// No description provided for @courier_claiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Claiming...'**
   String get courier_claiming;
+
+  /// No description provided for @courier_claim_job.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim this job'**
   String get courier_claim_job;
+
+  /// No description provided for @courier_my_deliveries_title.
+  ///
+  /// In en, this message translates to:
+  /// **'My deliveries'**
   String get courier_my_deliveries_title;
+
+  /// No description provided for @courier_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your deliveries.'**
   String get courier_load_error;
+
+  /// No description provided for @courier_no_claimed.
+  ///
+  /// In en, this message translates to:
+  /// **'No job claimed yet.'**
   String get courier_no_claimed;
+
+  /// No description provided for @courier_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
   String get courier_status_pending;
+
+  /// No description provided for @courier_status_assigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Claimed — to pick up'**
   String get courier_status_assigned;
+
+  /// No description provided for @courier_status_picked_up.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked up'**
   String get courier_status_picked_up;
+
+  /// No description provided for @courier_status_in_transit.
+  ///
+  /// In en, this message translates to:
+  /// **'On the way'**
   String get courier_status_in_transit;
+
+  /// No description provided for @courier_status_delivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
   String get courier_status_delivered;
+
+  /// No description provided for @courier_status_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
   String get courier_status_failed;
+
+  /// No description provided for @courier_scan_vendor_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the vendor\'s QR'**
   String get courier_scan_vendor_title;
+
+  /// No description provided for @courier_scan_vendor_instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the QR code shown by the vendor to confirm pickup.'**
   String get courier_scan_vendor_instructions;
+
+  /// No description provided for @courier_dropoff_qr_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop-off QR'**
   String get courier_dropoff_qr_title;
+
+  /// No description provided for @courier_dropoff_qr_instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this QR code to the buyer to confirm delivery.'**
   String get courier_dropoff_qr_instructions;
+
+  /// No description provided for @courier_scan_pickup_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan (pickup)'**
   String get courier_scan_pickup_button;
+
+  /// No description provided for @courier_start_transit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'On the way'**
   String get courier_start_transit_button;
+
+  /// No description provided for @courier_dropoff_qr_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop-off QR'**
   String get courier_dropoff_qr_button;
+
+  /// No description provided for @courier_show_dropoff_qr_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Show drop-off QR'**
   String get courier_show_dropoff_qr_button;
+
+  /// No description provided for @vendor_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for a courier'**
   String get vendor_status_pending;
+
+  /// No description provided for @vendor_status_assigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Courier assigned — ready for pickup'**
   String get vendor_status_assigned;
+
+  /// No description provided for @vendor_status_picked_up.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked up by the courier'**
   String get vendor_status_picked_up;
+
+  /// No description provided for @vendor_delivery_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
   String get vendor_delivery_title;
+
+  /// No description provided for @vendor_delivery_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the delivery.'**
   String get vendor_delivery_load_error;
+
+  /// No description provided for @vendor_pickup_qr_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup QR'**
   String get vendor_pickup_qr_title;
+
+  /// No description provided for @vendor_pickup_qr_instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this QR code to the courier to confirm they\'re picking up the part.'**
   String get vendor_pickup_qr_instructions;
+
+  /// No description provided for @vendor_show_pickup_qr_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Show pickup QR'**
   String get vendor_show_pickup_qr_button;
+
+  /// No description provided for @courier_status_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your status.'**
   String get courier_status_load_error;
+
+  /// No description provided for @courier_become_courier_pitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a courier for AUTOSYNX and pick up spare-part delivery jobs.'**
   String get courier_become_courier_pitch;
+
+  /// No description provided for @courier_register_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Register as a courier'**
   String get courier_register_button;
+
+  /// No description provided for @courier_verified_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
   String get courier_verified_label;
+
+  /// No description provided for @courier_pending_verification_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending verification'**
   String get courier_pending_verification_label;
+
+  /// No description provided for @courier_available_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
   String get courier_available_label;
+
+  /// No description provided for @courier_unavailable_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
   String get courier_unavailable_label;
+
+  /// No description provided for @courier_verification_pending_notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is being reviewed by our team. You\'ll be able to accept jobs once approved.'**
   String get courier_verification_pending_notice;
+
+  /// No description provided for @courier_view_available_button.
+  ///
+  /// In en, this message translates to:
+  /// **'View available jobs'**
   String get courier_view_available_button;
 
+  /// No description provided for @support_status_open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
   String get support_status_open;
+
+  /// No description provided for @support_status_in_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
   String get support_status_in_progress;
+
+  /// No description provided for @support_status_resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
   String get support_status_resolved;
+
+  /// No description provided for @support_status_closed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
   String get support_status_closed;
+
+  /// No description provided for @support_tickets_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
   String get support_tickets_title;
+
+  /// No description provided for @support_new_ticket.
+  ///
+  /// In en, this message translates to:
+  /// **'New ticket'**
   String get support_new_ticket;
+
+  /// No description provided for @support_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your tickets.'**
   String get support_load_error;
+
+  /// No description provided for @support_no_tickets.
+  ///
+  /// In en, this message translates to:
+  /// **'No support ticket yet.'**
   String get support_no_tickets;
+
+  /// No description provided for @support_send_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send the message.'**
   String get support_send_failed;
+
+  /// No description provided for @support_ticket_default_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket'**
   String get support_ticket_default_title;
+
+  /// No description provided for @support_load_ticket_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this ticket.'**
   String get support_load_ticket_error;
+
+  /// No description provided for @support_no_messages.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages.'**
   String get support_no_messages;
+
+  /// No description provided for @support_message_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Message ...'**
   String get support_message_hint;
+
+  /// No description provided for @support_staff_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
   String get support_staff_label;
+
+  /// No description provided for @support_missing_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in a subject and a message.'**
   String get support_missing_fields;
+
+  /// No description provided for @support_contact_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
   String get support_contact_title;
+
+  /// No description provided for @support_context_notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your conversation context with Autosynx will be automatically shared with support.'**
   String get support_context_notice;
+
+  /// No description provided for @support_subject_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject'**
   String get support_subject_label;
+
+  /// No description provided for @support_message_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
   String get support_message_label;
+
+  /// No description provided for @marketplace_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a part...'**
+  String get marketplace_search_hint;
+
+  /// No description provided for @marketplace_catalog_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the catalog right now.'**
+  String get marketplace_catalog_load_error;
+
+  /// No description provided for @marketplace_no_parts_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No parts found.'**
+  String get marketplace_no_parts_found;
+
+  /// No description provided for @condition_new.
+  ///
+  /// In en, this message translates to:
+  /// **'Brand new'**
+  String get condition_new;
+
+  /// No description provided for @condition_used.
+  ///
+  /// In en, this message translates to:
+  /// **'Used'**
+  String get condition_used;
+
+  /// No description provided for @marketplace_part_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this part.'**
+  String get marketplace_part_load_error;
+
+  /// No description provided for @marketplace_part_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'Part not found.'**
+  String get marketplace_part_not_found;
+
+  /// No description provided for @marketplace_in_stock_suffix.
+  ///
+  /// In en, this message translates to:
+  /// **'in stock'**
+  String get marketplace_in_stock_suffix;
+
+  /// No description provided for @marketplace_compatible_vehicles.
+  ///
+  /// In en, this message translates to:
+  /// **'Compatible vehicles'**
+  String get marketplace_compatible_vehicles;
+
+  /// No description provided for @marketplace_oem_references.
+  ///
+  /// In en, this message translates to:
+  /// **'OEM references'**
+  String get marketplace_oem_references;
+
+  /// No description provided for @marketplace_shop_price_guaranteed.
+  ///
+  /// In en, this message translates to:
+  /// **'Guaranteed shop price'**
+  String get marketplace_shop_price_guaranteed;
+
+  /// No description provided for @marketplace_out_of_stock.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of stock'**
+  String get marketplace_out_of_stock;
+
+  /// No description provided for @marketplace_buy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get marketplace_buy;
+
+  /// No description provided for @marketplace_shop_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get marketplace_shop_title;
+
+  /// No description provided for @marketplace_shop_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this shop.'**
+  String get marketplace_shop_load_error;
+
+  /// No description provided for @marketplace_shop_not_found.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop not found.'**
+  String get marketplace_shop_not_found;
+
+  /// No description provided for @marketplace_vendor_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active seller'**
+  String get marketplace_vendor_active;
+
+  /// No description provided for @marketplace_subscription_inactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive subscription'**
+  String get marketplace_subscription_inactive;
+
+  /// No description provided for @marketplace_parts_in_catalog_suffix.
+  ///
+  /// In en, this message translates to:
+  /// **'parts in catalog'**
+  String get marketplace_parts_in_catalog_suffix;
+
+  /// No description provided for @marketplace_catalog.
+  ///
+  /// In en, this message translates to:
+  /// **'Catalog'**
+  String get marketplace_catalog;
+
+  /// No description provided for @marketplace_vendor_catalog_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the catalog.'**
+  String get marketplace_vendor_catalog_load_error;
+
+  /// No description provided for @marketplace_no_parts_online.
+  ///
+  /// In en, this message translates to:
+  /// **'No parts online yet.'**
+  String get marketplace_no_parts_online;
+
+  /// No description provided for @marketplace_my_shop.
+  ///
+  /// In en, this message translates to:
+  /// **'My shop'**
+  String get marketplace_my_shop;
+
+  /// No description provided for @marketplace_add_part.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a part'**
+  String get marketplace_add_part;
+
+  /// No description provided for @marketplace_dashboard_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your shop. Have you already created a seller profile?'**
+  String get marketplace_dashboard_load_error;
+
+  /// No description provided for @marketplace_no_vendor_profile.
+  ///
+  /// In en, this message translates to:
+  /// **'No seller profile for this account.'**
+  String get marketplace_no_vendor_profile;
+
+  /// No description provided for @marketplace_subscription_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active subscription'**
+  String get marketplace_subscription_active;
+
+  /// No description provided for @marketplace_subscription_inactive_hidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive subscription — catalog hidden from the marketplace'**
+  String get marketplace_subscription_inactive_hidden;
+
+  /// No description provided for @marketplace_my_catalog.
+  ///
+  /// In en, this message translates to:
+  /// **'My catalog'**
+  String get marketplace_my_catalog;
+
+  /// No description provided for @marketplace_no_parts_published.
+  ///
+  /// In en, this message translates to:
+  /// **'No parts published yet.'**
+  String get marketplace_no_parts_published;
+
+  /// No description provided for @marketplace_orders_received.
+  ///
+  /// In en, this message translates to:
+  /// **'Orders received'**
+  String get marketplace_orders_received;
+
+  /// No description provided for @marketplace_no_orders_yet.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders yet.'**
+  String get marketplace_no_orders_yet;
+
+  /// No description provided for @marketplace_delete_part_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this part?'**
+  String get marketplace_delete_part_confirm_title;
+
+  /// No description provided for @marketplace_delete_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete.'**
+  String get marketplace_delete_failed;
+
+  /// No description provided for @marketplace_confirm_delivery_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm delivery'**
+  String get marketplace_confirm_delivery_title;
+
+  /// No description provided for @marketplace_client_pin_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer\'s PIN code'**
+  String get marketplace_client_pin_label;
+
+  /// No description provided for @marketplace_validate.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get marketplace_validate;
+
+  /// No description provided for @marketplace_delivery_confirmed_payout.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery confirmed, payout in progress.'**
+  String get marketplace_delivery_confirmed_payout;
+
+  /// No description provided for @marketplace_confirm_delivery_pin_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm delivery (PIN)'**
+  String get marketplace_confirm_delivery_pin_button;
+
+  /// No description provided for @marketplace_delivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
+  String get marketplace_delivery;
+
+  /// No description provided for @marketplace_customer_fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get marketplace_customer_fallback;
+
+  /// No description provided for @marketplace_qty_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Qty'**
+  String get marketplace_qty_label;
+
+  /// No description provided for @status_pending_payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment pending'**
+  String get status_pending_payment;
+
+  /// No description provided for @status_escrow_held.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid — in escrow'**
+  String get status_escrow_held;
+
+  /// No description provided for @status_delivered_pending_pin.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered — awaiting PIN'**
+  String get status_delivered_pending_pin;
+
+  /// No description provided for @status_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get status_completed;
+
+  /// No description provided for @status_returned.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get status_returned;
+
+  /// No description provided for @status_cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get status_cancelled;
+
+  /// No description provided for @status_disputed.
+  ///
+  /// In en, this message translates to:
+  /// **'Disputed'**
+  String get status_disputed;
+
+  /// No description provided for @delivery_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for a courier'**
+  String get delivery_status_pending;
+
+  /// No description provided for @delivery_status_assigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Courier en route to pick up'**
+  String get delivery_status_assigned;
+
+  /// No description provided for @delivery_status_picked_up.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked up by courier'**
+  String get delivery_status_picked_up;
+
+  /// No description provided for @delivery_status_in_transit.
+  ///
+  /// In en, this message translates to:
+  /// **'On the way to you'**
+  String get delivery_status_in_transit;
+
+  /// No description provided for @delivery_status_delivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get delivery_status_delivered;
+
+  /// No description provided for @delivery_status_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get delivery_status_failed;
+
+  /// No description provided for @marketplace_order_tracking_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Order tracking'**
+  String get marketplace_order_tracking_title;
+
+  /// No description provided for @marketplace_order_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this order.'**
+  String get marketplace_order_load_error;
+
+  /// No description provided for @marketplace_scan_courier_qr.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the courier\'s QR code'**
+  String get marketplace_scan_courier_qr;
+
+  /// No description provided for @marketplace_payment_pending_notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Mobile Money payment confirmation. This page updates automatically.'**
+  String get marketplace_payment_pending_notice;
+
+  /// No description provided for @marketplace_delivery_code_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery code'**
+  String get marketplace_delivery_code_title;
+
+  /// No description provided for @marketplace_delivery_code_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Only share it with the courier/seller at the moment of handover.'**
+  String get marketplace_delivery_code_warning;
+
+  /// No description provided for @marketplace_return_possible_until.
+  ///
+  /// In en, this message translates to:
+  /// **'Return possible until'**
+  String get marketplace_return_possible_until;
+
+  /// No description provided for @marketplace_returning_in_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Returning...'**
+  String get marketplace_returning_in_progress;
+
+  /// No description provided for @marketplace_report_problem_return.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a problem / Return'**
+  String get marketplace_report_problem_return;
+
+  /// No description provided for @marketplace_return_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Return this order?'**
+  String get marketplace_return_confirm_title;
+
+  /// No description provided for @marketplace_return_confirm_body.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount paid will be refunded to your Mobile Money number. This action cannot be undone.'**
+  String get marketplace_return_confirm_body;
+
+  /// No description provided for @marketplace_return_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get marketplace_return_action;
+
+  /// No description provided for @marketplace_refund_phone_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund phone number'**
+  String get marketplace_refund_phone_title;
+
+  /// No description provided for @marketplace_refund_phone_body.
+  ///
+  /// In en, this message translates to:
+  /// **'This order was paid by card: enter a Mobile Money number to receive the refund.'**
+  String get marketplace_refund_phone_body;
+
+  /// No description provided for @marketplace_confirm_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get marketplace_confirm_button;
+
+  /// No description provided for @marketplace_confirm_reception_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm reception'**
+  String get marketplace_confirm_reception_title;
+
+  /// No description provided for @marketplace_confirm_reception_instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan the QR code shown by the courier to confirm reception.'**
+  String get marketplace_confirm_reception_instructions;
+
+  /// No description provided for @marketplace_reception_confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reception confirmed!'**
+  String get marketplace_reception_confirmed;
+
+  /// No description provided for @marketplace_my_orders_title.
+  ///
+  /// In en, this message translates to:
+  /// **'My orders'**
+  String get marketplace_my_orders_title;
+
+  /// No description provided for @marketplace_orders_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your orders.'**
+  String get marketplace_orders_load_error;
+
+  /// No description provided for @marketplace_no_orders.
+  ///
+  /// In en, this message translates to:
+  /// **'No marketplace orders yet.'**
+  String get marketplace_no_orders;
+
+  /// No description provided for @marketplace_edit_part_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit part'**
+  String get marketplace_edit_part_title;
+
+  /// No description provided for @marketplace_new_part_title.
+  ///
+  /// In en, this message translates to:
+  /// **'New part'**
+  String get marketplace_new_part_title;
+
+  /// No description provided for @marketplace_title_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get marketplace_title_label;
+
+  /// No description provided for @marketplace_description_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get marketplace_description_label;
+
+  /// No description provided for @marketplace_condition_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Condition'**
+  String get marketplace_condition_label;
+
+  /// No description provided for @marketplace_price_xaf_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Price (XAF)'**
+  String get marketplace_price_xaf_label;
+
+  /// No description provided for @marketplace_stock_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock'**
+  String get marketplace_stock_label;
+
+  /// No description provided for @marketplace_add_oem_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an OEM reference'**
+  String get marketplace_add_oem_hint;
+
+  /// No description provided for @marketplace_vehicle_example_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g: Toyota Corolla'**
+  String get marketplace_vehicle_example_hint;
+
+  /// No description provided for @marketplace_photos_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get marketplace_photos_label;
+
+  /// No description provided for @marketplace_check_fields_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the title, price and stock.'**
+  String get marketplace_check_fields_error;
+
+  /// No description provided for @marketplace_publish_part.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish the part'**
+  String get marketplace_publish_part;
+
+  /// No description provided for @marketplace_need_shop_to_publish.
+  ///
+  /// In en, this message translates to:
+  /// **'You need a marketplace shop to publish a part.'**
+  String get marketplace_need_shop_to_publish;
+
+  /// No description provided for @marketplace_can_only_edit_own_shop.
+  ///
+  /// In en, this message translates to:
+  /// **'You can only edit parts from your own shop.'**
+  String get marketplace_can_only_edit_own_shop;
+
+  /// No description provided for @marketplace_my_favorites_title.
+  ///
+  /// In en, this message translates to:
+  /// **'My favorites'**
+  String get marketplace_my_favorites_title;
+
+  /// No description provided for @marketplace_favorites_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your favorites.'**
+  String get marketplace_favorites_load_error;
+
+  /// No description provided for @marketplace_no_saved_parts.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved parts yet.'**
+  String get marketplace_no_saved_parts;
+
+  /// No description provided for @marketplace_escrow_payment_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Escrow payment'**
+  String get marketplace_escrow_payment_title;
+
+  /// No description provided for @marketplace_quantity_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get marketplace_quantity_label;
+
+  /// No description provided for @marketplace_total_to_pay.
+  ///
+  /// In en, this message translates to:
+  /// **'Total to pay'**
+  String get marketplace_total_to_pay;
+
+  /// No description provided for @marketplace_payment_method_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment method'**
+  String get marketplace_payment_method_label;
+
+  /// No description provided for @marketplace_mobile_money.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Money'**
+  String get marketplace_mobile_money;
+
+  /// No description provided for @marketplace_bank_card.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank card'**
+  String get marketplace_bank_card;
+
+  /// No description provided for @marketplace_mobile_money_number_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Money number'**
+  String get marketplace_mobile_money_number_label;
+
+  /// No description provided for @marketplace_card_redirect_explainer.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be redirected to a secure Campay payment page to enter your card.'**
+  String get marketplace_card_redirect_explainer;
+
+  /// No description provided for @marketplace_escrow_explainer.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount stays held in escrow until you confirm delivery with the PIN code you\'ll receive. Return window: 48h.'**
+  String get marketplace_escrow_explainer;
+
+  /// No description provided for @marketplace_pay_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay'**
+  String get marketplace_pay_button;
+
+  /// No description provided for @marketplace_enter_momo_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the Mobile Money number to debit.'**
+  String get marketplace_enter_momo_number;
+  /// No description provided for @chat_take_photo.
+  String get chat_take_photo;
+  /// No description provided for @chat_choose_photo.
+  String get chat_choose_photo;
+  /// No description provided for @chat_nearby_garage_tooltip.
+  String get chat_nearby_garage_tooltip;
+  /// No description provided for @chat_compatible_parts_tooltip.
+  String get chat_compatible_parts_tooltip;
+  /// No description provided for @chat_share_conversation_tooltip.
+  String get chat_share_conversation_tooltip;
+  /// No description provided for @chat_escalate_subject.
+  String get chat_escalate_subject;
+  /// No description provided for @chat_location_error.
+  String get chat_location_error;
+  /// No description provided for @chat_load_error.
+  String get chat_load_error;
+  /// No description provided for @chat_attachment_placeholder.
+  String get chat_attachment_placeholder;
+  /// No description provided for @chat_typing_stage_1.
+  String get chat_typing_stage_1;
+  /// No description provided for @chat_typing_stage_2.
+  String get chat_typing_stage_2;
+  /// No description provided for @chat_typing_stage_3.
+  String get chat_typing_stage_3;
+  /// No description provided for @chat_you_label.
+  String get chat_you_label;
 }
 
 class _AppLocalizationsDelegate
