@@ -816,6 +816,18 @@ class _TypingBubble extends StatefulWidget {
   State<_TypingBubble> createState() => _TypingBubbleState();
 }
 
+// Cycles through progressively-reassuring copy the longer the AI reply
+// takes (backend does 2-4 sequential LLM calls per turn today, being
+// reduced separately — this is the UX side: make the wait feel like it's
+// moving rather than a generic stuck-looking loader, which matters most
+// for someone in an actually urgent situation). Times are from when the
+// bubble first mounts, i.e. right after sending.
+const List<(Duration, String)> _typingBubbleStages = [
+  (Duration.zero, 'Analyse en cours...'),
+  (Duration(seconds: 8), 'Je vérifie les informations...'),
+  (Duration(seconds: 20), 'Encore un instant, presque fini...'),
+];
+
 class _TypingBubbleState extends State<_TypingBubble>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
@@ -823,9 +835,32 @@ class _TypingBubbleState extends State<_TypingBubble>
     duration: const Duration(milliseconds: 900),
   )..repeat();
 
+  late final Stopwatch _elapsed = Stopwatch()..start();
+  Timer? _stageTimer;
+  String _stageText = _typingBubbleStages.first.$2;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleNextStage();
+  }
+
+  void _scheduleNextStage() {
+    final nextIndex =
+        _typingBubbleStages.indexWhere((s) => s.$2 == _stageText) + 1;
+    if (nextIndex >= _typingBubbleStages.length) return;
+    final delay = _typingBubbleStages[nextIndex].$1 - _elapsed.elapsed;
+    _stageTimer = Timer(delay.isNegative ? Duration.zero : delay, () {
+      if (!mounted) return;
+      setState(() => _stageText = _typingBubbleStages[nextIndex].$2);
+      _scheduleNextStage();
+    });
+  }
+
   @override
   void dispose() {
     _controller.dispose();
+    _stageTimer?.cancel();
     super.dispose();
   }
 
@@ -840,28 +875,42 @@ class _TypingBubbleState extends State<_TypingBubble>
           color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, _) {
-            return Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(3, (i) {
-                final t = (_controller.value - i * 0.2) % 1.0;
-                final opacity =
-                    0.3 + 0.7 * (1 - (t - 0.5).abs() * 2).clamp(0.0, 1.0);
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: Opacity(
-                    opacity: opacity,
-                    child: const CircleAvatar(
-                      radius: 4,
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, _) {
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(3, (i) {
+                    final t = (_controller.value - i * 0.2) % 1.0;
+                    final opacity =
+                        0.3 + 0.7 * (1 - (t - 0.5).abs() * 2).clamp(0.0, 1.0);
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Opacity(
+                        opacity: opacity,
+                        child: const CircleAvatar(
+                          radius: 4,
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                    );
+                  }),
                 );
-              }),
-            );
-          },
+              },
+            ),
+            const SizedBox(width: 8),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: Text(
+                _stageText,
+                key: ValueKey(_stageText),
+                style: const TextStyle(color: Colors.white, fontSize: 13),
+              ),
+            ),
+          ],
         ),
       ),
     );
