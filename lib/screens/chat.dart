@@ -71,11 +71,12 @@ class _ChatViewState extends ConsumerState<ChatView> {
   // generated in the background). The typing bubble needs to stay up until
   // that reply actually lands as a discussion_message WS push, which can
   // take much longer — using _sending for both made the bubble vanish
-  // right after sending, well before any reply existed. _replyTimeout is a
-  // safety net in case the push never arrives (dropped WS, backend error
-  // with no visible failure) so the bubble doesn't stay stuck forever.
+  // right after sending, well before any reply existed. No arbitrary
+  // client-side timeout hides it anymore (there used to be one, and it hid
+  // the loader while the AI was still genuinely working on slower replies)
+  // — it only clears via the WS-driven ref.listen below, matching how long
+  // the reply actually takes.
   bool _awaitingAiReply = false;
-  Timer? _replyTimeout;
   int _lastMessageCount = -1;
 
   final List<_PendingAttachment> _attachments = [];
@@ -107,7 +108,6 @@ class _ChatViewState extends ConsumerState<ChatView> {
     _messageController.dispose();
     _scrollController.dispose();
     _recordTicker?.cancel();
-    _replyTimeout?.cancel();
     _audioRecorder.dispose();
     super.dispose();
   }
@@ -241,10 +241,6 @@ class _ChatViewState extends ConsumerState<ChatView> {
       _sending = true;
       _awaitingAiReply = true;
       _attachments.clear();
-    });
-    _replyTimeout?.cancel();
-    _replyTimeout = Timer(const Duration(seconds: 60), () {
-      if (mounted) setState(() => _awaitingAiReply = false);
     });
 
     try {
@@ -445,7 +441,6 @@ class _ChatViewState extends ConsumerState<ChatView> {
       final hasNewAiMessage = (next.valueOrNull ?? const [])
           .any((m) => m.isAI && !previousIds.contains(m.id));
       if (hasNewAiMessage) {
-        _replyTimeout?.cancel();
         setState(() => _awaitingAiReply = false);
       }
     });
