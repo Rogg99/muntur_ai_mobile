@@ -2025,7 +2025,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucune pièce enregistrée pour le moment.';
 
   @override
-  String get marketplace_escrow_payment_title => 'Paiement escrow';
+  String get marketplace_escrow_payment_title => 'Paiement';
 
   @override
   String get marketplace_quantity_label => 'Quantité';

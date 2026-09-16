@@ -637,7 +637,7 @@
   "marketplace_my_favorites_title": "Mes favoris",
   "marketplace_favorites_load_error": "Impossible de charger vos favoris.",
   "marketplace_no_saved_parts": "Aucune pièce enregistrée pour le moment.",
-  "marketplace_escrow_payment_title": "Paiement escrow",
+  "marketplace_escrow_payment_title": "Paiement",
   "marketplace_quantity_label": "Quantité",
   "marketplace_total_to_pay": "Total à payer",
   "marketplace_payment_method_label": "Moyen de paiement",
@@ -660,5 +660,8 @@
   "chat_typing_stage_1": "Analyse en cours...",
   "chat_typing_stage_2": "Je vérifie les informations...",
   "chat_typing_stage_3": "Encore un instant, presque fini...",
-  "chat_you_label": "Moi"
+  "chat_you_label": "Moi",
+  "home_press_back_to_exit": "Appuyer encore pour quitter",
+  "home_no_conversations": "Aucune conversation. Commence une nouvelle conversation avec Autosynx !",
+  "home_no_forums": "Aucun forum disponible"
 }

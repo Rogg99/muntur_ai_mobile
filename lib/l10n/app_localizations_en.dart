@@ -2003,7 +2003,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get marketplace_no_saved_parts => 'No saved parts yet.';
 
   @override
-  String get marketplace_escrow_payment_title => 'Escrow payment';
+  String get marketplace_escrow_payment_title => 'Payment';
 
   @override
   String get marketplace_quantity_label => 'Quantity';
@@ -2063,4 +2063,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chat_typing_stage_3 => 'Just a moment, almost done...';
   @override
   String get chat_you_label => 'Me';
+  @override
+  String get home_press_back_to_exit => 'Press again to exit';
+  @override
+  String get home_no_conversations =>
+      'No conversations yet. Start a new conversation with Autosynx!';
+  @override
+  String get home_no_forums => 'No forums available';
 }

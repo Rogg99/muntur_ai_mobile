@@ -198,31 +198,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
                 labelText: l10n.marketplace_mobile_money_number_label,
                 hintText: '2376XXXXXXXX',
               ),
-            )
-          else
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainer,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                l10n.marketplace_card_redirect_explainer,
-                style: appStyle.H6(color: Colors.grey),
-              ),
             ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainer,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              l10n.marketplace_escrow_explainer,
-              style: appStyle.H6(color: Colors.grey),
-            ),
-          ),
           if (_error != null) ...[
             const SizedBox(height: 16),
             Text(_error!, style: appStyle.H6(color: Colors.redAccent)),

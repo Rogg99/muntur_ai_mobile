@@ -637,7 +637,7 @@
   "marketplace_my_favorites_title": "My favorites",
   "marketplace_favorites_load_error": "Couldn't load your favorites.",
   "marketplace_no_saved_parts": "No saved parts yet.",
-  "marketplace_escrow_payment_title": "Escrow payment",
+  "marketplace_escrow_payment_title": "Payment",
   "marketplace_quantity_label": "Quantity",
   "marketplace_total_to_pay": "Total to pay",
   "marketplace_payment_method_label": "Payment method",
@@ -660,5 +660,8 @@
   "chat_typing_stage_1": "Analyzing...",
   "chat_typing_stage_2": "Checking the information...",
   "chat_typing_stage_3": "Just a moment, almost done...",
-  "chat_you_label": "Me"
+  "chat_you_label": "Me",
+  "home_press_back_to_exit": "Press again to exit",
+  "home_no_conversations": "No conversations yet. Start a new conversation with Autosynx!",
+  "home_no_forums": "No forums available"
 }
