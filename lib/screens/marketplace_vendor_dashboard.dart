@@ -6,6 +6,7 @@ import 'package:munturai/features/marketplace/data/models/marketplace_models.dar
 import 'package:munturai/features/courier/presentation/providers/courier_provider.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
 import 'package:munturai/screens/courier_vendor_delivery.dart';
+import 'package:munturai/screens/marketplace_kyc.dart';
 import 'package:munturai/screens/marketplace_part_form.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
@@ -115,6 +116,10 @@ class MarketplaceVendorDashboard extends ConsumerWidget {
                     ),
                   ),
                 ),
+                if (dashboard.vendor.kycStatus != 'approved') ...[
+                  const SizedBox(height: 12),
+                  _KycBanner(vendor: dashboard.vendor),
+                ],
                 const SizedBox(height: 24),
                 Text('${l10n.marketplace_my_catalog} (${dashboard.catalog.length})',
                     style: appStyle.H4(weight: 'bold')),
@@ -345,6 +350,67 @@ class _ReceivedOrderTile extends ConsumerWidget {
               ],
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Shown on the dashboard whenever kyc_status != 'approved' — selling is
+/// blocked server-side until then, so this is the vendor's way in to
+/// marketplace_kyc.dart (upload/status/re-submit) without hunting for it.
+class _KycBanner extends ConsumerWidget {
+  const _KycBanner({required this.vendor});
+
+  final VendorProfile vendor;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appStyle = AppStyle.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final rejected = vendor.kycStatus == 'rejected';
+    final color = rejected ? Colors.redAccent : Colors.orange;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(rejected ? Icons.error_outline : Icons.hourglass_top, color: color),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  rejected
+                      ? l10n.kyc_dashboard_banner_rejected
+                      : l10n.kyc_dashboard_banner_pending,
+                  style: appStyle.H6(),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: OutlinedButton(
+              onPressed: () async {
+                final done = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(builder: (_) => MarketplaceKyc(vendor: vendor)),
+                );
+                if (done == true) {
+                  ref.invalidate(marketplaceVendorDashboardProvider);
+                }
+              },
+              child: Text(l10n.kyc_dashboard_action_button),
+            ),
+          ),
         ],
       ),
     );

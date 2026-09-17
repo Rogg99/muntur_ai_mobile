@@ -4501,6 +4501,51 @@ abstract class AppLocalizations {
 
   /// No description provided for @profile_marketplace_section_label.
   String get profile_marketplace_section_label;
+
+  /// No description provided for @kyc_screen_title.
+  String get kyc_screen_title;
+
+  /// No description provided for @kyc_missing_documents_error.
+  String get kyc_missing_documents_error;
+
+  /// No description provided for @kyc_upload_failed_error.
+  String get kyc_upload_failed_error;
+
+  /// No description provided for @kyc_id_front_label.
+  String get kyc_id_front_label;
+
+  /// No description provided for @kyc_id_back_label.
+  String get kyc_id_back_label;
+
+  /// No description provided for @kyc_business_registration_label.
+  String get kyc_business_registration_label;
+
+  /// No description provided for @kyc_optional_hint.
+  String get kyc_optional_hint;
+
+  /// No description provided for @kyc_submit_button.
+  String get kyc_submit_button;
+
+  /// No description provided for @kyc_resubmit_button.
+  String get kyc_resubmit_button;
+
+  /// No description provided for @kyc_status_approved.
+  String get kyc_status_approved;
+
+  /// No description provided for @kyc_status_rejected.
+  String get kyc_status_rejected;
+
+  /// No description provided for @kyc_status_pending.
+  String get kyc_status_pending;
+
+  /// No description provided for @kyc_dashboard_banner_pending.
+  String get kyc_dashboard_banner_pending;
+
+  /// No description provided for @kyc_dashboard_banner_rejected.
+  String get kyc_dashboard_banner_rejected;
+
+  /// No description provided for @kyc_dashboard_action_button.
+  String get kyc_dashboard_action_button;
 }
 
 class _AppLocalizationsDelegate

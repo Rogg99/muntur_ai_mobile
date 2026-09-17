@@ -744,5 +744,20 @@
   "no_news_label": "Aucune actualité",
   "refresh_button_label": "Actualiser",
   "article_not_found_label": "Article introuvable",
-  "profile_marketplace_section_label": "Marketplace"
+  "profile_marketplace_section_label": "Marketplace",
+  "kyc_screen_title": "Vérification d'identité",
+  "kyc_missing_documents_error": "Ajoutez les deux faces de votre pièce d'identité.",
+  "kyc_upload_failed_error": "Échec de l'envoi des documents. Réessayez.",
+  "kyc_id_front_label": "Pièce d'identité (recto)",
+  "kyc_id_back_label": "Pièce d'identité (verso)",
+  "kyc_business_registration_label": "Registre de commerce",
+  "kyc_optional_hint": "Optionnel",
+  "kyc_submit_button": "Soumettre",
+  "kyc_resubmit_button": "Soumettre à nouveau",
+  "kyc_status_approved": "Identité vérifiée",
+  "kyc_status_rejected": "Vérification rejetée",
+  "kyc_status_pending": "Vérification en attente",
+  "kyc_dashboard_banner_pending": "Votre identité est en cours de vérification. La vente sera activée une fois validée.",
+  "kyc_dashboard_banner_rejected": "Votre vérification d'identité a été rejetée. Soumettez de nouveaux documents pour pouvoir vendre.",
+  "kyc_dashboard_action_button": "Vérifier mon identité"
 }

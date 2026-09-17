@@ -189,6 +189,34 @@ class MarketplaceRepositoryImpl {
     }
   }
 
+  // ─────────────────────── KYC (vendor identity verification) ───────────
+
+  /// Uploads a local photo/scan to the shared media store and returns its
+  /// id, to pass into [submitKyc]. Same endpoint as [uploadPartPhoto] — kept
+  /// as a distinct method name for clarity at call sites, not because the
+  /// upload itself differs.
+  Future<String?> uploadKycDocument(File file) => uploadPartPhoto(file);
+
+  /// Attaches already-uploaded document media ids to the vendor's profile
+  /// and resets kyc_status to 'pending' for admin review — also clears any
+  /// previous kyc_rejection_reason when this is a re-submission after a
+  /// rejection.
+  Future<void> submitKyc({
+    required String idFrontMediaId,
+    required String idBackMediaId,
+    String? businessRegistrationMediaId,
+  }) {
+    return _withCleanError(() => _apiClient.post(
+          '/marketplace/vendors/submit-kyc/',
+          data: {
+            'kyc_id_front': idFrontMediaId,
+            'kyc_id_back': idBackMediaId,
+            if (businessRegistrationMediaId != null)
+              'kyc_business_registration': businessRegistrationMediaId,
+          },
+        ));
+  }
+
   // ─────────────────────── CATALOG MANAGEMENT ───────────────────────
 
   /// Uploads a local photo to the shared media store (same endpoint the

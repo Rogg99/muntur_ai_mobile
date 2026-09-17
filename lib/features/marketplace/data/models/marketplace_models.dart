@@ -24,6 +24,10 @@ double? _parseDecimalOrNull(dynamic value) {
 class VendorProfile {
   final String id;
   final String shopName;
+  /// Now actually synced to kyc_status == 'approved' server-side (a4 commit
+  /// d681ba7 — was a dead field before, never read). Kept as the display
+  /// condition for the "Vendeur Vérifié" badge everywhere it already
+  /// appears; kycStatus below is only needed for the vendor's own KYC flow.
   final bool verified;
   final bool pricePartyAgreed;
   final bool subscriptionActive;
@@ -34,6 +38,13 @@ class VendorProfile {
   /// way, just "unknown", so render its absence quietly.
   final double? distanceKm;
 
+  /// 'pending' / 'approved' / 'rejected'. Only meaningful to the vendor
+  /// themselves (own storefront) — not necessarily present on a buyer-facing
+  /// read of someone else's vendor profile.
+  final String kycStatus;
+  final String? kycRejectionReason;
+  final String? kycReviewedAt;
+
   const VendorProfile({
     required this.id,
     required this.shopName,
@@ -43,6 +54,9 @@ class VendorProfile {
     this.catalogCount = 0,
     this.ville = '',
     this.distanceKm,
+    this.kycStatus = 'pending',
+    this.kycRejectionReason,
+    this.kycReviewedAt,
   });
 
   factory VendorProfile.fromJson(Map<String, dynamic> json) => VendorProfile(
@@ -56,6 +70,9 @@ class VendorProfile {
         catalogCount: (json['catalog_count'] as num?)?.toInt() ?? 0,
         ville: json['ville']?.toString() ?? '',
         distanceKm: _parseDecimalOrNull(json['distance_km']),
+        kycStatus: json['kyc_status']?.toString() ?? 'pending',
+        kycRejectionReason: json['kyc_rejection_reason']?.toString(),
+        kycReviewedAt: json['kyc_reviewed_at']?.toString(),
       );
 }
 

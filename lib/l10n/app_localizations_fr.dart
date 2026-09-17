@@ -2372,4 +2372,53 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profile_marketplace_section_label => 'Marketplace';
+
+  @override
+  String get kyc_screen_title => 'Vérification d\'identité';
+
+  @override
+  String get kyc_missing_documents_error =>
+      'Ajoutez les deux faces de votre pièce d\'identité.';
+
+  @override
+  String get kyc_upload_failed_error =>
+      'Échec de l\'envoi des documents. Réessayez.';
+
+  @override
+  String get kyc_id_front_label => 'Pièce d\'identité (recto)';
+
+  @override
+  String get kyc_id_back_label => 'Pièce d\'identité (verso)';
+
+  @override
+  String get kyc_business_registration_label => 'Registre de commerce';
+
+  @override
+  String get kyc_optional_hint => 'Optionnel';
+
+  @override
+  String get kyc_submit_button => 'Soumettre';
+
+  @override
+  String get kyc_resubmit_button => 'Soumettre à nouveau';
+
+  @override
+  String get kyc_status_approved => 'Identité vérifiée';
+
+  @override
+  String get kyc_status_rejected => 'Vérification rejetée';
+
+  @override
+  String get kyc_status_pending => 'Vérification en attente';
+
+  @override
+  String get kyc_dashboard_banner_pending =>
+      'Votre identité est en cours de vérification. La vente sera activée une fois validée.';
+
+  @override
+  String get kyc_dashboard_banner_rejected =>
+      'Votre vérification d\'identité a été rejetée. Soumettez de nouveaux documents pour pouvoir vendre.';
+
+  @override
+  String get kyc_dashboard_action_button => 'Vérifier mon identité';
 }

@@ -2347,4 +2347,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile_marketplace_section_label => 'Marketplace';
+
+  @override
+  String get kyc_screen_title => 'Identity verification';
+
+  @override
+  String get kyc_missing_documents_error =>
+      'Add both sides of your ID document.';
+
+  @override
+  String get kyc_upload_failed_error =>
+      'Failed to upload documents. Please try again.';
+
+  @override
+  String get kyc_id_front_label => 'ID document (front)';
+
+  @override
+  String get kyc_id_back_label => 'ID document (back)';
+
+  @override
+  String get kyc_business_registration_label => 'Business registration';
+
+  @override
+  String get kyc_optional_hint => 'Optional';
+
+  @override
+  String get kyc_submit_button => 'Submit';
+
+  @override
+  String get kyc_resubmit_button => 'Resubmit';
+
+  @override
+  String get kyc_status_approved => 'Identity verified';
+
+  @override
+  String get kyc_status_rejected => 'Verification rejected';
+
+  @override
+  String get kyc_status_pending => 'Verification pending';
+
+  @override
+  String get kyc_dashboard_banner_pending =>
+      'Your identity is being verified. Selling will be enabled once approved.';
+
+  @override
+  String get kyc_dashboard_banner_rejected =>
+      'Your identity verification was rejected. Submit new documents to be able to sell.';
+
+  @override
+  String get kyc_dashboard_action_button => 'Verify my identity';
 }

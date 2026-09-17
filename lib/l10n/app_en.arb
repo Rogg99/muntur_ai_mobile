@@ -744,5 +744,20 @@
   "no_news_label": "No news",
   "refresh_button_label": "Refresh",
   "article_not_found_label": "Article not found",
-  "profile_marketplace_section_label": "Marketplace"
+  "profile_marketplace_section_label": "Marketplace",
+  "kyc_screen_title": "Identity verification",
+  "kyc_missing_documents_error": "Add both sides of your ID document.",
+  "kyc_upload_failed_error": "Failed to upload documents. Please try again.",
+  "kyc_id_front_label": "ID document (front)",
+  "kyc_id_back_label": "ID document (back)",
+  "kyc_business_registration_label": "Business registration",
+  "kyc_optional_hint": "Optional",
+  "kyc_submit_button": "Submit",
+  "kyc_resubmit_button": "Resubmit",
+  "kyc_status_approved": "Identity verified",
+  "kyc_status_rejected": "Verification rejected",
+  "kyc_status_pending": "Verification pending",
+  "kyc_dashboard_banner_pending": "Your identity is being verified. Selling will be enabled once approved.",
+  "kyc_dashboard_banner_rejected": "Your identity verification was rejected. Submit new documents to be able to sell.",
+  "kyc_dashboard_action_button": "Verify my identity"
 }
