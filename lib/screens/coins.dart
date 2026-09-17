@@ -3,18 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/subscriptions/domain/entities/subscription_entity.dart';
 import 'package:munturai/features/subscriptions/presentation/providers/subscription_provider.dart';
-import 'package:munturai/screens/momo_payment_pending.dart';
-import 'package:munturai/screens/payment_webview.dart';
-import 'package:munturai/widgets/payment_method_chip.dart';
+import 'package:munturai/screens/payment_screen.dart';
 import 'package:munturai/widgets/widget_coinsPack.dart';
-
-enum _PaymentMethod { momo, card }
 
 /// Écran d'achat de packs de coins.
 /// Packs chargés depuis GET /coins-packs/ (a4's coins-packs consolidation —
 /// remplace la liste codée en dur qu'il y avait ici avant, cf.
-/// coinsPacksProvider) ; achat MoMo ou carte, même pattern payment_pending +
-/// webhook Campay que le checkout marketplace.
+/// coinsPacksProvider). Le choix du pack seul se fait ici ; le "comment
+/// payer" (MoMo/carte, montant, en attente/webview) est le PaymentScreen
+/// partagé (voir payment_screen.dart), même écran que le checkout
+/// marketplace et les abonnements.
 class Coins extends ConsumerStatefulWidget {
   const Coins({super.key});
 
@@ -24,112 +22,47 @@ class Coins extends ConsumerStatefulWidget {
 
 class _CoinsState extends ConsumerState<Coins> {
   int _selectedIndex = 0;
-  _PaymentMethod _method = _PaymentMethod.momo;
-  bool _submitting = false;
 
   Future<void> _buy(CoinsPackEntity pack) async {
-    if (_method == _PaymentMethod.momo) {
-      await _buyByMomo(pack);
-    } else {
-      await _buyByCard(pack);
-    }
-  }
-
-  Future<void> _buyByMomo(CoinsPackEntity pack) async {
-    final phone = await _promptPhone();
-    if (phone == null || phone.isEmpty || !mounted) return;
-
-    setState(() => _submitting = true);
-    try {
-      final repo = ref.read(subscriptionRepositoryProvider);
-      final result = await repo.buyCoinsPack(pack.code, phone);
-      if (!mounted) return;
-      final previousBalance = await ref.read(coinsBalanceProvider.future);
-      await Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => MomoPaymentPending(
-          title: 'Achat de coins',
-          pendingMessage:
-              'En attente de confirmation du paiement Mobile Money...',
-          ussdCode: result.ussdCode,
-          checkDone: () async {
-            ref.invalidate(coinsBalanceProvider);
-            final balance = await ref.read(coinsBalanceProvider.future);
-            return balance != previousBalance;
-          },
-          onDone: () {
-            if (!mounted) return;
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Coins crédités avec succès !')),
-            );
-          },
-        ),
-      ));
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', ''))),
-      );
-    } finally {
-      if (mounted) setState(() => _submitting = false);
-    }
-  }
-
-  Future<void> _buyByCard(CoinsPackEntity pack) async {
-    setState(() => _submitting = true);
-    try {
-      final repo = ref.read(subscriptionRepositoryProvider);
-      final paymentLink = await repo.buyCoinsPackByLink(
-        pack.code,
-        redirectUrl: coinsPaymentSuccessUrl,
-        failureRedirectUrl: coinsPaymentFailureUrl,
-      );
-      if (!mounted) return;
-      await Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => PaymentWebview(
-          title: 'Achat de coins',
-          paymentLink: paymentLink,
-          successUrl: coinsPaymentSuccessUrl,
-          failureUrl: coinsPaymentFailureUrl,
-          onFinished: () {
-            ref.invalidate(coinsBalanceProvider);
-            Navigator.of(context).pop();
-          },
-        ),
-      ));
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', ''))),
-      );
-    } finally {
-      if (mounted) setState(() => _submitting = false);
-    }
-  }
-
-  Future<String?> _promptPhone() {
-    final controller = TextEditingController();
-    return showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Numéro Mobile Money'),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.phone,
-          decoration: const InputDecoration(hintText: '2376XXXXXXXX'),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Annuler')),
-          TextButton(
-              onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-              child: const Text('Confirmer')),
-        ],
+    int? previousBalance;
+    await Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => PaymentScreen(
+        title: 'Achat de coins',
+        itemTitle: pack.name,
+        itemSubtitle: '${pack.coins} coins',
+        amount: pack.price,
+        currency: pack.currency,
+        pendingMessage:
+            'En attente de confirmation du paiement Mobile Money...',
+        successUrl: coinsPaymentSuccessUrl,
+        failureUrl: coinsPaymentFailureUrl,
+        onMomoPay: (phone) async {
+          previousBalance ??= await ref.read(coinsBalanceProvider.future);
+          return ref
+              .read(subscriptionRepositoryProvider)
+              .buyCoinsPack(pack.code, phone);
+        },
+        onCardPay: () => ref
+            .read(subscriptionRepositoryProvider)
+            .buyCoinsPackByLink(
+              pack.code,
+              redirectUrl: coinsPaymentSuccessUrl,
+              failureRedirectUrl: coinsPaymentFailureUrl,
+            ),
+        checkDone: () async {
+          ref.invalidate(coinsBalanceProvider);
+          final balance = await ref.read(coinsBalanceProvider.future);
+          return previousBalance == null || balance != previousBalance;
+        },
+        onSuccess: () {
+          ref.invalidate(coinsBalanceProvider);
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Coins crédités avec succès !')),
+          );
+        },
       ),
-    );
+    ));
   }
 
   @override
@@ -198,32 +131,6 @@ class _CoinsState extends ConsumerState<Coins> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  Text('Moyen de paiement', style: appStyle.H5()),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: PaymentMethodChip(
-                          label: 'Mobile Money',
-                          icon: Icons.phone_android,
-                          selected: _method == _PaymentMethod.momo,
-                          onTap: () =>
-                              setState(() => _method = _PaymentMethod.momo),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: PaymentMethodChip(
-                          label: 'Carte bancaire',
-                          icon: Icons.credit_card,
-                          selected: _method == _PaymentMethod.card,
-                          onTap: () =>
-                              setState(() => _method = _PaymentMethod.card),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
               Align(
@@ -231,7 +138,7 @@ class _CoinsState extends ConsumerState<Coins> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   child: GestureDetector(
-                    onTap: _submitting ? null : () => _buy(selectedPack),
+                    onTap: () => _buy(selectedPack),
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
@@ -242,15 +149,7 @@ class _CoinsState extends ConsumerState<Coins> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (_submitting)
-                            const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
-                            )
-                          else
-                            Text(translator.continue__, style: appStyle.H4()),
+                          Text(translator.continue__, style: appStyle.H4()),
                         ],
                       ),
                     ),

@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/subscription_entity.dart';
 import '../../data/repositories_impl/subscription_repository_impl.dart';
 import '../../../../core/network/api_client.dart';
+import '../../../../core/models/payment_models.dart';
 
 part 'subscription_provider.g.dart';
 
@@ -69,9 +70,9 @@ final coinsPacksProvider = FutureProvider<List<CoinsPackEntity>>(
 );
 
 /// Redirect scheme for card payments on coins packs / subscriptions — same
-/// custom-URI-scheme approach as marketplace's payment webview (see
-/// marketplace_payment_webview.dart), just distinct paths so a webview
-/// knows which flow it's intercepting.
+/// custom-URI-scheme approach the shared PaymentScreen/PaymentWebview use
+/// for marketplace too (see payment_screen.dart / payment_webview.dart),
+/// just distinct paths so a webview knows which flow it's intercepting.
 const String coinsPaymentSuccessUrl = 'autosynx://payment/coins-success';
 const String coinsPaymentFailureUrl = 'autosynx://payment/coins-failure';
 const String subscriptionPaymentSuccessUrl =

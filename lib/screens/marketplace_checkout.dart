@@ -4,18 +4,19 @@ import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/marketplace/data/models/marketplace_models.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
 import 'package:munturai/screens/marketplace_order_tracking.dart';
-import 'package:munturai/screens/marketplace_payment_webview.dart';
+import 'package:munturai/screens/payment_screen.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
-import 'package:munturai/widgets/payment_method_chip.dart';
 import 'package:munturai/widgets/primary_button.dart';
 
-enum _PaymentMethod { momo, card }
+/// Custom-URI-scheme redirects the card payment webview intercepts for a
+/// marketplace order — see PaymentScreen / payment_webview.dart.
+const String marketplacePaymentSuccessUrl = 'autosynx://payment/success';
+const String marketplacePaymentFailureUrl = 'autosynx://payment/failure';
 
-/// Escrow checkout: creates the Order, then either triggers the Campay
-/// mobile money prompt on a given phone, or opens Campay's hosted
-/// payment-link widget for card payment. The order stays 'pending_payment'
-/// until Campay's webhook confirms it either way — this screen only starts
-/// that, then hands off to the tracking screen to show the eventual result.
+/// Product-selection step of the marketplace escrow purchase: quantity,
+/// total. The actual "how do you want to pay" step is the shared
+/// PaymentScreen (see payment_screen.dart) — this screen's job is just to
+/// create the Order once the buyer proceeds, then hand off.
 class MarketplaceCheckout extends ConsumerStatefulWidget {
   const MarketplaceCheckout({super.key, required this.part});
 
@@ -27,93 +28,83 @@ class MarketplaceCheckout extends ConsumerStatefulWidget {
 
 class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
   int _quantity = 1;
-  final _phoneController = TextEditingController();
-  bool _submitting = false;
   String? _error;
-  _PaymentMethod _method = _PaymentMethod.momo;
 
-  @override
-  void dispose() {
-    _phoneController.dispose();
-    super.dispose();
-  }
+  // Created once, on the first payment attempt, and reused across method
+  // switches/retries rather than creating a fresh Order every time the
+  // buyer taps "Payer" (e.g. after a failed MoMo attempt they retry).
+  MarketplaceOrder? _order;
 
   double get _total => widget.part.price * _quantity;
 
-  Future<void> _submit() async {
-    if (_method == _PaymentMethod.momo) {
-      await _submitByMomo();
-    } else {
-      await _submitByCard();
-    }
+  Future<MarketplaceOrder> _ensureOrder() async {
+    final existing = _order;
+    if (existing != null) return existing;
+    final repo = ref.read(marketplaceRepositoryProvider);
+    final order = await repo.createOrder(
+      partId: widget.part.id,
+      quantity: _quantity,
+    );
+    _order = order;
+    return order;
   }
 
-  Future<void> _submitByMomo() async {
-    final phone = _phoneController.text.trim();
-    if (phone.isEmpty) {
-      setState(() =>
-          _error = AppLocalizations.of(context)!.marketplace_enter_momo_number);
+  Future<void> _proceedToPayment() async {
+    setState(() => _error = null);
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      await _ensureOrder();
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
       return;
     }
-    setState(() {
-      _submitting = true;
-      _error = null;
-    });
-    try {
-      final repo = ref.read(marketplaceRepositoryProvider);
-      final order = await repo.createOrder(
-        partId: widget.part.id,
-        quantity: _quantity,
-      );
-      await repo.payOrder(order.id, phone);
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (_) => MarketplaceOrderTracking(orderId: order.id)),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _submitting = false;
-        _error = e.toString().replaceFirst('Exception: ', '');
-      });
-    }
-  }
-
-  Future<void> _submitByCard() async {
-    setState(() {
-      _submitting = true;
-      _error = null;
-    });
-    try {
-      final repo = ref.read(marketplaceRepositoryProvider);
-      final order = await repo.createOrder(
-        partId: widget.part.id,
-        quantity: _quantity,
-      );
-      final paymentLink = await repo.payOrderByLink(
-        order.id,
-        redirectUrl: marketplacePaymentSuccessUrl,
-        failureRedirectUrl: marketplacePaymentFailureUrl,
-      );
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MarketplacePaymentWebview(
-            orderId: order.id,
-            paymentLink: paymentLink,
-          ),
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PaymentScreen(
+          title: l10n.marketplace_escrow_payment_title,
+          itemTitle: widget.part.title,
+          itemSubtitle: widget.part.vendor.shopName,
+          amount: _total,
+          currency: widget.part.currency,
+          pendingMessage:
+              'En attente de confirmation du paiement Mobile Money...',
+          successUrl: marketplacePaymentSuccessUrl,
+          failureUrl: marketplacePaymentFailureUrl,
+          onMomoPay: (phone) async {
+            final order = await _ensureOrder();
+            return ref.read(marketplaceRepositoryProvider).payOrder(order.id, phone);
+          },
+          onCardPay: () async {
+            final order = await _ensureOrder();
+            return ref.read(marketplaceRepositoryProvider).payOrderByLink(
+                  order.id,
+                  redirectUrl: marketplacePaymentSuccessUrl,
+                  failureRedirectUrl: marketplacePaymentFailureUrl,
+                );
+          },
+          checkDone: () async {
+            final order = _order;
+            if (order == null) return false;
+            ref.invalidate(marketplaceOrderDetailProvider(order.id));
+            final fresh =
+                await ref.read(marketplaceOrderDetailProvider(order.id).future);
+            return fresh.status != 'pending_payment';
+          },
+          onSuccess: () {
+            final order = _order;
+            if (order == null || !mounted) return;
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => MarketplaceOrderTracking(orderId: order.id)),
+            );
+          },
         ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _submitting = false;
-        _error = e.toString().replaceFirst('Exception: ', '');
-      });
-    }
+      ),
+    );
   }
 
   @override
@@ -142,14 +133,20 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
                   IconButton(
                     icon: const Icon(Icons.remove_circle_outline),
                     onPressed: _quantity > 1
-                        ? () => setState(() => _quantity--)
+                        ? () => setState(() {
+                              _quantity--;
+                              _order = null; // quantity changed → re-quote
+                            })
                         : null,
                   ),
                   Text('$_quantity', style: appStyle.H4(weight: 'bold')),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),
                     onPressed: _quantity < part.stockQuantity
-                        ? () => setState(() => _quantity++)
+                        ? () => setState(() {
+                              _quantity++;
+                              _order = null;
+                            })
                         : null,
                   ),
                 ],
@@ -165,50 +162,14 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
                   style: appStyle.H4(weight: 'bold', color: colorScheme.primary)),
             ],
           ),
-          const SizedBox(height: 20),
-          Text(l10n.marketplace_payment_method_label, style: appStyle.H5()),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: PaymentMethodChip(
-                  label: l10n.marketplace_mobile_money,
-                  icon: Icons.phone_android,
-                  selected: _method == _PaymentMethod.momo,
-                  onTap: () => setState(() => _method = _PaymentMethod.momo),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: PaymentMethodChip(
-                  label: l10n.marketplace_bank_card,
-                  icon: Icons.credit_card,
-                  selected: _method == _PaymentMethod.card,
-                  onTap: () => setState(() => _method = _PaymentMethod.card),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          if (_method == _PaymentMethod.momo)
-            TextField(
-              controller: _phoneController,
-              style: appStyle.H6(),
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                labelText: l10n.marketplace_mobile_money_number_label,
-                hintText: '2376XXXXXXXX',
-              ),
-            ),
           if (_error != null) ...[
             const SizedBox(height: 16),
             Text(_error!, style: appStyle.H6(color: Colors.redAccent)),
           ],
           const SizedBox(height: 24),
           PrimaryButton(
-            text: '${l10n.marketplace_pay_button} ${_total.toStringAsFixed(0)} ${part.currency}',
-            loading: _submitting,
-            onPressed: _submit,
+            text: l10n.marketplace_pay_button,
+            onPressed: _proceedToPayment,
           ),
         ],
       ),

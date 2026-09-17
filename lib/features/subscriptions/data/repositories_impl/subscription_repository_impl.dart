@@ -3,6 +3,7 @@ import 'package:isar/isar.dart';
 
 import '../../../../core/network/api_client.dart';
 import '../../../../core/database/isar_db.dart';
+import '../../../../core/models/payment_models.dart';
 import '../../domain/entities/subscription_entity.dart';
 import '../models/subscription_model.dart';
 

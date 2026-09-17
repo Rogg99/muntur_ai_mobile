@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_client.dart';
+import '../../../../core/models/payment_models.dart';
 import '../models/marketplace_models.dart';
 
 /// Read-only for now: catalogue browsing, vendor storefronts, and the
@@ -108,10 +109,19 @@ class MarketplaceRepositoryImpl {
 
   /// Starts the Campay collect prompt on [phone]. The order stays
   /// 'pending_payment' until Campay's webhook confirms it — this call only
-  /// triggers the mobile money prompt, it doesn't wait for the result.
-  Future<void> payOrder(String orderId, String phone) {
-    return _withCleanError(() => _apiClient
-        .post('/marketplace/orders/$orderId/pay/', data: {'phone': phone}));
+  /// triggers the mobile money prompt, it doesn't wait for the result. Same
+  /// `{status, ussd_code}` shape as coins/subscription MoMo collects.
+  Future<MomoCollectResult> payOrder(String orderId, String phone) {
+    return _withCleanError(() async {
+      final response = await _apiClient.post(
+          '/marketplace/orders/$orderId/pay/', data: {'phone': phone});
+      final raw = response.data['data'] ?? response.data;
+      final map = (raw as Map).cast<String, dynamic>();
+      return MomoCollectResult(
+        status: map['status']?.toString() ?? 'payment_pending',
+        ussdCode: map['ussd_code']?.toString(),
+      );
+    });
   }
 
   /// Card payment alternative to [payOrder]: gets a Campay-hosted payment
