@@ -24,12 +24,25 @@ class CurrentSubscription extends _$CurrentSubscription {
         () => ref.read(subscriptionRepositoryProvider).getMySubscription());
   }
 
-  Future<bool> subscribe(String planCode, String paymentMethod) async {
-    final success = await ref
+  /// Starts a real Campay collect — no longer activates instantly, see
+  /// SubscriptionRepositoryImpl.subscribe. The plan only actually applies
+  /// once the webhook confirms and pushes a `subscription`/`transaction` WS
+  /// event, at which point RealtimeDispatcher invalidates this provider on
+  /// its own — [refresh] here is just an optimistic best-effort poll.
+  Future<MomoCollectResult> subscribe(String planCode, String phone) async {
+    final result = await ref
         .read(subscriptionRepositoryProvider)
-        .subscribe(planCode, paymentMethod);
-    if (success) await refresh();
-    return success;
+        .subscribe(planCode, phone);
+    await refresh();
+    return result;
+  }
+
+  Future<String> subscribeByLink(String planCode) {
+    return ref.read(subscriptionRepositoryProvider).subscribeByLink(
+          planCode,
+          redirectUrl: subscriptionPaymentSuccessUrl,
+          failureRedirectUrl: subscriptionPaymentFailureUrl,
+        );
   }
 }
 
@@ -45,3 +58,23 @@ Future<List<SubscriptionPlanEntity>> subscriptionPlans(
 @riverpod
 Future<int> coinsBalance(CoinsBalanceRef ref) =>
     ref.read(subscriptionRepositoryProvider).getCoins();
+
+// ── Coins packs ───────────────────────────────────────────────────────────────
+
+/// Plain (non-codegen) provider — no build_runner available in this
+/// environment to generate a new @riverpod provider's .g.dart entry, same
+/// convention as every other provider added this session.
+final coinsPacksProvider = FutureProvider<List<CoinsPackEntity>>(
+  (ref) => ref.read(subscriptionRepositoryProvider).getCoinsPacks(),
+);
+
+/// Redirect scheme for card payments on coins packs / subscriptions — same
+/// custom-URI-scheme approach as marketplace's payment webview (see
+/// marketplace_payment_webview.dart), just distinct paths so a webview
+/// knows which flow it's intercepting.
+const String coinsPaymentSuccessUrl = 'autosynx://payment/coins-success';
+const String coinsPaymentFailureUrl = 'autosynx://payment/coins-failure';
+const String subscriptionPaymentSuccessUrl =
+    'autosynx://payment/subscription-success';
+const String subscriptionPaymentFailureUrl =
+    'autosynx://payment/subscription-failure';

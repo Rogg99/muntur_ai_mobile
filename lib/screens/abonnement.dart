@@ -3,6 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/subscriptions/domain/entities/subscription_entity.dart';
 import 'package:munturai/features/subscriptions/presentation/providers/subscription_provider.dart';
+import 'package:munturai/screens/momo_payment_pending.dart';
+import 'package:munturai/screens/payment_webview.dart';
+import 'package:munturai/widgets/payment_method_chip.dart';
+
+enum _PaymentMethod { momo, card }
 
 class SubscriptionsScreen extends ConsumerWidget {
   const SubscriptionsScreen({super.key});
@@ -251,37 +256,140 @@ class _PlanCard extends ConsumerWidget {
   void _showPayDialog(
       BuildContext context, WidgetRef ref, SubscriptionPlanEntity plan) {
     final appStyle = AppStyle.of(context);
+    _PaymentMethod method = _PaymentMethod.momo;
+    final phoneController = TextEditingController();
+
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Souscrire au plan ${plan.type}',
-            style: appStyle.H5(weight: 'bold')),
-        content: Text(
-            '${plan.price.toStringAsFixed(0)} ${plan.currency} / ${plan.days} jours'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Annuler'),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: Text('Souscrire au plan ${plan.type}',
+              style: appStyle.H5(weight: 'bold')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                  '${plan.price.toStringAsFixed(0)} ${plan.currency} / ${plan.days} jours'),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: PaymentMethodChip(
+                      label: 'Mobile Money',
+                      icon: Icons.phone_android,
+                      selected: method == _PaymentMethod.momo,
+                      onTap: () => setDialogState(
+                          () => method = _PaymentMethod.momo),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: PaymentMethodChip(
+                      label: 'Carte',
+                      icon: Icons.credit_card,
+                      selected: method == _PaymentMethod.card,
+                      onTap: () => setDialogState(
+                          () => method = _PaymentMethod.card),
+                    ),
+                  ),
+                ],
+              ),
+              if (method == _PaymentMethod.momo) ...[
+                const SizedBox(height: 12),
+                TextField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration:
+                      const InputDecoration(hintText: '2376XXXXXXXX'),
+                ),
+              ],
+            ],
           ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              final success = await ref
-                  .read(currentSubscriptionProvider.notifier)
-                  .subscribe(plan.code, 'mobile_money');
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(success
-                      ? 'Souscription réussie !'
-                      : 'Échec de la souscription'),
-                  backgroundColor: success ? Colors.green : Colors.red,
-                ));
-              }
-            },
-            child: const Text('Confirmer'),
-          ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(ctx);
+                if (method == _PaymentMethod.momo) {
+                  await _subscribeByMomo(
+                      context, ref, plan, phoneController.text.trim());
+                } else {
+                  await _subscribeByCard(context, ref, plan);
+                }
+              },
+              child: const Text('Confirmer'),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Future<void> _subscribeByMomo(BuildContext context, WidgetRef ref,
+      SubscriptionPlanEntity plan, String phone) async {
+    if (phone.isEmpty) return;
+    try {
+      final result = await ref
+          .read(currentSubscriptionProvider.notifier)
+          .subscribe(plan.code, phone);
+      if (!context.mounted) return;
+      await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => MomoPaymentPending(
+          title: 'Souscription',
+          pendingMessage:
+              'En attente de confirmation du paiement Mobile Money...',
+          ussdCode: result.ussdCode,
+          checkDone: () async {
+            ref.invalidate(currentSubscriptionProvider);
+            final sub = await ref.read(currentSubscriptionProvider.future);
+            return sub != null && sub.code == plan.code && sub.active;
+          },
+          onDone: () {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Souscription activée !')),
+            );
+          },
+        ),
+      ));
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString().replaceFirst('Exception: ', '')),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  Future<void> _subscribeByCard(
+      BuildContext context, WidgetRef ref, SubscriptionPlanEntity plan) async {
+    try {
+      final paymentLink = await ref
+          .read(currentSubscriptionProvider.notifier)
+          .subscribeByLink(plan.code);
+      if (!context.mounted) return;
+      await Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => PaymentWebview(
+          title: 'Souscription',
+          paymentLink: paymentLink,
+          successUrl: subscriptionPaymentSuccessUrl,
+          failureUrl: subscriptionPaymentFailureUrl,
+          onFinished: () {
+            ref.invalidate(currentSubscriptionProvider);
+            Navigator.of(context).pop();
+          },
+        ),
+      ));
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString().replaceFirst('Exception: ', '')),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }

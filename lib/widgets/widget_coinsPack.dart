@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/colors/colors.dart';
-import 'package:munturai/features/subscriptions/domain/entities/subscription_entity.dart';
 
 /// Carte de pack de coins sélectionnable.
-/// [plan]       – plan d'abonnement à afficher (coins = nombre de coins inclus)
-/// [isSelected] – true si ce pack est actuellement sélectionné
-/// [isPopular]  – affiche un badge "Populaire"
-/// [onPressed]  – callback lors de la sélection
+/// Prend des champs explicites plutôt qu'une [SubscriptionPlanEntity] —
+/// depuis que les packs viennent de GET /coins-packs/ (CoinsPackEntity),
+/// ils portent un nombre de coins et un nom distincts d'un plan
+/// d'abonnement, ce widget n'a plus besoin d'être couplé à ce type-là.
 class CoinsPackWidget extends StatelessWidget {
-  final SubscriptionPlanEntity plan;
+  final String name;
+  final int coins;
+  final double price;
+  final String currency;
   final bool isSelected;
   final bool isPopular;
   final VoidCallback? onPressed;
 
   const CoinsPackWidget({
     super.key,
-    required this.plan,
+    required this.name,
+    required this.coins,
+    required this.price,
+    required this.currency,
     required this.isSelected,
     this.isPopular = false,
     this.onPressed,
@@ -49,22 +54,16 @@ class CoinsPackWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  plan.description.isNotEmpty ? plan.description : plan.code,
+                  name,
                   style: appStyle.H4(weight: 'b'),
                   textAlign: TextAlign.center,
                 ),
-                // Prix barré fictif (10% de plus)
                 Text(
-                  '${(plan.price * 1.1).toStringAsFixed(0)} ${plan.currency}',
-                  style: appStyle
-                      .txtRoboto(size: 16, color: const Color(0xFFAFAFAF))
-                      .copyWith(
-                        decoration: TextDecoration.lineThrough,
-                        decorationThickness: 2,
-                      ),
+                  '$coins coins',
+                  style: appStyle.txtRoboto(size: 13, color: Colors.grey),
                 ),
                 Text(
-                  '${plan.price.toStringAsFixed(0)} ${plan.currency}',
+                  '${price.toStringAsFixed(0)} $currency',
                   style: appStyle.H4(weight: 'b'),
                 ),
               ],

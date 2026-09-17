@@ -133,6 +133,15 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
         ref.invalidate(coinsBalanceProvider);
         break;
 
+      // Pushed once a coins-pack purchase's Campay webhook confirms —
+      // {"coins_balance": <int>}. Just invalidates rather than setting the
+      // value directly since coinsBalanceProvider is a plain FutureProvider
+      // (no build_runner here to give it a settable Notifier), same
+      // approach as the transaction/subscription case above.
+      case 'coins_balance_updated':
+        ref.invalidate(coinsBalanceProvider);
+        break;
+
       case 'account_status':
         if (data is Map && data['is_active'] == false) {
           _forceLogout();

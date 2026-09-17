@@ -6,6 +6,7 @@ import 'package:munturai/features/marketplace/presentation/providers/marketplace
 import 'package:munturai/screens/marketplace_order_tracking.dart';
 import 'package:munturai/screens/marketplace_payment_webview.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
+import 'package:munturai/widgets/payment_method_chip.dart';
 import 'package:munturai/widgets/primary_button.dart';
 
 enum _PaymentMethod { momo, card }
@@ -170,7 +171,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
           Row(
             children: [
               Expanded(
-                child: _PaymentMethodChip(
+                child: PaymentMethodChip(
                   label: l10n.marketplace_mobile_money,
                   icon: Icons.phone_android,
                   selected: _method == _PaymentMethod.momo,
@@ -179,7 +180,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _PaymentMethodChip(
+                child: PaymentMethodChip(
                   label: l10n.marketplace_bank_card,
                   icon: Icons.credit_card,
                   selected: _method == _PaymentMethod.card,
@@ -210,60 +211,6 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
             onPressed: _submit,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _PaymentMethodChip extends StatelessWidget {
-  const _PaymentMethodChip({
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final IconData icon;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final appStyle = AppStyle.of(context);
-    final colorScheme = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: selected ? colorScheme.primary : Colors.white30,
-            width: selected ? 2 : 1,
-          ),
-          color: selected
-              ? colorScheme.primary.withOpacity(0.08)
-              : Colors.transparent,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon,
-                size: 18,
-                color: selected ? colorScheme.primary : Colors.grey),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                label,
-                style: appStyle.H6(
-                    color: selected ? colorScheme.primary : Colors.grey),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

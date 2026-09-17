@@ -46,3 +46,38 @@ class SubscriptionPlanEntity {
     this.description = '',
   });
 }
+
+/// A purchasable coins pack from `GET /coins-packs/` (a4's coins-packs
+/// consolidation — replaces the client-side hardcoded list that used to
+/// live in coins.dart).
+class CoinsPackEntity {
+  final String id;
+  final String code;
+  final String name;
+  final int coins;
+  final double price;
+  final String currency;
+  final bool active;
+
+  const CoinsPackEntity({
+    required this.id,
+    required this.code,
+    this.name = '',
+    this.coins = 0,
+    this.price = 0,
+    this.currency = 'XAF',
+    this.active = true,
+  });
+}
+
+/// Result of a `POST /coins-packs/{code}/buy/` or
+/// `/abonnements/subscribe/` MoMo collect call — the same
+/// `{status, ussd_code}` shape the marketplace `pay/` endpoint uses. Coins
+/// (or the new subscription) are only actually credited once Campay's
+/// webhook confirms, pushed live via WS rather than returned here.
+class MomoCollectResult {
+  final String status;
+  final String? ussdCode;
+
+  const MomoCollectResult({required this.status, this.ussdCode});
+}
