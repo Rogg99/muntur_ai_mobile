@@ -18,6 +18,7 @@ class ForumDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
     final detailAsync = ref.watch(forumDetailProvider(forum.id));
     final messagesAsync = ref.watch(chatMessagesProvider(forum.id, isForum: true));
 
@@ -40,7 +41,8 @@ class ForumDetailsScreen extends ConsumerWidget {
         backgroundColor: colorScheme.surface,
         elevation: 0,
         centerTitle: true,
-        title: Text('Détails du groupe', style: appStyle.H4(weight: 'bold')),
+        title: Text(translator.forum_details_title,
+            style: appStyle.H4(weight: 'bold')),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -56,13 +58,14 @@ class ForumDetailsScreen extends ConsumerWidget {
                 detailAsync.when(
                   data: (detail) => Text(
                     detail?.membersCount != null
-                        ? '${detail!.membersCount} membre${detail.membersCount! > 1 ? 's' : ''}'
-                        : 'Groupe',
+                        ? translator.forum_members_count(detail!.membersCount,
+                            detail.membersCount! > 1 ? 's' : '')
+                        : translator.forum_group_label,
                     style: appStyle.H6(color: colorScheme.onSurfaceVariant),
                   ),
-                  loading: () => Text('Groupe',
+                  loading: () => Text(translator.forum_group_label,
                       style: appStyle.H6(color: colorScheme.onSurfaceVariant)),
-                  error: (_, __) => Text('Groupe',
+                  error: (_, __) => Text(translator.forum_group_label,
                       style: appStyle.H6(color: colorScheme.onSurfaceVariant)),
                 ),
               ],
@@ -72,7 +75,7 @@ class ForumDetailsScreen extends ConsumerWidget {
           detailAsync.maybeWhen(
             data: (detail) => (detail?.description.isNotEmpty ?? false)
                 ? _Section(
-                    title: 'Description',
+                    title: translator.forum_description,
                     child: Text(detail!.description, style: appStyle.H5()),
                   )
                 : const SizedBox.shrink(),
@@ -81,7 +84,8 @@ class ForumDetailsScreen extends ConsumerWidget {
           detailAsync.maybeWhen(
             data: (detail) => (detail?.members.isNotEmpty ?? false)
                 ? _Section(
-                    title: 'Membres (${detail!.members.length})',
+                    title: translator
+                        .forum_members_section(detail!.members.length),
                     child: Column(
                       children: detail.members
                           .map((member) => _MemberTile(member: member))
@@ -92,9 +96,9 @@ class ForumDetailsScreen extends ConsumerWidget {
             orElse: () => const SizedBox.shrink(),
           ),
           _Section(
-            title: 'Médias partagés (${mediaItems.length})',
+            title: translator.forum_media_shared(mediaItems.length),
             child: mediaItems.isEmpty
-                ? Text('Aucun média partagé pour le moment',
+                ? Text(translator.forum_no_media,
                     style: appStyle.H6(color: colorScheme.onSurfaceVariant))
                 : GridView.builder(
                     shrinkWrap: true,
@@ -135,9 +139,9 @@ class ForumDetailsScreen extends ConsumerWidget {
                   ),
           ),
           _Section(
-            title: 'Liens (${links.length})',
+            title: translator.forum_links(links.length),
             child: links.isEmpty
-                ? Text('Aucun lien partagé pour le moment',
+                ? Text(translator.forum_no_links,
                     style: appStyle.H6(color: colorScheme.onSurfaceVariant))
                 : Column(
                     children: links

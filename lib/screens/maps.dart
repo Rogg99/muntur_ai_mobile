@@ -163,6 +163,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
     final garagesAsync = ref.watch(garagesAroundProvider());
     final searchAsync = ref.watch(garageSearchProvider);
 
@@ -279,7 +280,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: colorScheme.primary)),
                       const SizedBox(width: 8),
-                      Text('Chargement des garages…', style: appStyle.H6()),
+                      Text(translator.garage_loading, style: appStyle.H6()),
                     ],
                   ),
                 ),
@@ -330,7 +331,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     onSubmitted: (_) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     decoration: InputDecoration(
-                      hintText: 'Rechercher un garage…',
+                      hintText: translator.garage_search_hint,
                       prefixIcon: const Icon(Icons.search),
                       suffixIcon: _searching
                           ? IconButton(
@@ -374,7 +375,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
                     error: (e, _) => Center(
-                      child: Text('Erreur : $e', style: appStyle.H6()),
+                      child: Text('${translator.error_prefix}: $e',
+                          style: appStyle.H6()),
                     ),
                     data: (results) {
                       final sorted = _sortedByDistance(results);
@@ -395,8 +397,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 sorted.isEmpty
-                                    ? 'Aucun garage trouvé'
-                                    : '${sorted.length} garage${sorted.length > 1 ? 's' : ''} trouvé${sorted.length > 1 ? 's' : ''}',
+                                    ? translator.garage_none_found
+                                    : translator.garage_results_count(
+                                        sorted.length,
+                                        sorted.length > 1 ? 's' : ''),
                                 style: appStyle.H5(weight: 'bold'),
                               ),
                             ),
@@ -517,6 +521,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
     final isOpen = isGarageOpenNow(garage);
 
     return Column(
@@ -581,7 +586,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                             style: appStyle.H6()),
                       if (isOpen != null)
                         Text(
-                          isOpen ? 'Ouvert' : 'Fermé',
+                          isOpen ? translator.garage_open : translator.garage_closed,
                           style: appStyle.H6(
                             weight: 'bold',
                             color: isOpen ? Colors.green : colorScheme.error,
@@ -603,7 +608,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   onPressed: () =>
                       launchExternalUrl('tel:${garage.telephone1}'),
                   icon: const Icon(Icons.call_outlined, size: 18),
-                  label: const Text('Appeler'),
+                  label: Text(translator.action_call),
                 ),
               ),
             if (garage.telephone1.isNotEmpty &&
@@ -615,7 +620,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   onPressed: () => launchExternalUrl(
                       'https://www.google.com/maps/search/?api=1&query=${garage.latitude},${garage.longitude}'),
                   icon: const Icon(Icons.directions_outlined, size: 18),
-                  label: const Text('Itinéraire'),
+                  label: Text(translator.action_directions),
                 ),
               ),
           ],
@@ -625,7 +630,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: onSeeDetails,
-            child: const Text('Voir la fiche complète'),
+            child: Text(translator.garage_see_full_details),
           ),
         ),
       ],
@@ -652,6 +657,7 @@ class _SearchResultTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
     final isOpen = isGarageOpenNow(garage);
 
     return Column(
@@ -715,7 +721,9 @@ class _SearchResultTile extends StatelessWidget {
                           if (isOpen != null) ...[
                             const SizedBox(width: 10),
                             Text(
-                              isOpen ? 'Ouvert' : 'Fermé',
+                              isOpen
+                                  ? translator.garage_open
+                                  : translator.garage_closed,
                               style: appStyle.H6(
                                 weight: 'bold',
                                 color:
@@ -752,7 +760,7 @@ class _SearchResultTile extends StatelessWidget {
                 child: TextButton.icon(
                   onPressed: onDirections,
                   icon: const Icon(Icons.directions_outlined, size: 18),
-                  label: const Text('Itinéraire'),
+                  label: Text(translator.action_directions),
                 ),
               ),
             ],

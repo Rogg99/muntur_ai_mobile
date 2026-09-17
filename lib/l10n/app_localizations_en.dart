@@ -2037,37 +2037,241 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get marketplace_enter_momo_number =>
       'Enter the Mobile Money number to debit.';
+
   @override
   String get chat_take_photo => 'Take a photo';
+
   @override
   String get chat_choose_photo => 'Choose a photo';
+
   @override
   String get chat_nearby_garage_tooltip => 'Nearby garage';
+
   @override
   String get chat_compatible_parts_tooltip => 'Compatible parts';
+
   @override
   String get chat_share_conversation_tooltip => 'Share the conversation';
+
   @override
   String get chat_escalate_subject => 'Escalation from chat';
+
   @override
-  String get chat_location_error => "Couldn't get your location.";
+  String get chat_location_error => 'Couldn\'t get your location.';
+
   @override
-  String get chat_load_error => "Couldn't load the conversation";
+  String get chat_load_error => 'Couldn\'t load the conversation';
+
   @override
   String get chat_attachment_placeholder => '[attachment]';
+
   @override
   String get chat_typing_stage_1 => 'Analyzing...';
+
   @override
   String get chat_typing_stage_2 => 'Checking the information...';
+
   @override
   String get chat_typing_stage_3 => 'Just a moment, almost done...';
+
   @override
   String get chat_you_label => 'Me';
+
   @override
   String get home_press_back_to_exit => 'Press again to exit';
+
   @override
   String get home_no_conversations =>
       'No conversations yet. Start a new conversation with Autosynx!';
+
   @override
   String get home_no_forums => 'No forums available';
+
+  @override
+  String get profile_loading => 'Loading...';
+
+  @override
+  String get profile_email_edit_unavailable =>
+      'Editing your email isn\'t available yet.';
+
+  @override
+  String get profile_my_shop => 'My shop';
+
+  @override
+  String get profile_password_changed => 'Password changed';
+
+  @override
+  String get profile_photo_upload_failed => 'Failed to upload the photo.';
+
+  @override
+  String get fp_enter_phone_error => 'Enter your phone number';
+
+  @override
+  String get fp_send_otp_failed =>
+      'Couldn\'t send the code. Check the number and try again.';
+
+  @override
+  String get fp_enter_otp_error => 'Enter the code you received by SMS';
+
+  @override
+  String get fp_otp_invalid => 'Invalid or expired code.';
+
+  @override
+  String get fp_password_too_short => 'Password must be at least 6 characters';
+
+  @override
+  String get fp_passwords_mismatch => 'Passwords don\'t match';
+
+  @override
+  String get fp_session_expired => 'Session expired, start over.';
+
+  @override
+  String get fp_reset_success => 'Password reset. You can now sign in.';
+
+  @override
+  String get fp_reset_failed => 'Reset failed. Try again.';
+
+  @override
+  String get fp_title_phone => 'Forgot password';
+
+  @override
+  String get fp_title_otp => 'Verification';
+
+  @override
+  String get fp_title_new_password => 'New password';
+
+  @override
+  String fp_step_indicator(Object step) {
+    return 'Step $step/3';
+  }
+
+  @override
+  String get fp_reset_button => 'Reset';
+
+  @override
+  String get fp_phone_instructions =>
+      'Enter the phone number linked to your account. A code will be sent to you by SMS.';
+
+  @override
+  String fp_otp_instructions(Object phone) {
+    return 'Enter the 6-digit code sent by SMS to $phone.';
+  }
+
+  @override
+  String get fp_otp_hint => 'Verification code';
+
+  @override
+  String get fp_choose_new_password => 'Choose a new password.';
+
+  @override
+  String get fp_new_password_hint => 'New password';
+
+  @override
+  String get fp_confirm_password_hint => 'Confirm password';
+
+  @override
+  String get notifications_mark_all_read => 'Mark all read';
+
+  @override
+  String get notifications_empty => 'No notifications';
+
+  @override
+  String get notifications_refresh => 'Refresh';
+
+  @override
+  String get forum_details_title => 'Group details';
+
+  @override
+  String get forum_group_label => 'Group';
+
+  @override
+  String forum_members_count(Object count, Object plural) {
+    return '$count member$plural';
+  }
+
+  @override
+  String get forum_description => 'Description';
+
+  @override
+  String forum_members_section(Object count) {
+    return 'Members ($count)';
+  }
+
+  @override
+  String forum_media_shared(Object count) {
+    return 'Shared media ($count)';
+  }
+
+  @override
+  String get forum_no_media => 'No media shared yet';
+
+  @override
+  String forum_links(Object count) {
+    return 'Links ($count)';
+  }
+
+  @override
+  String get forum_no_links => 'No links shared yet';
+
+  @override
+  String get attach_camera => 'Camera';
+
+  @override
+  String get attach_gallery => 'Gallery';
+
+  @override
+  String get forum_load_error => 'Couldn\'t load the group';
+
+  @override
+  String get forum_message_hint => 'Message the group...';
+
+  @override
+  String get garages_title => 'Garages';
+
+  @override
+  String get garage_search_hint => 'Search for a garage…';
+
+  @override
+  String get garage_none_found => 'No garage found';
+
+  @override
+  String get garage_not_rated_yet => 'Not rated yet';
+
+  @override
+  String get garage_open => 'Open';
+
+  @override
+  String get garage_closed => 'Closed';
+
+  @override
+  String get action_call => 'Call';
+
+  @override
+  String get action_email => 'Email';
+
+  @override
+  String get action_directions => 'Directions';
+
+  @override
+  String get garage_info_hours => 'Hours';
+
+  @override
+  String get garage_info_phone => 'Phone';
+
+  @override
+  String get garage_info_phone_2 => 'Phone (2)';
+
+  @override
+  String get garage_photos_label => 'Photos';
+
+  @override
+  String get garage_loading => 'Loading garages…';
+
+  @override
+  String garage_results_count(Object count, Object plural) {
+    return '$count garage$plural found';
+  }
+
+  @override
+  String get garage_see_full_details => 'See full details';
 }

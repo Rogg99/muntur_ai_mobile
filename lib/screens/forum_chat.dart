@@ -96,12 +96,12 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Appareil photo'),
+              title: Text(AppLocalizations.of(context)!.attach_camera),
               onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Galerie'),
+              title: Text(AppLocalizations.of(context)!.attach_gallery),
               onTap: () => Navigator.pop(sheetContext, _AttachSheetChoice.gallery),
             ),
           ],
@@ -376,14 +376,14 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
                 size: 40, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 12),
             Text(
-              'Impossible de charger le groupe',
+              AppLocalizations.of(context)!.forum_load_error,
               textAlign: TextAlign.center,
               style: appStyle.H5(),
             ),
             const SizedBox(height: 12),
             TextButton(
               onPressed: () => ref.invalidate(chatMessagesProvider(_discId, isForum: true)),
-              child: const Text('Réessayer'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),
@@ -464,7 +464,7 @@ class _ForumChatViewState extends ConsumerState<ForumChatView> {
                       textCapitalization: TextCapitalization.sentences,
                       style: AppStyle.of(context).H5(),
                       decoration: InputDecoration(
-                        hintText: 'Message au groupe...',
+                        hintText: AppLocalizations.of(context)!.forum_message_hint,
                         filled: true,
                         fillColor: colorScheme.surfaceContainer,
                         contentPadding: const EdgeInsets.symmetric(
@@ -628,15 +628,17 @@ class _GroupAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-    final title = disc?.title ?? 'Groupe';
+    final translator = AppLocalizations.of(context)!;
+    final title = disc?.title ?? translator.forum_group_label;
     final initial = title.isNotEmpty ? title.substring(0, 1).toUpperCase() : '?';
     final photo = disc?.photo ?? 'none';
     final detailAsync =
         disc != null ? ref.watch(forumDetailProvider(disc!.id)) : null;
     final membersCount = detailAsync?.valueOrNull?.membersCount;
     final subtitle = membersCount != null
-        ? '$membersCount membre${membersCount > 1 ? 's' : ''}'
-        : 'Groupe';
+        ? translator.forum_members_count(
+            membersCount, membersCount > 1 ? 's' : '')
+        : translator.forum_group_label;
 
     return AppBar(
       backgroundColor: colorScheme.surface,

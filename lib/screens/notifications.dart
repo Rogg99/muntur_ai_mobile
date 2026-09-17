@@ -12,6 +12,7 @@ class NotificationsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
 
     final notifAsync = ref.watch(notificationsListProvider);
 
@@ -21,7 +22,8 @@ class NotificationsScreen extends ConsumerWidget {
         backgroundColor: colorScheme.surface,
         centerTitle: true,
         elevation: 0,
-        title: Text('Notifications', style: appStyle.H3(weight: 'bold')),
+        title:
+            Text(translator.notificationsTitle, style: appStyle.H3(weight: 'bold')),
         actions: [
           notifAsync.whenOrNull(
                 data: (n) => n.any((notif) => !notif.isRead)
@@ -29,7 +31,7 @@ class NotificationsScreen extends ConsumerWidget {
                         onPressed: () => ref
                             .read(notificationsListProvider.notifier)
                             .markAllAsRead(),
-                        child: const Text('Tout lire'),
+                        child: Text(translator.notifications_mark_all_read),
                       )
                     : null,
               ) ??
@@ -39,7 +41,8 @@ class NotificationsScreen extends ConsumerWidget {
       body: notifAsync.when(
         loading: () => Center(
             child: CircularProgressIndicator(color: colorScheme.primary)),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) =>
+            Center(child: Text('${translator.error_prefix}: $e')),
         data: (notifications) {
           if (notifications.isEmpty) {
             return Center(
@@ -50,11 +53,11 @@ class NotificationsScreen extends ConsumerWidget {
                       size: 64,
                       color: colorScheme.onSurface.withValues(alpha: 0.3)),
                   const SizedBox(height: 12),
-                  Text('Aucune notification', style: appStyle.H5()),
+                  Text(translator.notifications_empty, style: appStyle.H5()),
                   const SizedBox(height: 8),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Actualiser'),
+                    label: Text(translator.notifications_refresh),
                     onPressed: () =>
                         ref.read(notificationsListProvider.notifier).refresh(),
                   ),

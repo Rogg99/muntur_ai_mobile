@@ -3929,7 +3929,7 @@ abstract class AppLocalizations {
   /// No description provided for @marketplace_escrow_payment_title.
   ///
   /// In en, this message translates to:
-  /// **'Escrow payment'**
+  /// **'Payment'**
   String get marketplace_escrow_payment_title;
 
   /// No description provided for @marketplace_quantity_label.
@@ -3991,32 +3991,444 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter the Mobile Money number to debit.'**
   String get marketplace_enter_momo_number;
+
   /// No description provided for @chat_take_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
   String get chat_take_photo;
+
   /// No description provided for @chat_choose_photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a photo'**
   String get chat_choose_photo;
+
   /// No description provided for @chat_nearby_garage_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby garage'**
   String get chat_nearby_garage_tooltip;
+
   /// No description provided for @chat_compatible_parts_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Compatible parts'**
   String get chat_compatible_parts_tooltip;
+
   /// No description provided for @chat_share_conversation_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Share the conversation'**
   String get chat_share_conversation_tooltip;
+
   /// No description provided for @chat_escalate_subject.
+  ///
+  /// In en, this message translates to:
+  /// **'Escalation from chat'**
   String get chat_escalate_subject;
+
   /// No description provided for @chat_location_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t get your location.'**
   String get chat_location_error;
+
   /// No description provided for @chat_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the conversation'**
   String get chat_load_error;
+
   /// No description provided for @chat_attachment_placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'[attachment]'**
   String get chat_attachment_placeholder;
+
   /// No description provided for @chat_typing_stage_1.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing...'**
   String get chat_typing_stage_1;
+
   /// No description provided for @chat_typing_stage_2.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking the information...'**
   String get chat_typing_stage_2;
+
   /// No description provided for @chat_typing_stage_3.
+  ///
+  /// In en, this message translates to:
+  /// **'Just a moment, almost done...'**
   String get chat_typing_stage_3;
+
   /// No description provided for @chat_you_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Me'**
   String get chat_you_label;
+
+  /// No description provided for @home_press_back_to_exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press again to exit'**
+  String get home_press_back_to_exit;
+
+  /// No description provided for @home_no_conversations.
+  ///
+  /// In en, this message translates to:
+  /// **'No conversations yet. Start a new conversation with Autosynx!'**
+  String get home_no_conversations;
+
+  /// No description provided for @home_no_forums.
+  ///
+  /// In en, this message translates to:
+  /// **'No forums available'**
+  String get home_no_forums;
+
+  /// No description provided for @profile_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get profile_loading;
+
+  /// No description provided for @profile_email_edit_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing your email isn\'t available yet.'**
+  String get profile_email_edit_unavailable;
+
+  /// No description provided for @profile_my_shop.
+  ///
+  /// In en, this message translates to:
+  /// **'My shop'**
+  String get profile_my_shop;
+
+  /// No description provided for @profile_password_changed.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed'**
+  String get profile_password_changed;
+
+  /// No description provided for @profile_photo_upload_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload the photo.'**
+  String get profile_photo_upload_failed;
+
+  /// No description provided for @fp_enter_phone_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number'**
+  String get fp_enter_phone_error;
+
+  /// No description provided for @fp_send_otp_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send the code. Check the number and try again.'**
+  String get fp_send_otp_failed;
+
+  /// No description provided for @fp_enter_otp_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code you received by SMS'**
+  String get fp_enter_otp_error;
+
+  /// No description provided for @fp_otp_invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid or expired code.'**
+  String get fp_otp_invalid;
+
+  /// No description provided for @fp_password_too_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get fp_password_too_short;
+
+  /// No description provided for @fp_passwords_mismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords don\'t match'**
+  String get fp_passwords_mismatch;
+
+  /// No description provided for @fp_session_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired, start over.'**
+  String get fp_session_expired;
+
+  /// No description provided for @fp_reset_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset. You can now sign in.'**
+  String get fp_reset_success;
+
+  /// No description provided for @fp_reset_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset failed. Try again.'**
+  String get fp_reset_failed;
+
+  /// No description provided for @fp_title_phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password'**
+  String get fp_title_phone;
+
+  /// No description provided for @fp_title_otp.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification'**
+  String get fp_title_otp;
+
+  /// No description provided for @fp_title_new_password.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get fp_title_new_password;
+
+  /// No description provided for @fp_step_indicator.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step}/3'**
+  String fp_step_indicator(Object step);
+
+  /// No description provided for @fp_reset_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get fp_reset_button;
+
+  /// No description provided for @fp_phone_instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the phone number linked to your account. A code will be sent to you by SMS.'**
+  String get fp_phone_instructions;
+
+  /// No description provided for @fp_otp_instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit code sent by SMS to {phone}.'**
+  String fp_otp_instructions(Object phone);
+
+  /// No description provided for @fp_otp_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code'**
+  String get fp_otp_hint;
+
+  /// No description provided for @fp_choose_new_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a new password.'**
+  String get fp_choose_new_password;
+
+  /// No description provided for @fp_new_password_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get fp_new_password_hint;
+
+  /// No description provided for @fp_confirm_password_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get fp_confirm_password_hint;
+
+  /// No description provided for @notifications_mark_all_read.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get notifications_mark_all_read;
+
+  /// No description provided for @notifications_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications'**
+  String get notifications_empty;
+
+  /// No description provided for @notifications_refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get notifications_refresh;
+
+  /// No description provided for @forum_details_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Group details'**
+  String get forum_details_title;
+
+  /// No description provided for @forum_group_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get forum_group_label;
+
+  /// No description provided for @forum_members_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} member{plural}'**
+  String forum_members_count(Object count, Object plural);
+
+  /// No description provided for @forum_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get forum_description;
+
+  /// No description provided for @forum_members_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Members ({count})'**
+  String forum_members_section(Object count);
+
+  /// No description provided for @forum_media_shared.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared media ({count})'**
+  String forum_media_shared(Object count);
+
+  /// No description provided for @forum_no_media.
+  ///
+  /// In en, this message translates to:
+  /// **'No media shared yet'**
+  String get forum_no_media;
+
+  /// No description provided for @forum_links.
+  ///
+  /// In en, this message translates to:
+  /// **'Links ({count})'**
+  String forum_links(Object count);
+
+  /// No description provided for @forum_no_links.
+  ///
+  /// In en, this message translates to:
+  /// **'No links shared yet'**
+  String get forum_no_links;
+
+  /// No description provided for @attach_camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get attach_camera;
+
+  /// No description provided for @attach_gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get attach_gallery;
+
+  /// No description provided for @forum_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the group'**
+  String get forum_load_error;
+
+  /// No description provided for @forum_message_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Message the group...'**
+  String get forum_message_hint;
+
+  /// No description provided for @garages_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Garages'**
+  String get garages_title;
+
+  /// No description provided for @garage_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a garage…'**
+  String get garage_search_hint;
+
+  /// No description provided for @garage_none_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No garage found'**
+  String get garage_none_found;
+
+  /// No description provided for @garage_not_rated_yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not rated yet'**
+  String get garage_not_rated_yet;
+
+  /// No description provided for @garage_open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get garage_open;
+
+  /// No description provided for @garage_closed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get garage_closed;
+
+  /// No description provided for @action_call.
+  ///
+  /// In en, this message translates to:
+  /// **'Call'**
+  String get action_call;
+
+  /// No description provided for @action_email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get action_email;
+
+  /// No description provided for @action_directions.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get action_directions;
+
+  /// No description provided for @garage_info_hours.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get garage_info_hours;
+
+  /// No description provided for @garage_info_phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get garage_info_phone;
+
+  /// No description provided for @garage_info_phone_2.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone (2)'**
+  String get garage_info_phone_2;
+
+  /// No description provided for @garage_photos_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get garage_photos_label;
+
+  /// No description provided for @garage_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading garages…'**
+  String get garage_loading;
+
+  /// No description provided for @garage_results_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} garage{plural} found'**
+  String garage_results_count(Object count, Object plural);
+
+  /// No description provided for @garage_see_full_details.
+  ///
+  /// In en, this message translates to:
+  /// **'See full details'**
+  String get garage_see_full_details;
 }
 
 class _AppLocalizationsDelegate

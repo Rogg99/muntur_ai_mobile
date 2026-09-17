@@ -13,6 +13,7 @@ class ForumListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
 
     final forumsAsync = ref.watch(forumsProvider);
 
@@ -22,7 +23,7 @@ class ForumListScreen extends ConsumerWidget {
         backgroundColor: colorScheme.surface,
         centerTitle: true,
         elevation: 0,
-        title: Text('Forum', style: appStyle.H3(weight: 'bold')),
+        title: Text(translator.forumsTitle, style: appStyle.H3(weight: 'bold')),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -33,7 +34,8 @@ class ForumListScreen extends ConsumerWidget {
       body: forumsAsync.when(
         loading: () => Center(
             child: CircularProgressIndicator(color: colorScheme.primary)),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) =>
+            Center(child: Text('${translator.error_prefix}: $e')),
         data: (forums) {
           if (forums.isEmpty) {
             return Center(
@@ -44,11 +46,11 @@ class ForumListScreen extends ConsumerWidget {
                       size: 64,
                       color: colorScheme.onSurface.withValues(alpha: 0.3)),
                   const SizedBox(height: 12),
-                  Text('Aucun forum disponible', style: appStyle.H5()),
+                  Text(translator.home_no_forums, style: appStyle.H5()),
                   const SizedBox(height: 8),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Actualiser'),
+                    label: Text(translator.notifications_refresh),
                     onPressed: () =>
                         ref.read(forumsProvider.notifier).refresh(),
                   ),

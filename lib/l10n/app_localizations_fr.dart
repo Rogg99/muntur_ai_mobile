@@ -2059,30 +2059,244 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get marketplace_enter_momo_number =>
       'Entrez le numéro Mobile Money à débiter.';
+
   @override
   String get chat_take_photo => 'Prendre une photo';
+
   @override
   String get chat_choose_photo => 'Choisir une photo';
+
   @override
   String get chat_nearby_garage_tooltip => 'Garage à proximité';
+
   @override
   String get chat_compatible_parts_tooltip => 'Pièces compatibles';
+
   @override
   String get chat_share_conversation_tooltip => 'Partager la conversation';
+
   @override
   String get chat_escalate_subject => 'Escalade depuis le chat';
+
   @override
   String get chat_location_error => 'Impossible de récupérer votre position.';
+
   @override
   String get chat_load_error => 'Impossible de charger la conversation';
+
   @override
   String get chat_attachment_placeholder => '[pièce jointe]';
+
   @override
   String get chat_typing_stage_1 => 'Analyse en cours...';
+
   @override
   String get chat_typing_stage_2 => 'Je vérifie les informations...';
+
   @override
   String get chat_typing_stage_3 => 'Encore un instant, presque fini...';
+
   @override
   String get chat_you_label => 'Moi';
+
+  @override
+  String get home_press_back_to_exit => 'Appuyer encore pour quitter';
+
+  @override
+  String get home_no_conversations =>
+      'Aucune conversation. Commence une nouvelle conversation avec Autosynx !';
+
+  @override
+  String get home_no_forums => 'Aucun forum disponible';
+
+  @override
+  String get profile_loading => 'Chargement...';
+
+  @override
+  String get profile_email_edit_unavailable =>
+      'La modification de l\'email n\'est pas encore disponible.';
+
+  @override
+  String get profile_my_shop => 'Ma boutique';
+
+  @override
+  String get profile_password_changed => 'Mot de passe modifié';
+
+  @override
+  String get profile_photo_upload_failed => 'Échec de l\'envoi de la photo.';
+
+  @override
+  String get fp_enter_phone_error => 'Entrez votre numéro de téléphone';
+
+  @override
+  String get fp_send_otp_failed =>
+      'Impossible d\'envoyer le code. Vérifiez le numéro et réessayez.';
+
+  @override
+  String get fp_enter_otp_error => 'Entrez le code reçu par SMS';
+
+  @override
+  String get fp_otp_invalid => 'Code invalide ou expiré.';
+
+  @override
+  String get fp_password_too_short =>
+      'Le mot de passe doit contenir au moins 6 caractères';
+
+  @override
+  String get fp_passwords_mismatch => 'Les mots de passe ne correspondent pas';
+
+  @override
+  String get fp_session_expired =>
+      'Session expirée, recommencez depuis le début.';
+
+  @override
+  String get fp_reset_success =>
+      'Mot de passe réinitialisé. Vous pouvez vous connecter.';
+
+  @override
+  String get fp_reset_failed => 'La réinitialisation a échoué. Réessayez.';
+
+  @override
+  String get fp_title_phone => 'Mot de passe oublié';
+
+  @override
+  String get fp_title_otp => 'Vérification';
+
+  @override
+  String get fp_title_new_password => 'Nouveau mot de passe';
+
+  @override
+  String fp_step_indicator(Object step) {
+    return 'Étape $step/3';
+  }
+
+  @override
+  String get fp_reset_button => 'Réinitialiser';
+
+  @override
+  String get fp_phone_instructions =>
+      'Entrez le numéro de téléphone associé à votre compte. Un code vous sera envoyé par SMS.';
+
+  @override
+  String fp_otp_instructions(Object phone) {
+    return 'Entrez le code à 6 chiffres reçu par SMS au $phone.';
+  }
+
+  @override
+  String get fp_otp_hint => 'Code de vérification';
+
+  @override
+  String get fp_choose_new_password => 'Choisissez un nouveau mot de passe.';
+
+  @override
+  String get fp_new_password_hint => 'Nouveau mot de passe';
+
+  @override
+  String get fp_confirm_password_hint => 'Confirmer le mot de passe';
+
+  @override
+  String get notifications_mark_all_read => 'Tout lire';
+
+  @override
+  String get notifications_empty => 'Aucune notification';
+
+  @override
+  String get notifications_refresh => 'Actualiser';
+
+  @override
+  String get forum_details_title => 'Détails du groupe';
+
+  @override
+  String get forum_group_label => 'Groupe';
+
+  @override
+  String forum_members_count(Object count, Object plural) {
+    return '$count membre$plural';
+  }
+
+  @override
+  String get forum_description => 'Description';
+
+  @override
+  String forum_members_section(Object count) {
+    return 'Membres ($count)';
+  }
+
+  @override
+  String forum_media_shared(Object count) {
+    return 'Médias partagés ($count)';
+  }
+
+  @override
+  String get forum_no_media => 'Aucun média partagé pour le moment';
+
+  @override
+  String forum_links(Object count) {
+    return 'Liens ($count)';
+  }
+
+  @override
+  String get forum_no_links => 'Aucun lien partagé pour le moment';
+
+  @override
+  String get attach_camera => 'Appareil photo';
+
+  @override
+  String get attach_gallery => 'Galerie';
+
+  @override
+  String get forum_load_error => 'Impossible de charger le groupe';
+
+  @override
+  String get forum_message_hint => 'Message au groupe...';
+
+  @override
+  String get garages_title => 'Garages';
+
+  @override
+  String get garage_search_hint => 'Rechercher un garage…';
+
+  @override
+  String get garage_none_found => 'Aucun garage trouvé';
+
+  @override
+  String get garage_not_rated_yet => 'Pas encore noté';
+
+  @override
+  String get garage_open => 'Ouvert';
+
+  @override
+  String get garage_closed => 'Fermé';
+
+  @override
+  String get action_call => 'Appeler';
+
+  @override
+  String get action_email => 'Email';
+
+  @override
+  String get action_directions => 'Itinéraire';
+
+  @override
+  String get garage_info_hours => 'Horaires';
+
+  @override
+  String get garage_info_phone => 'Téléphone';
+
+  @override
+  String get garage_info_phone_2 => 'Téléphone (2)';
+
+  @override
+  String get garage_photos_label => 'Photos';
+
+  @override
+  String get garage_loading => 'Chargement des garages…';
+
+  @override
+  String garage_results_count(Object count, Object plural) {
+    return '$count garage$plural trouvé$plural';
+  }
+
+  @override
+  String get garage_see_full_details => 'Voir la fiche complète';
 }

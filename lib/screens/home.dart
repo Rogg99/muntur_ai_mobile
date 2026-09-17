@@ -42,7 +42,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     if (!_firstClick) {
       _firstClick = true;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Appuyer encore pour quitter')),
+        SnackBar(
+            content:
+                Text(AppLocalizations.of(context)!.home_press_back_to_exit)),
       );
       Future.delayed(const Duration(seconds: 2), () => _firstClick = false);
       return false;
@@ -263,12 +265,13 @@ class _DiscussionsTab extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Erreur : $err', style: appStyle.H5(color: Colors.red)),
+                  Text('${translator.error_prefix}: $err',
+                      style: appStyle.H5(color: Colors.red)),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () =>
                         ref.read(discussionsProvider.notifier).refresh(),
-                    child: const Text('Réessayer'),
+                    child: Text(translator.retry),
                   ),
                 ],
               ),
@@ -291,7 +294,7 @@ class _DiscussionsTab extends ConsumerWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(24),
                             child: Text(
-                              'Aucune conversation. Commence une nouvelle conversation avec Autosynx !',
+                              translator.home_no_conversations,
                               style: appStyle.H4(color: colorScheme.primary),
                               textAlign: TextAlign.center,
                             ),
@@ -342,13 +345,15 @@ class _ForumsTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
 
     return ref.watch(forumsProvider).when(
           loading: () => Center(
             child: CircularProgressIndicator(color: colorScheme.primary),
           ),
           error: (err, _) => Center(
-            child: Text('Erreur : $err', style: appStyle.H5(color: Colors.red)),
+            child: Text('${translator.error_prefix}: $err',
+                style: appStyle.H5(color: Colors.red)),
           ),
           data: (forums) {
             if (forums.isEmpty) {
@@ -362,7 +367,7 @@ class _ForumsTab extends ConsumerWidget {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.7,
                       child: Center(
-                        child: Text('Aucun forum disponible',
+                        child: Text(translator.home_no_forums,
                             style: appStyle.H5()),
                       ),
                     ),

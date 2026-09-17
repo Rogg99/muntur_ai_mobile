@@ -33,6 +33,7 @@ class _GaragesScreenState extends ConsumerState<GaragesScreen> {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
 
     final garagesAsync = _searching
         ? ref.watch(garageSearchProvider)
@@ -43,7 +44,7 @@ class _GaragesScreenState extends ConsumerState<GaragesScreen> {
       appBar: AppBar(
         backgroundColor: colorScheme.surface,
         centerTitle: true,
-        title: const Text('Garages'),
+        title: Text(translator.garages_title),
         elevation: 0,
       ),
       body: Column(
@@ -61,7 +62,7 @@ class _GaragesScreenState extends ConsumerState<GaragesScreen> {
                 }
               },
               decoration: InputDecoration(
-                hintText: 'Rechercher un garage…',
+                hintText: translator.garage_search_hint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searching
                     ? IconButton(
@@ -87,7 +88,8 @@ class _GaragesScreenState extends ConsumerState<GaragesScreen> {
             child: garagesAsync.when(
               loading: () => Center(
                   child: CircularProgressIndicator(color: colorScheme.primary)),
-              error: (e, _) => Center(child: Text('Erreur : $e')),
+              error: (e, _) =>
+                  Center(child: Text('${translator.error_prefix}: $e')),
               data: (garages) {
                 if (garages.isEmpty) {
                   return Center(
@@ -98,11 +100,11 @@ class _GaragesScreenState extends ConsumerState<GaragesScreen> {
                             size: 64,
                             color: colorScheme.onSurface.withOpacity(0.3)),
                         const SizedBox(height: 12),
-                        Text('Aucun garage trouvé', style: appStyle.H5()),
+                        Text(translator.garage_none_found, style: appStyle.H5()),
                         const SizedBox(height: 8),
                         ElevatedButton.icon(
                           icon: const Icon(Icons.refresh),
-                          label: const Text('Actualiser'),
+                          label: Text(translator.notifications_refresh),
                           onPressed: () => ref
                               .read(garagesAroundProvider().notifier)
                               .refresh(),
@@ -282,6 +284,7 @@ class GarageDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
     final photoUrls = displayableMediaUrls(garage.medias);
     final isOpen = isGarageOpenNow(garage);
     final hasPhone2 =
@@ -385,7 +388,7 @@ class GarageDetailView extends StatelessWidget {
                       iconColor: colorScheme.primary,
                       label: garage.rating > 0
                           ? '${garage.rating.toStringAsFixed(1)}/5'
-                          : 'Pas encore noté',
+                          : translator.garage_not_rated_yet,
                     ),
                     if (garage.distance > 0)
                       _StatChip(
@@ -397,7 +400,9 @@ class GarageDetailView extends StatelessWidget {
                         icon: Icons.circle,
                         iconColor: isOpen ? Colors.green : colorScheme.error,
                         iconSize: 10,
-                        label: isOpen ? 'Ouvert' : 'Fermé',
+                        label: isOpen
+                            ? translator.garage_open
+                            : translator.garage_closed,
                       ),
                   ],
                 ),
@@ -412,14 +417,14 @@ class GarageDetailView extends StatelessWidget {
                     if (garage.telephone1.isNotEmpty)
                       _ActionButton(
                         icon: Icons.call_outlined,
-                        label: 'Appeler',
+                        label: translator.action_call,
                         onTap: () => _launch('tel:${garage.telephone1}'),
                       ),
                     if (garage.email.isNotEmpty) ...[
                       const SizedBox(width: 10),
                       _ActionButton(
                         icon: Icons.email_outlined,
-                        label: 'Email',
+                        label: translator.action_email,
                         onTap: () => _launch('mailto:${garage.email}'),
                       ),
                     ],
@@ -427,7 +432,7 @@ class GarageDetailView extends StatelessWidget {
                       const SizedBox(width: 10),
                       _ActionButton(
                         icon: Icons.directions_outlined,
-                        label: 'Itinéraire',
+                        label: translator.action_directions,
                         onTap: () => _launch(
                             'https://www.google.com/maps/search/?api=1&query=${garage.latitude},${garage.longitude}'),
                       ),
@@ -459,28 +464,28 @@ class GarageDetailView extends StatelessWidget {
                     children: [
                       _InfoRow(
                         icon: Icons.schedule_outlined,
-                        label: 'Horaires',
+                        label: translator.garage_info_hours,
                         value:
                             '${garage.heureOuverture} – ${garage.heureFermeture}',
                       ),
                       if (garage.telephone1.isNotEmpty)
                         _InfoRow(
                           icon: Icons.phone_outlined,
-                          label: 'Téléphone',
+                          label: translator.garage_info_phone,
                           value: garage.telephone1,
                           onTap: () => _launch('tel:${garage.telephone1}'),
                         ),
                       if (hasPhone2)
                         _InfoRow(
                           icon: Icons.phone_outlined,
-                          label: 'Téléphone (2)',
+                          label: translator.garage_info_phone_2,
                           value: garage.telephone2,
                           onTap: () => _launch('tel:${garage.telephone2}'),
                         ),
                       if (garage.email.isNotEmpty)
                         _InfoRow(
                           icon: Icons.email_outlined,
-                          label: 'Email',
+                          label: translator.action_email,
                           value: garage.email,
                           onTap: () => _launch('mailto:${garage.email}'),
                           isLast: true,
@@ -495,7 +500,8 @@ class GarageDetailView extends StatelessWidget {
                 const SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text('Photos', style: appStyle.H5(weight: 'bold')),
+                  child: Text(translator.garage_photos_label,
+                      style: appStyle.H5(weight: 'bold')),
                 ),
                 const SizedBox(height: 10),
                 SizedBox(

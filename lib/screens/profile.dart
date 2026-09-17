@@ -71,13 +71,13 @@ class ProfileState extends ConsumerState<Profile>
       ),
       error: (e, _) => Scaffold(
         backgroundColor: colorScheme.surface,
-        body: Center(child: Text('Erreur: $e')),
+        body: Center(child: Text('${translator.error_prefix}: $e')),
       ),
       data: (user) {
         if (user == null) {
           return Scaffold(
             backgroundColor: colorScheme.surface,
-            body: const Center(child: Text('Chargement...')),
+            body: Center(child: Text(translator.profile_loading)),
           );
         }
         return _buildBody(context, appStyle, translator, colorScheme, user);
@@ -177,9 +177,9 @@ class ProfileState extends ConsumerState<Profile>
                 // endpoint exposed yet) — nothing to open here until that
                 // exists server-side, so say so instead of doing nothing.
                 onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                       content:
-                          Text("La modification de l'email n'est pas encore disponible.")),
+                          Text(translator.profile_email_edit_unavailable)),
                 ),
               ),
               ProfileTile(
@@ -266,7 +266,7 @@ class ProfileState extends ConsumerState<Profile>
                       ),
                       ProfileTile(
                         icon: const Icon(Icons.storefront_outlined),
-                        text: 'Ma boutique',
+                        text: translator.profile_my_shop,
                         desc: vendor.shopName,
                         onPressed: () => Navigator.push(
                           context,
@@ -554,7 +554,9 @@ class ProfileState extends ConsumerState<Profile>
                     if (mounted) {
                       setState(() => setPassword = false);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Mot de passe modifié')),
+                        SnackBar(
+                            content:
+                                Text(translator.profile_password_changed)),
                       );
                     }
                   },
@@ -590,7 +592,9 @@ class ProfileState extends ConsumerState<Profile>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Échec de l'envoi de la photo.")),
+          SnackBar(
+              content: Text(
+                  AppLocalizations.of(context)!.profile_photo_upload_failed)),
         );
       }
     } finally {
