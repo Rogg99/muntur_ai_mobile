@@ -4429,6 +4429,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See full details'**
   String get garage_see_full_details;
+
+  /// No description provided for @subscriptions_screen_title.
+  String get subscriptions_screen_title;
+
+  /// No description provided for @coins_balance_label.
+  String get coins_balance_label;
+
+  /// No description provided for @coins_unit_label.
+  String get coins_unit_label;
+
+  /// No description provided for @my_subscription_label.
+  String get my_subscription_label;
+
+  /// No description provided for @available_plans_label.
+  String get available_plans_label;
+
+  /// No description provided for @no_plan_available_label.
+  String get no_plan_available_label;
+
+  /// No description provided for @free_plan_label.
+  String get free_plan_label;
+
+  /// No description provided for @subscription_plan_prefix.
+  String get subscription_plan_prefix;
+
+  /// No description provided for @subscription_status_active.
+  String get subscription_status_active;
+
+  /// No description provided for @subscription_status_expired.
+  String get subscription_status_expired;
+
+  /// No description provided for @subscription_expires_label.
+  String get subscription_expires_label;
+
+  /// No description provided for @coins_included_suffix.
+  String get coins_included_suffix;
+
+  /// No description provided for @subscribe_button_label.
+  String get subscribe_button_label;
+
+  /// No description provided for @subscription_activated_message.
+  String get subscription_activated_message;
+
+  /// No description provided for @coins_credited_message.
+  String get coins_credited_message;
+
+  /// No description provided for @no_pack_available_label.
+  String get no_pack_available_label;
+
+  /// No description provided for @account_suspended_message.
+  String get account_suspended_message;
+
+  /// No description provided for @recommended_part_label.
+  String get recommended_part_label;
+
+  /// No description provided for @news_title_label.
+  String get news_title_label;
+
+  /// No description provided for @no_news_available_label.
+  String get no_news_available_label;
+
+  /// No description provided for @no_news_label.
+  String get no_news_label;
+
+  /// No description provided for @refresh_button_label.
+  String get refresh_button_label;
+
+  /// No description provided for @article_not_found_label.
+  String get article_not_found_label;
+
+  /// No description provided for @profile_marketplace_section_label.
+  String get profile_marketplace_section_label;
 }
 
 class _AppLocalizationsDelegate

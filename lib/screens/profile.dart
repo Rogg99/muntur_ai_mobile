@@ -261,7 +261,7 @@ class ProfileState extends ConsumerState<Profile>
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 28, bottom: 8),
-                        child: Text('Marketplace',
+                        child: Text(translator.profile_marketplace_section_label,
                             style: appStyle.txtRoboto(weight: 'b', size: 22)),
                       ),
                       ProfileTile(

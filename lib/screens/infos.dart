@@ -13,6 +13,7 @@ class Infos extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     final newsAsync = ref.watch(newsListProvider);
 
     return Scaffold(
@@ -20,7 +21,7 @@ class Infos extends ConsumerWidget {
       body: newsAsync.when(
         loading: () => Center(
             child: CircularProgressIndicator(color: colorScheme.primary)),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) => Center(child: Text('${l10n.error_prefix} : $e')),
         data: (news) {
           if (news.isEmpty) {
             // Still wrapped in RefreshIndicator + AlwaysScrollableScrollPhysics
@@ -34,7 +35,7 @@ class Infos extends ConsumerWidget {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.7,
                     child: Center(
-                      child: Text('Aucune actualité', style: appStyle.H5()),
+                      child: Text(l10n.no_news_label, style: appStyle.H5()),
                     ),
                   ),
                 ],

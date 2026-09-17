@@ -2299,4 +2299,77 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get garage_see_full_details => 'Voir la fiche complète';
+
+  @override
+  String get subscriptions_screen_title => 'Abonnements';
+
+  @override
+  String get coins_balance_label => 'Solde Coins';
+
+  @override
+  String get coins_unit_label => 'pièces';
+
+  @override
+  String get my_subscription_label => 'Mon abonnement';
+
+  @override
+  String get available_plans_label => 'Plans disponibles';
+
+  @override
+  String get no_plan_available_label => 'Aucun plan disponible';
+
+  @override
+  String get free_plan_label => 'Plan Gratuit';
+
+  @override
+  String get subscription_plan_prefix => 'Plan';
+
+  @override
+  String get subscription_status_active => 'Actif';
+
+  @override
+  String get subscription_status_expired => 'Expiré';
+
+  @override
+  String get subscription_expires_label => 'Expire le :';
+
+  @override
+  String get coins_included_suffix => 'coins inclus';
+
+  @override
+  String get subscribe_button_label => 'Souscrire';
+
+  @override
+  String get subscription_activated_message => 'Souscription activée !';
+
+  @override
+  String get coins_credited_message => 'Coins crédités avec succès !';
+
+  @override
+  String get no_pack_available_label => 'Aucun pack disponible';
+
+  @override
+  String get account_suspended_message =>
+      'Votre compte a été suspendu.';
+
+  @override
+  String get recommended_part_label => 'Pièce recommandée';
+
+  @override
+  String get news_title_label => 'Actualités';
+
+  @override
+  String get no_news_available_label => 'Aucune actualité disponible';
+
+  @override
+  String get no_news_label => 'Aucune actualité';
+
+  @override
+  String get refresh_button_label => 'Actualiser';
+
+  @override
+  String get article_not_found_label => 'Article introuvable';
+
+  @override
+  String get profile_marketplace_section_label => 'Marketplace';
 }

@@ -69,8 +69,7 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
           itemSubtitle: widget.part.vendor.shopName,
           amount: _total,
           currency: widget.part.currency,
-          pendingMessage:
-              'En attente de confirmation du paiement Mobile Money...',
+          pendingMessage: l10n.marketplace_payment_pending_notice,
           successUrl: marketplacePaymentSuccessUrl,
           failureUrl: marketplacePaymentFailureUrl,
           onMomoPay: (phone) async {

@@ -497,7 +497,7 @@ class _PartPurchaseCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Pièce recommandée',
+          Text(AppLocalizations.of(context)!.recommended_part_label,
               style: TextStyle(
                   color: foreground, fontSize: 12, fontWeight: FontWeight.w700)),
           const SizedBox(height: 6),
@@ -572,7 +572,8 @@ class _PartPurchaseRow extends StatelessWidget {
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             onPressed: () => onBuy(listing),
-            child: const Text('Acheter', style: TextStyle(fontSize: 12)),
+            child: Text(AppLocalizations.of(context)!.marketplace_buy,
+                style: const TextStyle(fontSize: 12)),
           ),
         ],
       ),

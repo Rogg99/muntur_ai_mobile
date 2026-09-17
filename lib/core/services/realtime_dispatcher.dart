@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../main.dart';
 import '../../screens/login.dart';
 import '../../services/notifications.dart';
@@ -183,7 +184,9 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
       (route) => false,
     );
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Votre compte a été suspendu.')),
+      SnackBar(
+          content: Text(
+              AppLocalizations.of(context)!.account_suspended_message)),
     );
   }
 }

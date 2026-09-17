@@ -11,6 +11,7 @@ class NewsDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final newsAsync = ref.watch(newsDetailProvider(newsId));
 
@@ -19,11 +20,11 @@ class NewsDetailScreen extends ConsumerWidget {
       body: newsAsync.when(
         loading: () => Center(
             child: CircularProgressIndicator(color: colorScheme.primary)),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) => Center(child: Text('${l10n.error_prefix} : $e')),
         data: (news) {
           if (news == null) {
             return Center(
-                child: Text('Article introuvable', style: appStyle.H5()));
+                child: Text(l10n.article_not_found_label, style: appStyle.H5()));
           }
           return CustomScrollView(
             slivers: [

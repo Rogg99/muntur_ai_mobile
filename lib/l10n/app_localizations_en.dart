@@ -2274,4 +2274,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get garage_see_full_details => 'See full details';
+
+  @override
+  String get subscriptions_screen_title => 'Subscriptions';
+
+  @override
+  String get coins_balance_label => 'Coins Balance';
+
+  @override
+  String get coins_unit_label => 'coins';
+
+  @override
+  String get my_subscription_label => 'My subscription';
+
+  @override
+  String get available_plans_label => 'Available plans';
+
+  @override
+  String get no_plan_available_label => 'No plan available';
+
+  @override
+  String get free_plan_label => 'Free plan';
+
+  @override
+  String get subscription_plan_prefix => 'Plan';
+
+  @override
+  String get subscription_status_active => 'Active';
+
+  @override
+  String get subscription_status_expired => 'Expired';
+
+  @override
+  String get subscription_expires_label => 'Expires on:';
+
+  @override
+  String get coins_included_suffix => 'coins included';
+
+  @override
+  String get subscribe_button_label => 'Subscribe';
+
+  @override
+  String get subscription_activated_message => 'Subscription activated!';
+
+  @override
+  String get coins_credited_message => 'Coins credited successfully!';
+
+  @override
+  String get no_pack_available_label => 'No pack available';
+
+  @override
+  String get account_suspended_message =>
+      'Your account has been suspended.';
+
+  @override
+  String get recommended_part_label => 'Recommended part';
+
+  @override
+  String get news_title_label => 'News';
+
+  @override
+  String get no_news_available_label => 'No news available';
+
+  @override
+  String get no_news_label => 'No news';
+
+  @override
+  String get refresh_button_label => 'Refresh';
+
+  @override
+  String get article_not_found_label => 'Article not found';
+
+  @override
+  String get profile_marketplace_section_label => 'Marketplace';
 }

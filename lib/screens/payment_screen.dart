@@ -102,7 +102,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Future<void> _submitByMomo() async {
     final phone = _phoneController.text.trim();
     if (phone.isEmpty) {
-      setState(() => _error = 'Entrez le numéro Mobile Money à débiter.');
+      setState(() => _error =
+          AppLocalizations.of(context)!.marketplace_enter_momo_number);
       return;
     }
     setState(() {
@@ -172,6 +173,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -193,13 +195,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
             widget.extraContent!,
           ],
           const SizedBox(height: 24),
-          Text('Moyen de paiement', style: appStyle.H5()),
+          Text(l10n.marketplace_payment_method_label, style: appStyle.H5()),
           const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
                 child: PaymentMethodChip(
-                  label: 'Mobile Money',
+                  label: l10n.marketplace_mobile_money,
                   icon: Icons.phone_android,
                   selected: _method == _PaymentMethod.momo,
                   onTap: () => setState(() => _method = _PaymentMethod.momo),
@@ -208,7 +210,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: PaymentMethodChip(
-                  label: 'Carte bancaire',
+                  label: l10n.marketplace_bank_card,
                   icon: Icons.credit_card,
                   selected: _method == _PaymentMethod.card,
                   onTap: () => setState(() => _method = _PaymentMethod.card),
@@ -222,8 +224,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               controller: _phoneController,
               style: appStyle.H6(),
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Numéro Mobile Money',
+              decoration: InputDecoration(
+                labelText: l10n.marketplace_mobile_money_number_label,
                 hintText: '2376XXXXXXXX',
               ),
             ),
@@ -235,7 +237,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           const SizedBox(height: 24),
           PrimaryButton(
             text:
-                'Payer ${widget.amount.toStringAsFixed(0)} ${widget.currency}',
+                '${l10n.marketplace_pay_button} ${widget.amount.toStringAsFixed(0)} ${widget.currency}',
             loading: _submitting,
             onPressed: _submit,
           ),

@@ -14,6 +14,7 @@ class Help extends StatelessWidget {
   Widget build(BuildContext context) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final translator = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: colorScheme.background,
@@ -28,7 +29,8 @@ class Help extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        title: Text('Aide', overflow: TextOverflow.ellipsis, style: appStyle.H3()),
+        title: Text(translator.help,
+            overflow: TextOverflow.ellipsis, style: appStyle.H3()),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),

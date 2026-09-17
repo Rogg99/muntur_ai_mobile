@@ -24,16 +24,16 @@ class _CoinsState extends ConsumerState<Coins> {
   int _selectedIndex = 0;
 
   Future<void> _buy(CoinsPackEntity pack) async {
+    final l10n = AppLocalizations.of(context)!;
     int? previousBalance;
     await Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => PaymentScreen(
-        title: 'Achat de coins',
+        title: l10n.coins,
         itemTitle: pack.name,
-        itemSubtitle: '${pack.coins} coins',
+        itemSubtitle: '${pack.coins} ${l10n.coins_unit_label}',
         amount: pack.price,
         currency: pack.currency,
-        pendingMessage:
-            'En attente de confirmation du paiement Mobile Money...',
+        pendingMessage: l10n.marketplace_payment_pending_notice,
         successUrl: coinsPaymentSuccessUrl,
         failureUrl: coinsPaymentFailureUrl,
         onMomoPay: (phone) async {
@@ -58,7 +58,7 @@ class _CoinsState extends ConsumerState<Coins> {
           ref.invalidate(coinsBalanceProvider);
           if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Coins crédités avec succès !')),
+            SnackBar(content: Text(l10n.coins_credited_message)),
           );
         },
       ),
@@ -99,7 +99,8 @@ class _CoinsState extends ConsumerState<Coins> {
         data: (packs) {
           if (packs.isEmpty) {
             return Center(
-                child: Text('Aucun pack disponible', style: appStyle.H5()));
+                child: Text(translator.no_pack_available_label,
+                    style: appStyle.H5()));
           }
           if (_selectedIndex >= packs.length) _selectedIndex = 0;
           final selectedPack = packs[_selectedIndex];

@@ -12,6 +12,7 @@ class SubscriptionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final currentSubAsync = ref.watch(currentSubscriptionProvider);
     final plansAsync = ref.watch(subscriptionPlansProvider);
@@ -23,7 +24,8 @@ class SubscriptionsScreen extends ConsumerWidget {
         backgroundColor: colorScheme.surface,
         centerTitle: true,
         elevation: 0,
-        title: Text('Abonnements', style: appStyle.H3(weight: 'bold')),
+        title: Text(l10n.subscriptions_screen_title,
+            style: appStyle.H3(weight: 'bold')),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -55,9 +57,9 @@ class SubscriptionsScreen extends ConsumerWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Solde Coins',
+                        Text(l10n.coins_balance_label,
                             style: appStyle.H6(color: Colors.white70)),
-                        Text('$coins pièces',
+                        Text('$coins ${l10n.coins_unit_label}',
                             style: appStyle.H3(
                                 weight: 'bold', color: Colors.white)),
                       ],
@@ -70,13 +72,13 @@ class SubscriptionsScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // ─── Abonnement actif ───
-            Text('Mon abonnement', style: appStyle.H4(weight: 'bold')),
+            Text(l10n.my_subscription_label, style: appStyle.H4(weight: 'bold')),
             const SizedBox(height: 12),
             currentSubAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('Erreur : $e'),
+              error: (e, _) => Text('${l10n.error_prefix} : $e'),
               data: (sub) => sub == null
-                  ? _freeBadge(appStyle, colorScheme)
+                  ? _freeBadge(appStyle, colorScheme, l10n)
                   : _CurrentSubCard(
                       sub: sub, appStyle: appStyle, colorScheme: colorScheme),
             ),
@@ -84,14 +86,14 @@ class SubscriptionsScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // ─── Plans ───
-            Text('Plans disponibles', style: appStyle.H4(weight: 'bold')),
+            Text(l10n.available_plans_label, style: appStyle.H4(weight: 'bold')),
             const SizedBox(height: 12),
             plansAsync.when(
               loading: () => Center(
                   child: CircularProgressIndicator(color: colorScheme.primary)),
-              error: (e, _) => Text('Erreur : $e'),
+              error: (e, _) => Text('${l10n.error_prefix} : $e'),
               data: (plans) => plans.isEmpty
-                  ? Text('Aucun plan disponible', style: appStyle.H5())
+                  ? Text(l10n.no_plan_available_label, style: appStyle.H5())
                   : Column(
                       children: plans.map((p) => _PlanCard(plan: p)).toList(),
                     ),
@@ -102,7 +104,9 @@ class SubscriptionsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _freeBadge(AppStyle appStyle, ColorScheme colorScheme) => Container(
+  Widget _freeBadge(
+          AppStyle appStyle, ColorScheme colorScheme, AppLocalizations l10n) =>
+      Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerLow,
@@ -113,7 +117,7 @@ class SubscriptionsScreen extends ConsumerWidget {
           children: [
             Icon(Icons.star_border, color: colorScheme.primary),
             const SizedBox(width: 12),
-            Text('Plan Gratuit', style: appStyle.H5(weight: 'bold')),
+            Text(l10n.free_plan_label, style: appStyle.H5(weight: 'bold')),
           ],
         ),
       );
@@ -128,6 +132,7 @@ class _CurrentSubCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -145,7 +150,7 @@ class _CurrentSubCard extends StatelessWidget {
             children: [
               const Icon(Icons.verified, color: Colors.white, size: 28),
               const SizedBox(width: 8),
-              Text('Plan ${sub.type}',
+              Text('${l10n.subscription_plan_prefix} ${sub.type}',
                   style: appStyle.H4(weight: 'bold', color: Colors.white)),
               const Spacer(),
               Container(
@@ -156,7 +161,9 @@ class _CurrentSubCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  sub.isExpired ? 'Expiré' : 'Actif',
+                  sub.isExpired
+                      ? l10n.subscription_status_expired
+                      : l10n.subscription_status_active,
                   style: appStyle.H6(color: Colors.white),
                 ),
               ),
@@ -165,14 +172,14 @@ class _CurrentSubCard extends StatelessWidget {
           if (sub.expiresAt > 0) ...[
             const SizedBox(height: 12),
             Text(
-              'Expire le : ${_formatDate(sub.expiresAt)}',
+              '${l10n.subscription_expires_label} ${_formatDate(sub.expiresAt)}',
               style: appStyle.H6(color: Colors.white70),
             ),
           ],
           if (sub.coins > 0) ...[
             const SizedBox(height: 8),
             Text(
-              '${sub.coins} coins inclus',
+              '${sub.coins} ${l10n.coins_included_suffix}',
               style: appStyle.H6(color: Colors.white70),
             ),
           ],
@@ -214,7 +221,7 @@ class _PlanCard extends ConsumerWidget {
                   Text(plan.type, style: appStyle.H5(weight: 'bold')),
                   if (plan.description.isNotEmpty)
                     Text(plan.description, style: appStyle.H6()),
-                  Text('${plan.days} jours',
+                  Text(AppLocalizations.of(context)!.days(plan.days),
                       style: appStyle.H6(
                           color: colorScheme.onSurface.withValues(alpha: 0.6))),
                 ],
@@ -239,7 +246,7 @@ class _PlanCard extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(20)),
                   ),
                   onPressed: () => _goToPayment(context, ref, plan),
-                  child: const Text('Souscrire'),
+                  child: Text(AppLocalizations.of(context)!.subscribe_button_label),
                 ),
               ],
             ),
@@ -251,17 +258,17 @@ class _PlanCard extends ConsumerWidget {
 
   void _goToPayment(
       BuildContext context, WidgetRef ref, SubscriptionPlanEntity plan) {
+    final l10n = AppLocalizations.of(context)!;
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => PaymentScreen(
-        title: 'Souscription',
-        itemTitle: 'Plan ${plan.type}',
+        title: l10n.subscriptions_screen_title,
+        itemTitle: '${l10n.subscription_plan_prefix} ${plan.type}',
         itemSubtitle: plan.description.isNotEmpty
             ? plan.description
-            : '${plan.days} jours',
+            : l10n.days(plan.days),
         amount: plan.price,
         currency: plan.currency,
-        pendingMessage:
-            'En attente de confirmation du paiement Mobile Money...',
+        pendingMessage: l10n.marketplace_payment_pending_notice,
         successUrl: subscriptionPaymentSuccessUrl,
         failureUrl: subscriptionPaymentFailureUrl,
         onMomoPay: (phone) => ref
@@ -279,7 +286,7 @@ class _PlanCard extends ConsumerWidget {
           ref.invalidate(currentSubscriptionProvider);
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Souscription activée !')),
+            SnackBar(content: Text(l10n.subscription_activated_message)),
           );
         },
       ),

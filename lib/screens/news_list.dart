@@ -12,6 +12,7 @@ class NewsListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     final newsAsync = ref.watch(newsListProvider);
 
@@ -21,7 +22,7 @@ class NewsListScreen extends ConsumerWidget {
         backgroundColor: colorScheme.surface,
         centerTitle: true,
         elevation: 0,
-        title: Text('Actualités', style: appStyle.H3(weight: 'bold')),
+        title: Text(l10n.news_title_label, style: appStyle.H3(weight: 'bold')),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -32,7 +33,7 @@ class NewsListScreen extends ConsumerWidget {
       body: newsAsync.when(
         loading: () => Center(
             child: CircularProgressIndicator(color: colorScheme.primary)),
-        error: (e, _) => Center(child: Text('Erreur : $e')),
+        error: (e, _) => Center(child: Text('${l10n.error_prefix} : $e')),
         data: (news) {
           if (news.isEmpty) {
             return Center(
@@ -43,11 +44,11 @@ class NewsListScreen extends ConsumerWidget {
                       size: 64,
                       color: colorScheme.onSurface.withValues(alpha: 0.3)),
                   const SizedBox(height: 12),
-                  Text('Aucune actualité disponible', style: appStyle.H5()),
+                  Text(l10n.no_news_available_label, style: appStyle.H5()),
                   const SizedBox(height: 8),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Actualiser'),
+                    label: Text(l10n.refresh_button_label),
                     onPressed: () =>
                         ref.read(newsListProvider.notifier).refresh(),
                   ),
