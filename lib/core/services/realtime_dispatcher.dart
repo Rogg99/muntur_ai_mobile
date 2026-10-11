@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -16,6 +17,12 @@ import '../../features/subscriptions/presentation/providers/subscription_provide
 import '../../features/support/presentation/providers/support_provider.dart';
 
 part 'realtime_dispatcher.g.dart';
+
+/// The chat discussion id currently open on screen, if any — ChatView sets
+/// this on mount/re-key and clears it on dispose, so a `discussion_message`
+/// push for that same discussion doesn't also pop a system notification
+/// while the user is already looking right at the message landing live.
+final activeDiscussionIdProvider = StateProvider<String?>((ref) => null);
 
 /// Wires [WebSocketService] events to the Riverpod caches that render them, so
 /// discussions/forums/notifications/subscriptions update live instead of
@@ -51,6 +58,9 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
                   lastWriter: message.senderId,
                   dateEnvoi: message.dateEnvoi,
                 );
+          }
+          if (discId != null && discId == ref.read(activeDiscussionIdProvider)) {
+            break; // user is already looking at this discussion
           }
         }
         _notify(_senderLabel(data, fallback: 'Autosynx'), _messageBody(data));

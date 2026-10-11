@@ -6,8 +6,12 @@ class NotificationService {
   FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
+    // Must match the app's actual launcher icon resource — the project was
+    // rebranded to Autosynx with android:icon="@mipmap/launcher_icon" in
+    // AndroidManifest.xml, not the Flutter-default "ic_launcher" name this
+    // was still pointing at.
     const AndroidInitializationSettings androidInit =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+    AndroidInitializationSettings('@mipmap/launcher_icon');
 
     const InitializationSettings settings =
     InitializationSettings(android: androidInit);

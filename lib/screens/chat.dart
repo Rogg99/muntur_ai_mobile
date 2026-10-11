@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/services/home_navigation.dart';
+import 'package:munturai/core/services/realtime_dispatcher.dart';
 import 'package:munturai/features/marketplace/data/models/marketplace_models.dart';
 import 'package:munturai/screens/marketplace_checkout.dart';
 import 'package:munturai/screens/marketplace_home.dart';
@@ -77,6 +78,15 @@ class _ChatViewState extends ConsumerState<ChatView> {
   // — it only clears via the WS-driven ref.listen below, matching how long
   // the reply actually takes.
   bool _awaitingAiReply = false;
+  // Snapshot of message ids present right before sending — lets build()
+  // detect "the reply already arrived" even when ref.listen's own
+  // before/after diff misses it (e.g. the 'new' -> real discussion id
+  // re-key below resubscribes chatMessagesProvider to a fresh instance
+  // whose initial value already includes the AI reply merged in while this
+  // screen was still watching the 'new' provider — Riverpod's ref.listen
+  // only fires on CHANGES after subscribing, never for an already-settled
+  // value, so that transition is otherwise never observed).
+  Set<String>? _idsBeforeSend;
   int _lastMessageCount = -1;
 
   final List<_PendingAttachment> _attachments = [];
@@ -105,11 +115,28 @@ class _ChatViewState extends ConsumerState<ChatView> {
 
   @override
   void dispose() {
+    // Only clear if this screen is still the one that claimed it — a
+    // just-pushed second ChatView (or a re-key) may already own it.
+    if (ref.read(activeDiscussionIdProvider) == _discId) {
+      ref.read(activeDiscussionIdProvider.notifier).state = null;
+    }
     _messageController.dispose();
     _scrollController.dispose();
     _recordTicker?.cancel();
     _audioRecorder.dispose();
     super.dispose();
+  }
+
+  /// Keeps [activeDiscussionIdProvider] in sync with `_discId` — called
+  /// every build so the 'new' -> real-id re-key (see [_handleSend]) is
+  /// covered too, not just the initial mount.
+  void _syncActiveDiscussionId() {
+    if (ref.read(activeDiscussionIdProvider) != _discId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref.read(activeDiscussionIdProvider.notifier).state = _discId;
+      });
+    }
   }
 
   Future<void> _showAttachSheet() async {
@@ -238,9 +265,11 @@ class _ChatViewState extends ConsumerState<ChatView> {
 
     _messageController.clear();
     FocusManager.instance.primaryFocus?.unfocus();
+    final existing = ref.read(chatMessagesProvider(_discId)).valueOrNull ?? const [];
     setState(() {
       _sending = true;
       _awaitingAiReply = true;
+      _idsBeforeSend = existing.map((m) => m.id).toSet();
       _attachments.clear();
     });
 
@@ -431,6 +460,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
 
   @override
   Widget build(BuildContext context) {
+    _syncActiveDiscussionId();
     final translator = AppLocalizations.of(context)!;
     final messagesState = ref.watch(chatMessagesProvider(_discId));
 
@@ -482,6 +512,22 @@ class _ChatViewState extends ConsumerState<ChatView> {
           .addPostFrameCallback((_) => _scrollToBottom(animate: false));
     }
 
+    // Covers the case ref.listen's diff misses (see _idsBeforeSend) — the
+    // reply is already sitting in `messages` by the time this build runs,
+    // so don't render the bubble for this frame, and officially clear the
+    // flag right after so later rebuilds (and the listen callback) agree.
+    bool showTypingBubble = _awaitingAiReply;
+    if (_awaitingAiReply && _idsBeforeSend != null) {
+      final alreadyArrived =
+          messages.any((m) => m.isAI && !_idsBeforeSend!.contains(m.id));
+      if (alreadyArrived) {
+        showTypingBubble = false;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _awaitingAiReply) setState(() => _awaitingAiReply = false);
+        });
+      }
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: true,
@@ -510,7 +556,8 @@ class _ChatViewState extends ConsumerState<ChatView> {
         child: Column(
           children: [
             Expanded(
-              child: _buildMessageList(context, messagesState, messages),
+              child: _buildMessageList(
+                  context, messagesState, messages, showTypingBubble),
             ),
             _buildComposer(context),
           ],
@@ -523,6 +570,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
     BuildContext context,
     AsyncValue<Object?> messagesState,
     List<UIMessage> messages,
+    bool showTypingBubble,
   ) {
     if (messagesState is AsyncLoading && messages.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -554,7 +602,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
           controller: _scrollController,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: messages.length + (_awaitingAiReply ? 1 : 0),
+          itemCount: messages.length + (showTypingBubble ? 1 : 0),
           separatorBuilder: (_, __) => const SizedBox(height: 4),
           itemBuilder: (context, index) {
             if (index == messages.length) return const _TypingBubble();
