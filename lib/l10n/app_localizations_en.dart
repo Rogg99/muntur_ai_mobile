@@ -1782,6 +1782,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get collect_agent_garage_email_label => 'Email (optional)';
 
   @override
+  String get google_sign_in_button => 'Continue with Google';
+
+  @override
+  String get google_sign_in_complete_profile_notice =>
+      'Welcome! Take a moment to complete your profile.';
+
+  @override
+  String get google_sign_in_complete_profile_action => 'Complete';
+
+  @override
   String get applock_toggle_label => 'Biometric/PIN lock';
 
   @override

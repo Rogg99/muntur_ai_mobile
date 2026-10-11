@@ -50,6 +50,33 @@ class AuthRepositoryImpl implements AuthRepository {
     return tokenField.toString();
   }
 
+  // ────────────────────── GOOGLE SIGN-IN ───────────────────
+  // Backend contract confirmed directly by c7 (2026-10-11): POST
+  // /auth/google/ with {"id_token": ...} returns the exact same
+  // {"token": {"access", "refresh", "user"}} shape as login/register
+  // (get_tokens_for_user, shared by all three) plus "created": bool — true
+  // the first time this Google account signs in. No forced profile
+  // completion server-side (sexe/ville/telephone/date_naissance stay
+  // optional), so `created` is only a UX signal for the caller.
+
+  @override
+  Future<(UserEntity?, bool)> loginWithGoogle(String idToken) async {
+    try {
+      final response = await _apiClient
+          .post('/auth/google/', data: {'id_token': idToken});
+      final created = (response.data['data'] ?? response.data)['created'] == true;
+      final token = _extractAccessToken(response.data);
+      if (token != null) {
+        await _secureStorage.saveToken(token);
+        await _clearCachedProfile();
+      }
+      final user = await getUserProfile();
+      return (user, created);
+    } catch (e) {
+      throw Exception('Google sign-in failed: ${e.toString()}');
+    }
+  }
+
   // ─────────────────────── REGISTER ────────────────────────
 
   @override

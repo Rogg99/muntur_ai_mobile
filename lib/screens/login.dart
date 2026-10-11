@@ -3,8 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/colors/colors.dart';
+import 'package:munturai/core/services/google_auth_service.dart';
 import 'package:munturai/screens/forgot_password.dart';
 import 'package:munturai/screens/home.dart';
+import 'package:munturai/screens/profile.dart';
 import 'package:munturai/screens/register.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/widgets/primary_button.dart';
@@ -26,6 +28,7 @@ class _loginState extends ConsumerState<Login> with TickerProviderStateMixin {
   late AnimationController controller;
   final emailText = TextEditingController();
   final pwdText = TextEditingController();
+  bool _googleSigningIn = false;
 
   @override
   void initState() {
@@ -191,6 +194,21 @@ class _loginState extends ConsumerState<Login> with TickerProviderStateMixin {
             ),
           ),
           Padding(padding: getPadding(top: 20)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: OutlinedButton.icon(
+              onPressed: _googleSigningIn ? null : _loginWithGoogle,
+              icon: _googleSigningIn
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.g_mobiledata, size: 24),
+              label: Text(translator.google_sign_in_button),
+              style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+            ),
+          ),
+          Padding(padding: getPadding(top: 20)),
           GestureDetector(
             onTap: () {
               Navigator.push(
@@ -247,6 +265,44 @@ class _loginState extends ConsumerState<Login> with TickerProviderStateMixin {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("connexion failed"),
       ));
+    }
+  }
+
+  Future<void> _loginWithGoogle() async {
+    final translator = AppLocalizations.of(context)!;
+    setState(() => _googleSigningIn = true);
+    final idToken = await GoogleAuthService().signInAndGetIdToken();
+    if (idToken == null) {
+      if (mounted) setState(() => _googleSigningIn = false);
+      return; // user cancelled the picker — not an error, stay quiet.
+    }
+    try {
+      final created =
+          await ref.read(authStateProvider.notifier).loginWithGoogle(idToken);
+      if (!mounted) return;
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen()));
+      if (created) {
+        // Non-blocking nudge, per c7: nothing server-side requires
+        // completing sexe/ville/telephone/date_naissance, this is purely
+        // a suggestion so a fresh Google account isn't left with an
+        // empty profile without ever being invited to fill it in.
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(translator.google_sign_in_complete_profile_notice),
+          action: SnackBarAction(
+            label: translator.google_sign_in_complete_profile_action,
+            onPressed: () => Navigator.push(
+                context, MaterialPageRoute(builder: (_) => const Profile())),
+          ),
+          duration: const Duration(seconds: 6),
+        ));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _googleSigningIn = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
     }
   }
 }

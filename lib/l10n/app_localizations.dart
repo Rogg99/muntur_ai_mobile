@@ -3275,6 +3275,15 @@ abstract class AppLocalizations {
   /// No description provided for @collect_agent_garage_email_label.
   String get collect_agent_garage_email_label;
 
+  /// No description provided for @google_sign_in_button.
+  String get google_sign_in_button;
+
+  /// No description provided for @google_sign_in_complete_profile_notice.
+  String get google_sign_in_complete_profile_notice;
+
+  /// No description provided for @google_sign_in_complete_profile_action.
+  String get google_sign_in_complete_profile_action;
+
   /// No description provided for @applock_toggle_label.
   ///
   /// In en, this message translates to:

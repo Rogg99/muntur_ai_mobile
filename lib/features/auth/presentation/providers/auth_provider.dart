@@ -45,6 +45,27 @@ class AuthState extends _$AuthState {
     _connectRealtime();
   }
 
+  /// Returns whether this Google account was just provisioned for the
+  /// first time (`created`) — purely informational, caller decides what
+  /// to do with it (e.g. a one-off "complete your profile" nudge).
+  Future<bool> loginWithGoogle(String idToken) async {
+    state = const AsyncValue.loading();
+    bool created = false;
+    state = await AsyncValue.guard(() async {
+      final (user, wasCreated) =
+          await ref.read(authRepositoryProvider).loginWithGoogle(idToken);
+      if (user == null) throw Exception('Google sign-in failed');
+      created = wasCreated;
+      return user;
+    });
+    if (state.hasError) {
+      final error = state.asError!;
+      Error.throwWithStackTrace(error.error, error.stackTrace);
+    }
+    _connectRealtime();
+    return created;
+  }
+
   /// Starts the WebSocket + its Riverpod event dispatcher for the session.
   /// Safe to call repeatedly (e.g. every time [build] reruns) — a no-op if
   /// already connected.
