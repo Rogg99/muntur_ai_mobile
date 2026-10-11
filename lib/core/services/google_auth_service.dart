@@ -5,11 +5,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 /// id_token.verify_oauth2_token() (c7, 2026-10-11) — distinct from the
 /// per-platform Android/iOS client ids, which only gate the native
 /// sign-in flow and are never referenced in code.
-///
-/// TODO: replace once the user creates the Web client in the same Google
-/// Cloud project (the Android client 413253006066-brvhjl65bdvgagrjnjn8r9hf4at0n0up
-/// already exists but is NOT usable here — it's the wrong client type).
-const String _googleServerClientId = 'REPLACE_WITH_WEB_CLIENT_ID.apps.googleusercontent.com';
+const String _googleServerClientId =
+    '413253006066-d1di562okck18hf74n104ou1p835nmfj.apps.googleusercontent.com';
 
 class GoogleAuthService {
   static final GoogleAuthService _instance = GoogleAuthService._internal();
