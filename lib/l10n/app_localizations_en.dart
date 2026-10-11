@@ -1524,6 +1524,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings_privacy_security => 'Privacy & Security';
 
   @override
+  String get applock_toggle_label => 'Biometric/PIN lock';
+
+  @override
+  String get applock_change_pin => 'Change PIN code';
+
+  @override
+  String get applock_enabled_confirmation => 'App lock enabled';
+
+  @override
+  String get applock_enter_pin_title => 'Enter your PIN';
+
+  @override
+  String get applock_create_pin_title => 'Create a PIN code';
+
+  @override
+  String get applock_confirm_pin_title => 'Confirm your PIN code';
+
+  @override
+  String get applock_wrong_pin => 'Incorrect PIN code';
+
+  @override
+  String get applock_pin_mismatch => 'PIN codes don\'t match, try again';
+
+  @override
+  String get applock_biometric_reason => 'Confirm it\'s you to continue';
+
+  @override
   String get error_prefix => 'Error';
 
   @override

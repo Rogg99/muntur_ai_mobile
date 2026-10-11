@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/services/app_lock_service.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
 import 'package:munturai/screens/abonnement.dart';
+import 'package:munturai/screens/app_lock_pin_screen.dart';
 import 'package:munturai/screens/coins.dart';
 import 'package:munturai/screens/profile.dart';
 import 'package:munturai/screens/switchlanguage.dart';
@@ -213,6 +215,7 @@ class Settings extends ConsumerWidget {
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const PrivacyPolicy())),
             ),
+            const _AppLockSection(),
             _SettingsTile(
               icon: CupertinoIcons.heart_circle_fill,
               label: translator.about,
@@ -259,6 +262,100 @@ class Settings extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Toggle + PIN management for the local biometric/PIN app lock. Kept as
+/// its own small stateful widget (rather than lifting state into the
+/// otherwise-stateless [Settings]) since it's the only tile needing to load
+/// async state (enabled flag, whether a PIN already exists) and react to
+/// its own toggle.
+class _AppLockSection extends StatefulWidget {
+  const _AppLockSection();
+
+  @override
+  State<_AppLockSection> createState() => _AppLockSectionState();
+}
+
+class _AppLockSectionState extends State<_AppLockSection> {
+  final _service = AppLockService();
+  bool _loading = true;
+  bool _enabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final enabled = await _service.isEnabled();
+    if (!mounted) return;
+    setState(() {
+      _enabled = enabled;
+      _loading = false;
+    });
+  }
+
+  Future<void> _onToggle(bool value) async {
+    final l10n = AppLocalizations.of(context)!;
+    if (!value) {
+      await _service.disableAndClear();
+      if (!mounted) return;
+      setState(() => _enabled = false);
+      return;
+    }
+
+    // Turning it on requires a PIN first (the fallback when biometrics
+    // aren't available/enrolled or are cancelled) — set it up right away
+    // rather than leaving the toggle on with no fallback possible.
+    final created = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => const AppLockPinScreen(isSetup: true)),
+    );
+    if (created != true) return;
+    await _service.setEnabled(true);
+    if (!mounted) return;
+    setState(() => _enabled = true);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(l10n.applock_enabled_confirmation)));
+  }
+
+  Future<void> _changePin() async {
+    await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => const AppLockPinScreen(isSetup: true)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final translator = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      children: [
+        _SettingsTile(
+          icon: CupertinoIcons.lock_rotation,
+          label: translator.applock_toggle_label,
+          trailing: _loading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2))
+              : Switch(
+                  value: _enabled,
+                  activeColor: colorScheme.primary,
+                  inactiveTrackColor: Colors.transparent,
+                  onChanged: _onToggle,
+                ),
+        ),
+        if (_enabled)
+          _SettingsTile(
+            icon: CupertinoIcons.number,
+            label: translator.applock_change_pin,
+            onTap: _changePin,
+          ),
+      ],
     );
   }
 }

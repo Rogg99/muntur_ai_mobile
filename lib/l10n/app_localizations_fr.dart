@@ -1537,6 +1537,33 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settings_privacy_security => 'Confidentialité & sécurité';
 
   @override
+  String get applock_toggle_label => 'Verrou biométrie/PIN';
+
+  @override
+  String get applock_change_pin => 'Changer le code PIN';
+
+  @override
+  String get applock_enabled_confirmation => 'Verrou de l\'application activé';
+
+  @override
+  String get applock_enter_pin_title => 'Entrez votre code PIN';
+
+  @override
+  String get applock_create_pin_title => 'Créez un code PIN';
+
+  @override
+  String get applock_confirm_pin_title => 'Confirmez votre code PIN';
+
+  @override
+  String get applock_wrong_pin => 'Code PIN incorrect';
+
+  @override
+  String get applock_pin_mismatch => 'Les codes PIN ne correspondent pas, réessayez';
+
+  @override
+  String get applock_biometric_reason => 'Confirmez que c\'est bien vous pour continuer';
+
+  @override
   String get error_prefix => 'Erreur';
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/models/payment_models.dart';
+import 'package:munturai/core/services/app_lock_guard.dart';
 import 'package:munturai/screens/momo_payment_pending.dart';
 import 'package:munturai/screens/payment_webview.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
@@ -92,6 +93,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 
   Future<void> _submit() async {
+    if (!await requireAppUnlock(context)) return;
+    if (!mounted) return;
     if (_method == _PaymentMethod.momo) {
       await _submitByMomo();
     } else {

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/network/api_client.dart';
+import 'package:munturai/core/services/app_lock_guard.dart';
 import 'package:munturai/features/auth/domain/entities/user_entity.dart';
 import 'package:munturai/features/auth/presentation/providers/auth_provider.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
@@ -547,6 +548,8 @@ class ProfileState extends ConsumerState<Profile>
                   padding: 50,
                   radius: 50,
                   onPressed: () async {
+                    if (!await requireAppUnlock(context)) return;
+                    if (!mounted) return;
                     final pwd = pwdcontroller.text;
                     await ref
                         .read(authStateProvider.notifier)

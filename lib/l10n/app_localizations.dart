@@ -3014,6 +3014,60 @@ abstract class AppLocalizations {
   /// **'Privacy & Security'**
   String get settings_privacy_security;
 
+  /// No description provided for @applock_toggle_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric/PIN lock'**
+  String get applock_toggle_label;
+
+  /// No description provided for @applock_change_pin.
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN code'**
+  String get applock_change_pin;
+
+  /// No description provided for @applock_enabled_confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock enabled'**
+  String get applock_enabled_confirmation;
+
+  /// No description provided for @applock_enter_pin_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your PIN'**
+  String get applock_enter_pin_title;
+
+  /// No description provided for @applock_create_pin_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a PIN code'**
+  String get applock_create_pin_title;
+
+  /// No description provided for @applock_confirm_pin_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your PIN code'**
+  String get applock_confirm_pin_title;
+
+  /// No description provided for @applock_wrong_pin.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN code'**
+  String get applock_wrong_pin;
+
+  /// No description provided for @applock_pin_mismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN codes don\'t match, try again'**
+  String get applock_pin_mismatch;
+
+  /// No description provided for @applock_biometric_reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm it\'s you to continue'**
+  String get applock_biometric_reason;
+
   /// No description provided for @error_prefix.
   ///
   /// In en, this message translates to:

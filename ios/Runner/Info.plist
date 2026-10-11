@@ -51,5 +51,7 @@
 	<string>Autosynx uses the microphone to let you record a voice note in a chat message.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Autosynx needs access to your photos to let you attach one to a chat message.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Autosynx uses Face ID to confirm it's really you before sensitive actions like payments.</string>
 </dict>
 </plist>
