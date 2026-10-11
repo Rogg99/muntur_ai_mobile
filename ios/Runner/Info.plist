@@ -53,5 +53,18 @@
 	<string>Autosynx needs access to your photos to let you attach one to a chat message.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Autosynx uses Face ID to confirm it's really you before sensitive actions like payments.</string>
+	<key>GIDClientID</key>
+	<string>413253006066-dsfvem1lq9p0rb7bd0mn9dcofim1ts55.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Reversed form of the iOS OAuth client id, required by
+				     google_sign_in to receive the sign-in redirect. -->
+				<string>com.googleusercontent.apps.413253006066-dsfvem1lq9p0rb7bd0mn9dcofim1ts55</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
