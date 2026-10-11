@@ -480,14 +480,17 @@ class _ChatViewState extends ConsumerState<ChatView> {
     final messagesState = ref.watch(chatMessagesProvider(_discId));
 
     // Clears the typing bubble as soon as the AI's reply actually lands
-    // (pushed via WS as a new isAI message), rather than tying it to the
-    // 202 Accepted response — see _awaitingAiReply's declaration.
+    // (pushed via WS as a new message from someone other than this user),
+    // rather than tying it to the 202 Accepted response — see
+    // _awaitingAiReply's declaration. Mostly superseded by the synchronous
+    // check below (which also catches the case this miss-able diff can't),
+    // kept as a fast path for the common case.
     ref.listen(chatMessagesProvider(_discId), (previous, next) {
       if (!_awaitingAiReply) return;
       final previousIds = (previous?.valueOrNull ?? const []).map((m) => m.id).toSet();
-      final hasNewAiMessage = (next.valueOrNull ?? const [])
-          .any((m) => m.isAI && !previousIds.contains(m.id));
-      if (hasNewAiMessage) {
+      final hasNewReply = (next.valueOrNull ?? const [])
+          .any((m) => m.senderId != _userId && !previousIds.contains(m.id));
+      if (hasNewReply) {
         setState(() => _awaitingAiReply = false);
       }
     });
@@ -531,10 +534,20 @@ class _ChatViewState extends ConsumerState<ChatView> {
     // reply is already sitting in `messages` by the time this build runs,
     // so don't render the bubble for this frame, and officially clear the
     // flag right after so later rebuilds (and the listen callback) agree.
+    //
+    // Deliberately checks `m.emetteur != _userId` rather than `m.isAI`:
+    // the bubble's own side/color rendering below already keys off
+    // `sender: message.emetteur == _userId` (never isAI) and visibly works,
+    // so this matches the one signal actually proven reliable through the
+    // WS push — isAI may not be populated the same way on that path (it
+    // comes from a literal `json['isAI']` key that's unverified against
+    // the live discussion_message payload) and was making this check never
+    // fire, which is consistent with the bubble staying stuck forever
+    // rather than eventually clearing.
     bool showTypingBubble = _awaitingAiReply;
     if (_awaitingAiReply && _idsBeforeSend != null) {
-      final alreadyArrived =
-          messages.any((m) => m.isAI && !_idsBeforeSend!.contains(m.id));
+      final alreadyArrived = messages
+          .any((m) => m.emetteur != _userId && !_idsBeforeSend!.contains(m.id));
       if (alreadyArrived) {
         showTypingBubble = false;
         WidgetsBinding.instance.addPostFrameCallback((_) {
