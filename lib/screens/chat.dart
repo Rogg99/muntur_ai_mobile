@@ -113,12 +113,26 @@ class _ChatViewState extends ConsumerState<ChatView> {
       a.status == _AttachmentStatus.uploading ||
       a.status == _AttachmentStatus.failed);
 
+  // Captured during build (see _syncActiveDiscussionId) rather than
+  // fetched via `ref` inside dispose() — by the time a State's dispose()
+  // runs, the Element can already be past the point where
+  // ConsumerStatefulElement allows `ref` access (observed as a "Cannot use
+  // ref after the widget was disposed" crash during a whole-tree teardown,
+  // e.g. logout), so the controller reference itself must outlive that.
+  StateController<String?>? _activeDiscussionController;
+
   @override
   void dispose() {
     // Only clear if this screen is still the one that claimed it — a
     // just-pushed second ChatView (or a re-key) may already own it.
-    if (ref.read(activeDiscussionIdProvider) == _discId) {
-      ref.read(activeDiscussionIdProvider.notifier).state = null;
+    final controller = _activeDiscussionController;
+    if (controller != null) {
+      try {
+        if (controller.state == _discId) controller.state = null;
+      } catch (_) {
+        // Provider container itself may already be gone (e.g. logout
+        // tearing down the whole tree at once) — nothing to clean up then.
+      }
     }
     _messageController.dispose();
     _scrollController.dispose();
@@ -131,10 +145,11 @@ class _ChatViewState extends ConsumerState<ChatView> {
   /// every build so the 'new' -> real-id re-key (see [_handleSend]) is
   /// covered too, not just the initial mount.
   void _syncActiveDiscussionId() {
-    if (ref.read(activeDiscussionIdProvider) != _discId) {
+    _activeDiscussionController = ref.read(activeDiscussionIdProvider.notifier);
+    if (_activeDiscussionController!.state != _discId) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        ref.read(activeDiscussionIdProvider.notifier).state = _discId;
+        _activeDiscussionController!.state = _discId;
       });
     }
   }
