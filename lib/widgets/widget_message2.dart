@@ -151,7 +151,9 @@ class MessageWidget2_ extends State<MessageWidget2> {
                     constraints: BoxConstraints(
                         maxWidth: (MediaQuery.of(context).size.width) * 0.7,
                         minWidth: 60),
-                    child: Container(
+                    child: GestureDetector(
+                      onLongPress: () => _showMessageActions(context),
+                      child: Container(
                       padding: getPadding(
                         left: 5,
                         top: 5,
@@ -184,29 +186,15 @@ class MessageWidget2_ extends State<MessageWidget2> {
                             if (hasText) const SizedBox(height: 6),
                           ],
                           if (hasText)
-                            GestureDetector(
-                              onLongPress: () {
-                                Clipboard.setData(
-                                        ClipboardData(text: message!.contenu))
-                                    .then((value) {
-                                  //only if ->
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                    content: Text(
-                                        'message copié dans le presse papier'),
-                                  ));
-                                }); // -> show a notification
-                              },
-                              child: Align(
-                                alignment: Alignment.topLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 3.0),
-                                  child: Text(message!.contenu,
-                                      maxLines: null,
-                                      textAlign: TextAlign.left,
-                                      style: appStyle.H5(color: bubbleTextColor)),
-                                ),
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 3.0),
+                                child: Text(message!.contenu,
+                                    maxLines: null,
+                                    textAlign: TextAlign.left,
+                                    style: appStyle.H5(color: bubbleTextColor)),
                               ),
                             ),
                           if (message!.relatedArticle != 'null' &&
@@ -230,18 +218,71 @@ class MessageWidget2_ extends State<MessageWidget2> {
                               foreground: bubbleTextColor,
                               onTap: onSuggestedAction!,
                             ),
-                          if (onFeedback != null)
-                            _FeedbackRow(
-                              current: message!.userFeedback,
-                              foreground: bubbleTextColor,
-                              onFeedback: onFeedback!,
-                            ),
                         ],
                       ),
+                    ),
                     ),
                   ),
                 ],
               ),
+      ),
+    );
+  }
+
+  /// Long-press contextual menu for a message bubble: copy (if it has
+  /// text), plus useful/not-useful thumbs for AI replies ([onFeedback] is
+  /// only ever passed for those). Replaces the old always-visible thumbs
+  /// row and the text-only copy gesture with one consistent entry point.
+  void _showMessageActions(BuildContext context) {
+    final translator = AppLocalizations.of(context)!;
+    final current = message!.userFeedback;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (message!.contenu.trim().isNotEmpty)
+              ListTile(
+                leading: const Icon(Icons.copy),
+                title: Text(translator.message_action_copy),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  Clipboard.setData(ClipboardData(text: message!.contenu));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(translator.message_copied_snackbar)),
+                  );
+                },
+              ),
+            if (onFeedback != null) ...[
+              ListTile(
+                leading: Icon(current == 'useful'
+                    ? Icons.thumb_up
+                    : Icons.thumb_up_outlined),
+                title: Text(translator.message_action_useful),
+                selected: current == 'useful',
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  onFeedback!(true);
+                },
+              ),
+              ListTile(
+                leading: Icon(current == 'not_useful'
+                    ? Icons.thumb_down
+                    : Icons.thumb_down_outlined),
+                title: Text(translator.message_action_not_useful),
+                selected: current == 'not_useful',
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  onFeedback!(false);
+                },
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -640,57 +681,6 @@ class _SuggestedActionChip extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// Useful / not-useful thumbs for an AI reply. [current] is
-/// MessageModel.userFeedback ('useful' / 'not_useful' / 'none') and drives
-/// which thumb, if any, renders as active/filled.
-class _FeedbackRow extends StatelessWidget {
-  final String current;
-  final Color foreground;
-  final void Function(bool useful) onFeedback;
-
-  const _FeedbackRow({
-    required this.current,
-    required this.foreground,
-    required this.onFeedback,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isUseful = current == 'useful';
-    final isNotUseful = current == 'not_useful';
-    return Padding(
-      padding: const EdgeInsets.only(top: 4),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-            iconSize: 16,
-            visualDensity: VisualDensity.compact,
-            icon: Icon(
-              isUseful ? Icons.thumb_up : Icons.thumb_up_outlined,
-              color: foreground.withValues(alpha: isUseful ? 1 : 0.5),
-            ),
-            onPressed: () => onFeedback(true),
-          ),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
-            iconSize: 16,
-            visualDensity: VisualDensity.compact,
-            icon: Icon(
-              isNotUseful ? Icons.thumb_down : Icons.thumb_down_outlined,
-              color: foreground.withValues(alpha: isNotUseful ? 1 : 0.5),
-            ),
-            onPressed: () => onFeedback(false),
-          ),
-        ],
       ),
     );
   }

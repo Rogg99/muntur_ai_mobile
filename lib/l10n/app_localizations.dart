@@ -3014,6 +3014,30 @@ abstract class AppLocalizations {
   /// **'Privacy & Security'**
   String get settings_privacy_security;
 
+  /// No description provided for @message_action_copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get message_action_copy;
+
+  /// No description provided for @message_copied_snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Message copied to clipboard'**
+  String get message_copied_snackbar;
+
+  /// No description provided for @message_action_useful.
+  ///
+  /// In en, this message translates to:
+  /// **'Useful'**
+  String get message_action_useful;
+
+  /// No description provided for @message_action_not_useful.
+  ///
+  /// In en, this message translates to:
+  /// **'Not useful'**
+  String get message_action_not_useful;
+
   /// No description provided for @applock_toggle_label.
   ///
   /// In en, this message translates to:

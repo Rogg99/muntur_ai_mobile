@@ -1537,6 +1537,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settings_privacy_security => 'Confidentialité & sécurité';
 
   @override
+  String get message_action_copy => 'Copier';
+
+  @override
+  String get message_copied_snackbar => 'Message copié dans le presse-papier';
+
+  @override
+  String get message_action_useful => 'Utile';
+
+  @override
+  String get message_action_not_useful => 'Pas utile';
+
+  @override
   String get applock_toggle_label => 'Verrou biométrie/PIN';
 
   @override
