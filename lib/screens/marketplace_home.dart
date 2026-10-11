@@ -90,9 +90,11 @@ class _MarketplaceHomeState extends ConsumerState<MarketplaceHome> {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      // Slightly taller than 0.72 to fit the title's 2nd
-                      // line without re-triggering the earlier overflow.
-                      childAspectRatio: 0.66,
+                      // Taller than 0.66 to also fit the ville/distance row
+                      // (820f79d, added after this ratio was last tuned) —
+                      // without it the title's 2nd line alone overflowed by
+                      // ~5px.
+                      childAspectRatio: 0.58,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                     ),
