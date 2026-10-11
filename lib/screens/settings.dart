@@ -19,6 +19,8 @@ import 'package:munturai/screens/marketplace_wishlist.dart';
 import 'package:munturai/screens/marketplace_vendor_dashboard.dart';
 import 'package:munturai/screens/privacy_policy.dart';
 import 'package:munturai/screens/courier_profile.dart';
+import 'package:munturai/screens/repair_garage_staff.dart';
+import 'package:munturai/screens/repair_my_bookings.dart';
 import 'package:munturai/screens/support_tickets.dart';
 
 import '../core/fonctions.dart';
@@ -167,6 +169,18 @@ class Settings extends ConsumerWidget {
               label: translator.settings_my_wishlist,
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const MarketplaceWishlist())),
+            ),
+            _SettingsTile(
+              icon: CupertinoIcons.wrench,
+              label: translator.repair_my_bookings_title,
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const RepairMyBookings())),
+            ),
+            _SettingsTile(
+              icon: CupertinoIcons.gear_alt,
+              label: translator.repair_staff_title,
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const RepairGarageStaffScreen())),
             ),
             // Vendor-only — hidden rather than shown-then-erroring for an
             // account with no storefront (same gating as the Profile

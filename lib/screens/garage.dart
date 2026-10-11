@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/garages/domain/entities/garage_entity.dart';
 import 'package:munturai/features/garages/presentation/providers/garage_provider.dart';
+import 'package:munturai/screens/repair_booking_create.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -437,6 +438,20 @@ class GarageDetailView extends StatelessWidget {
                             'https://www.google.com/maps/search/?api=1&query=${garage.latitude},${garage.longitude}'),
                       ),
                     ],
+                    const SizedBox(width: 10),
+                    _ActionButton(
+                      icon: Icons.build_outlined,
+                      label: translator.repair_book_action,
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => RepairBookingCreate(
+                            garageId: garage.id,
+                            garageName: garage.nom,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

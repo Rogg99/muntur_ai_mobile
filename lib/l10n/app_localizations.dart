@@ -3038,6 +3038,126 @@ abstract class AppLocalizations {
   /// **'Not useful'**
   String get message_action_not_useful;
 
+  /// No description provided for @repair_book_action.
+  String get repair_book_action;
+
+  /// No description provided for @repair_create_intro.
+  String get repair_create_intro;
+
+  /// No description provided for @repair_description_label.
+  String get repair_description_label;
+
+  /// No description provided for @repair_description_hint.
+  String get repair_description_hint;
+
+  /// No description provided for @repair_deposit_label.
+  String get repair_deposit_label;
+
+  /// No description provided for @repair_deposit_notice.
+  String get repair_deposit_notice;
+
+  /// No description provided for @repair_pay_deposit_button.
+  String get repair_pay_deposit_button;
+
+  /// No description provided for @repair_status_pending.
+  String get repair_status_pending;
+
+  /// No description provided for @repair_status_accepted.
+  String get repair_status_accepted;
+
+  /// No description provided for @repair_status_in_progress.
+  String get repair_status_in_progress;
+
+  /// No description provided for @repair_status_completed.
+  String get repair_status_completed;
+
+  /// No description provided for @repair_status_cancelled.
+  String get repair_status_cancelled;
+
+  /// No description provided for @repair_status_refused.
+  String get repair_status_refused;
+
+  /// No description provided for @repair_tracking_title.
+  String get repair_tracking_title;
+
+  /// No description provided for @repair_load_error.
+  String get repair_load_error;
+
+  /// No description provided for @repair_completion_code_title.
+  String get repair_completion_code_title;
+
+  /// No description provided for @repair_completion_code_warning.
+  String get repair_completion_code_warning;
+
+  /// No description provided for @repair_cancel_confirm_title.
+  String get repair_cancel_confirm_title;
+
+  /// No description provided for @repair_cancel_action.
+  String get repair_cancel_action;
+
+  /// No description provided for @repair_no_show_confirm_title.
+  String get repair_no_show_confirm_title;
+
+  /// No description provided for @repair_no_show_confirm_body.
+  String get repair_no_show_confirm_body;
+
+  /// No description provided for @repair_no_show_action.
+  String get repair_no_show_action;
+
+  /// No description provided for @repair_my_bookings_title.
+  String get repair_my_bookings_title;
+
+  /// No description provided for @repair_my_bookings_empty.
+  String get repair_my_bookings_empty;
+
+  /// No description provided for @repair_staff_title.
+  String get repair_staff_title;
+
+  /// No description provided for @repair_staff_pitch.
+  String get repair_staff_pitch;
+
+  /// No description provided for @repair_staff_pick_garage.
+  String get repair_staff_pick_garage;
+
+  /// No description provided for @repair_staff_payout_phone_label.
+  String get repair_staff_payout_phone_label;
+
+  /// No description provided for @repair_staff_missing_fields.
+  String get repair_staff_missing_fields;
+
+  /// No description provided for @repair_staff_register_button.
+  String get repair_staff_register_button;
+
+  /// No description provided for @repair_staff_dashboard_button.
+  String get repair_staff_dashboard_button;
+
+  /// No description provided for @repair_staff_search_garage_hint.
+  String get repair_staff_search_garage_hint;
+
+  /// No description provided for @repair_dashboard_empty.
+  String get repair_dashboard_empty;
+
+  /// No description provided for @repair_no_description.
+  String get repair_no_description;
+
+  /// No description provided for @repair_refuse_action.
+  String get repair_refuse_action;
+
+  /// No description provided for @repair_accept_action.
+  String get repair_accept_action;
+
+  /// No description provided for @repair_start_action.
+  String get repair_start_action;
+
+  /// No description provided for @repair_complete_action.
+  String get repair_complete_action;
+
+  /// No description provided for @repair_complete_dialog_title.
+  String get repair_complete_dialog_title;
+
+  /// No description provided for @repair_client_pin_label.
+  String get repair_client_pin_label;
+
   /// No description provided for @applock_toggle_label.
   ///
   /// In en, this message translates to:

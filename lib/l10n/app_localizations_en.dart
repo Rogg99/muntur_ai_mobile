@@ -1536,6 +1536,132 @@ class AppLocalizationsEn extends AppLocalizations {
   String get message_action_not_useful => 'Not useful';
 
   @override
+  String get repair_book_action => 'Drop off my car';
+
+  @override
+  String get repair_create_intro =>
+      'Describe the issue (optional), then pay the deposit to send your request to the garage.';
+
+  @override
+  String get repair_description_label => 'Description';
+
+  @override
+  String get repair_description_hint => 'e.g. strange noise when braking';
+
+  @override
+  String get repair_deposit_label => 'Deposit';
+
+  @override
+  String get repair_deposit_notice =>
+      'Refunded in full if the garage declines, if you cancel before they respond, or if they never showed up.';
+
+  @override
+  String get repair_pay_deposit_button => 'Pay the deposit';
+
+  @override
+  String get repair_status_pending => 'Awaiting garage response';
+
+  @override
+  String get repair_status_accepted => 'Accepted';
+
+  @override
+  String get repair_status_in_progress => 'In progress';
+
+  @override
+  String get repair_status_completed => 'Completed';
+
+  @override
+  String get repair_status_cancelled => 'Cancelled';
+
+  @override
+  String get repair_status_refused => 'Declined';
+
+  @override
+  String get repair_tracking_title => 'Repair booking';
+
+  @override
+  String get repair_load_error => 'Unable to load this booking';
+
+  @override
+  String get repair_completion_code_title => 'Completion code';
+
+  @override
+  String get repair_completion_code_warning =>
+      'Only give this code to the garage once your car is actually picked up, fixed and ready.';
+
+  @override
+  String get repair_cancel_confirm_title => 'Cancel this booking?';
+
+  @override
+  String get repair_cancel_action => 'Cancel booking';
+
+  @override
+  String get repair_no_show_confirm_title => 'Garage never showed up?';
+
+  @override
+  String get repair_no_show_confirm_body =>
+      'This cancels the booking and refunds your deposit in full.';
+
+  @override
+  String get repair_no_show_action => 'Report no-show';
+
+  @override
+  String get repair_my_bookings_title => 'My repair bookings';
+
+  @override
+  String get repair_my_bookings_empty => 'No repair bookings yet';
+
+  @override
+  String get repair_staff_title => 'Garage staff';
+
+  @override
+  String get repair_staff_pitch =>
+      'Register as staff for a garage to receive and manage repair bookings.';
+
+  @override
+  String get repair_staff_pick_garage => 'Choose your garage';
+
+  @override
+  String get repair_staff_payout_phone_label => 'Payout Mobile Money number';
+
+  @override
+  String get repair_staff_missing_fields =>
+      'Choose a garage and enter a payout number';
+
+  @override
+  String get repair_staff_register_button => 'Register';
+
+  @override
+  String get repair_staff_dashboard_button => 'Bookings dashboard';
+
+  @override
+  String get repair_staff_search_garage_hint => 'Search for a garage';
+
+  @override
+  String get repair_dashboard_empty => 'No bookings yet';
+
+  @override
+  String get repair_no_description => 'No description provided';
+
+  @override
+  String get repair_refuse_action => 'Decline';
+
+  @override
+  String get repair_accept_action => 'Accept';
+
+  @override
+  String get repair_start_action => 'Start repair';
+
+  @override
+  String get repair_complete_action => 'Complete (PIN)';
+
+  @override
+  String get repair_complete_dialog_title => "Enter the client's completion code";
+
+  @override
+  String get repair_client_pin_label => 'Completion code';
+
+  @override
   String get applock_toggle_label => 'Biometric/PIN lock';
 
   @override

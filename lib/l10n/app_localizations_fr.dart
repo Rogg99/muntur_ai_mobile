@@ -1549,6 +1549,134 @@ class AppLocalizationsFr extends AppLocalizations {
   String get message_action_not_useful => 'Pas utile';
 
   @override
+  String get repair_book_action => 'Déposer ma voiture';
+
+  @override
+  String get repair_create_intro =>
+      "Décrivez le problème (optionnel), puis payez l'acompte pour envoyer votre demande au garage.";
+
+  @override
+  String get repair_description_label => 'Description';
+
+  @override
+  String get repair_description_hint => 'ex. bruit étrange au freinage';
+
+  @override
+  String get repair_deposit_label => 'Acompte';
+
+  @override
+  String get repair_deposit_notice =>
+      "Remboursé intégralement si le garage refuse, si vous annulez avant sa réponse, ou s'il ne se présente pas.";
+
+  @override
+  String get repair_pay_deposit_button => "Payer l'acompte";
+
+  @override
+  String get repair_status_pending => 'En attente de réponse du garage';
+
+  @override
+  String get repair_status_accepted => 'Accepté';
+
+  @override
+  String get repair_status_in_progress => 'En cours';
+
+  @override
+  String get repair_status_completed => 'Terminé';
+
+  @override
+  String get repair_status_cancelled => 'Annulé';
+
+  @override
+  String get repair_status_refused => 'Refusé';
+
+  @override
+  String get repair_tracking_title => 'Dépôt réparation';
+
+  @override
+  String get repair_load_error => 'Impossible de charger ce dépôt';
+
+  @override
+  String get repair_completion_code_title => 'Code de fin de réparation';
+
+  @override
+  String get repair_completion_code_warning =>
+      'Ne donnez ce code au garage que lorsque votre voiture est bien récupérée, réparée et prête.';
+
+  @override
+  String get repair_cancel_confirm_title => 'Annuler ce dépôt ?';
+
+  @override
+  String get repair_cancel_action => 'Annuler le dépôt';
+
+  @override
+  String get repair_no_show_confirm_title => "Le garage ne s'est pas présenté ?";
+
+  @override
+  String get repair_no_show_confirm_body =>
+      'Ceci annule le dépôt et vous rembourse intégralement.';
+
+  @override
+  String get repair_no_show_action => 'Signaler une absence';
+
+  @override
+  String get repair_my_bookings_title => 'Mes dépôts réparation';
+
+  @override
+  String get repair_my_bookings_empty => "Aucun dépôt réparation pour l'instant";
+
+  @override
+  String get repair_staff_title => 'Personnel garage';
+
+  @override
+  String get repair_staff_pitch =>
+      "Inscrivez-vous comme personnel d'un garage pour recevoir et gérer les dépôts réparation.";
+
+  @override
+  String get repair_staff_pick_garage => 'Choisir votre garage';
+
+  @override
+  String get repair_staff_payout_phone_label =>
+      'Numéro Mobile Money de versement';
+
+  @override
+  String get repair_staff_missing_fields =>
+      'Choisissez un garage et renseignez un numéro de versement';
+
+  @override
+  String get repair_staff_register_button => "S'inscrire";
+
+  @override
+  String get repair_staff_dashboard_button => 'Tableau de bord des dépôts';
+
+  @override
+  String get repair_staff_search_garage_hint => 'Rechercher un garage';
+
+  @override
+  String get repair_dashboard_empty => "Aucun dépôt pour l'instant";
+
+  @override
+  String get repair_no_description => 'Aucune description fournie';
+
+  @override
+  String get repair_refuse_action => 'Refuser';
+
+  @override
+  String get repair_accept_action => 'Accepter';
+
+  @override
+  String get repair_start_action => 'Démarrer la réparation';
+
+  @override
+  String get repair_complete_action => 'Terminer (code)';
+
+  @override
+  String get repair_complete_dialog_title =>
+      'Entrez le code de fin fourni par le client';
+
+  @override
+  String get repair_client_pin_label => 'Code de fin';
+
+  @override
   String get applock_toggle_label => 'Verrou biométrie/PIN';
 
   @override
