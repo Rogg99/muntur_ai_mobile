@@ -1662,6 +1662,126 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repair_client_pin_label => 'Completion code';
 
   @override
+  String get collect_agent_title => 'Field collect agent';
+
+  @override
+  String get collect_agent_load_error => 'Unable to load';
+
+  @override
+  String get collect_agent_pitch =>
+      'Become a field collect agent: report breakdowns and garages you encounter in the field, after an identity check.';
+
+  @override
+  String get collect_agent_apply_button => 'Apply';
+
+  @override
+  String get collect_agent_reapply_button => 'Re-apply';
+
+  @override
+  String get collect_agent_pending_notice => 'Your application is being reviewed.';
+
+  @override
+  String get collect_agent_rejected_notice => 'Your application was declined.';
+
+  @override
+  String get collect_agent_approved_notice => "You're an approved collect agent.";
+
+  @override
+  String get collect_agent_apply_title => 'Agent application';
+
+  @override
+  String get collect_agent_apply_intro =>
+      'Take a photo of your ID (front and back) and 3 selfies (face, left profile, right profile) for identity verification.';
+
+  @override
+  String get collect_agent_apply_submit => 'Submit application';
+
+  @override
+  String get collect_agent_cni_front => 'ID card — front';
+
+  @override
+  String get collect_agent_cni_back => 'ID card — back';
+
+  @override
+  String get collect_agent_selfie_face => 'Selfie — face';
+
+  @override
+  String get collect_agent_selfie_left => 'Selfie — left profile';
+
+  @override
+  String get collect_agent_selfie_right => 'Selfie — right profile';
+
+  @override
+  String get collect_agent_submit_panne_button => 'Report a breakdown';
+
+  @override
+  String get collect_agent_submit_garage_button => 'Report a garage';
+
+  @override
+  String get collect_agent_my_submissions_title => 'My submissions';
+
+  @override
+  String get collect_agent_my_submissions_empty => 'No submissions yet';
+
+  @override
+  String get collect_agent_panne_cases_section => 'Breakdowns reported';
+
+  @override
+  String get collect_agent_garages_section => 'Garages reported';
+
+  @override
+  String get collect_agent_status_pending => 'Pending';
+
+  @override
+  String get collect_agent_status_approved => 'Approved';
+
+  @override
+  String get collect_agent_status_rejected => 'Rejected';
+
+  @override
+  String get collect_agent_vehicle_label => 'Vehicle';
+
+  @override
+  String get collect_agent_type_label => 'Breakdown type';
+
+  @override
+  String get collect_agent_reparation_label => 'Repair needed';
+
+  @override
+  String get collect_agent_ville_label => 'City';
+
+  @override
+  String get collect_agent_submission_submit => 'Submit';
+
+  @override
+  String get collect_agent_submission_sent => 'Submission sent, thank you';
+
+  @override
+  String get collect_agent_locating => 'Locating…';
+
+  @override
+  String get collect_agent_location_captured => 'Location captured';
+
+  @override
+  String get collect_agent_location_missing => 'Location unavailable';
+
+  @override
+  String get collect_agent_garage_missing_fields =>
+      'Name, phone and location are required';
+
+  @override
+  String get collect_agent_garage_name_label => 'Garage name';
+
+  @override
+  String get collect_agent_garage_phone1_label => 'Phone 1';
+
+  @override
+  String get collect_agent_garage_phone2_label => 'Phone 2 (optional)';
+
+  @override
+  String get collect_agent_garage_email_label => 'Email (optional)';
+
+  @override
   String get applock_toggle_label => 'Biometric/PIN lock';
 
   @override

@@ -1677,6 +1677,127 @@ class AppLocalizationsFr extends AppLocalizations {
   String get repair_client_pin_label => 'Code de fin';
 
   @override
+  String get collect_agent_title => 'Agent collecteur terrain';
+
+  @override
+  String get collect_agent_load_error => 'Impossible de charger';
+
+  @override
+  String get collect_agent_pitch =>
+      "Devenez agent collecteur terrain : signalez les pannes et garages que vous rencontrez sur le terrain, après vérification d'identité.";
+
+  @override
+  String get collect_agent_apply_button => 'Postuler';
+
+  @override
+  String get collect_agent_reapply_button => 'Repostuler';
+
+  @override
+  String get collect_agent_pending_notice =>
+      "Votre candidature est en cours d'examen.";
+
+  @override
+  String get collect_agent_rejected_notice => 'Votre candidature a été refusée.';
+
+  @override
+  String get collect_agent_approved_notice => 'Vous êtes agent collecteur approuvé.';
+
+  @override
+  String get collect_agent_apply_title => 'Candidature agent';
+
+  @override
+  String get collect_agent_apply_intro =>
+      "Prenez une photo de votre CNI (recto et verso) et 3 selfies (face, profil gauche, profil droit) pour la vérification d'identité.";
+
+  @override
+  String get collect_agent_apply_submit => 'Envoyer la candidature';
+
+  @override
+  String get collect_agent_cni_front => 'CNI — recto';
+
+  @override
+  String get collect_agent_cni_back => 'CNI — verso';
+
+  @override
+  String get collect_agent_selfie_face => 'Selfie — face';
+
+  @override
+  String get collect_agent_selfie_left => 'Selfie — profil gauche';
+
+  @override
+  String get collect_agent_selfie_right => 'Selfie — profil droit';
+
+  @override
+  String get collect_agent_submit_panne_button => 'Signaler une panne';
+
+  @override
+  String get collect_agent_submit_garage_button => 'Signaler un garage';
+
+  @override
+  String get collect_agent_my_submissions_title => 'Mes soumissions';
+
+  @override
+  String get collect_agent_my_submissions_empty => "Aucune soumission pour l'instant";
+
+  @override
+  String get collect_agent_panne_cases_section => 'Pannes signalées';
+
+  @override
+  String get collect_agent_garages_section => 'Garages signalés';
+
+  @override
+  String get collect_agent_status_pending => 'En attente';
+
+  @override
+  String get collect_agent_status_approved => 'Approuvé';
+
+  @override
+  String get collect_agent_status_rejected => 'Rejeté';
+
+  @override
+  String get collect_agent_vehicle_label => 'Véhicule';
+
+  @override
+  String get collect_agent_type_label => 'Type de panne';
+
+  @override
+  String get collect_agent_reparation_label => 'Réparation nécessaire';
+
+  @override
+  String get collect_agent_ville_label => 'Ville';
+
+  @override
+  String get collect_agent_submission_submit => 'Envoyer';
+
+  @override
+  String get collect_agent_submission_sent => 'Soumission envoyée, merci';
+
+  @override
+  String get collect_agent_locating => 'Localisation en cours…';
+
+  @override
+  String get collect_agent_location_captured => 'Position capturée';
+
+  @override
+  String get collect_agent_location_missing => 'Position indisponible';
+
+  @override
+  String get collect_agent_garage_missing_fields =>
+      'Le nom, le téléphone et la position sont requis';
+
+  @override
+  String get collect_agent_garage_name_label => 'Nom du garage';
+
+  @override
+  String get collect_agent_garage_phone1_label => 'Téléphone 1';
+
+  @override
+  String get collect_agent_garage_phone2_label => 'Téléphone 2 (optionnel)';
+
+  @override
+  String get collect_agent_garage_email_label => 'Email (optionnel)';
+
+  @override
   String get applock_toggle_label => 'Verrou biométrie/PIN';
 
   @override

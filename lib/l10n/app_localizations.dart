@@ -3158,6 +3158,123 @@ abstract class AppLocalizations {
   /// No description provided for @repair_client_pin_label.
   String get repair_client_pin_label;
 
+  /// No description provided for @collect_agent_title.
+  String get collect_agent_title;
+
+  /// No description provided for @collect_agent_load_error.
+  String get collect_agent_load_error;
+
+  /// No description provided for @collect_agent_pitch.
+  String get collect_agent_pitch;
+
+  /// No description provided for @collect_agent_apply_button.
+  String get collect_agent_apply_button;
+
+  /// No description provided for @collect_agent_reapply_button.
+  String get collect_agent_reapply_button;
+
+  /// No description provided for @collect_agent_pending_notice.
+  String get collect_agent_pending_notice;
+
+  /// No description provided for @collect_agent_rejected_notice.
+  String get collect_agent_rejected_notice;
+
+  /// No description provided for @collect_agent_approved_notice.
+  String get collect_agent_approved_notice;
+
+  /// No description provided for @collect_agent_apply_title.
+  String get collect_agent_apply_title;
+
+  /// No description provided for @collect_agent_apply_intro.
+  String get collect_agent_apply_intro;
+
+  /// No description provided for @collect_agent_apply_submit.
+  String get collect_agent_apply_submit;
+
+  /// No description provided for @collect_agent_cni_front.
+  String get collect_agent_cni_front;
+
+  /// No description provided for @collect_agent_cni_back.
+  String get collect_agent_cni_back;
+
+  /// No description provided for @collect_agent_selfie_face.
+  String get collect_agent_selfie_face;
+
+  /// No description provided for @collect_agent_selfie_left.
+  String get collect_agent_selfie_left;
+
+  /// No description provided for @collect_agent_selfie_right.
+  String get collect_agent_selfie_right;
+
+  /// No description provided for @collect_agent_submit_panne_button.
+  String get collect_agent_submit_panne_button;
+
+  /// No description provided for @collect_agent_submit_garage_button.
+  String get collect_agent_submit_garage_button;
+
+  /// No description provided for @collect_agent_my_submissions_title.
+  String get collect_agent_my_submissions_title;
+
+  /// No description provided for @collect_agent_my_submissions_empty.
+  String get collect_agent_my_submissions_empty;
+
+  /// No description provided for @collect_agent_panne_cases_section.
+  String get collect_agent_panne_cases_section;
+
+  /// No description provided for @collect_agent_garages_section.
+  String get collect_agent_garages_section;
+
+  /// No description provided for @collect_agent_status_pending.
+  String get collect_agent_status_pending;
+
+  /// No description provided for @collect_agent_status_approved.
+  String get collect_agent_status_approved;
+
+  /// No description provided for @collect_agent_status_rejected.
+  String get collect_agent_status_rejected;
+
+  /// No description provided for @collect_agent_vehicle_label.
+  String get collect_agent_vehicle_label;
+
+  /// No description provided for @collect_agent_type_label.
+  String get collect_agent_type_label;
+
+  /// No description provided for @collect_agent_reparation_label.
+  String get collect_agent_reparation_label;
+
+  /// No description provided for @collect_agent_ville_label.
+  String get collect_agent_ville_label;
+
+  /// No description provided for @collect_agent_submission_submit.
+  String get collect_agent_submission_submit;
+
+  /// No description provided for @collect_agent_submission_sent.
+  String get collect_agent_submission_sent;
+
+  /// No description provided for @collect_agent_locating.
+  String get collect_agent_locating;
+
+  /// No description provided for @collect_agent_location_captured.
+  String get collect_agent_location_captured;
+
+  /// No description provided for @collect_agent_location_missing.
+  String get collect_agent_location_missing;
+
+  /// No description provided for @collect_agent_garage_missing_fields.
+  String get collect_agent_garage_missing_fields;
+
+  /// No description provided for @collect_agent_garage_name_label.
+  String get collect_agent_garage_name_label;
+
+  /// No description provided for @collect_agent_garage_phone1_label.
+  String get collect_agent_garage_phone1_label;
+
+  /// No description provided for @collect_agent_garage_phone2_label.
+  String get collect_agent_garage_phone2_label;
+
+  /// No description provided for @collect_agent_garage_email_label.
+  String get collect_agent_garage_email_label;
+
   /// No description provided for @applock_toggle_label.
   ///
   /// In en, this message translates to:
