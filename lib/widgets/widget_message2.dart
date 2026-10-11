@@ -191,10 +191,10 @@ class MessageWidget2_ extends State<MessageWidget2> {
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 3.0),
-                                child: Text(message!.contenu,
-                                    maxLines: null,
-                                    textAlign: TextAlign.left,
-                                    style: appStyle.H5(color: bubbleTextColor)),
+                                child: _FormattedText(
+                                  text: message!.contenu,
+                                  baseStyle: appStyle.H5(color: bubbleTextColor),
+                                ),
                               ),
                             ),
                           if (message!.relatedArticle != 'null' &&
@@ -340,6 +340,64 @@ class MessageWidget2_ extends State<MessageWidget2> {
       duree = DateTime.fromMillisecondsSinceEpoch(time.toInt() * 1000)
           .format('MM/dd');
     return duree;
+  }
+}
+
+/// Renders a lightweight subset of Markdown the AI's replies commonly use
+/// (**bold**, *italic*/_italic_, `code`) as a styled RichText — the
+/// backend sometimes answers with raw Markdown syntax that a plain Text
+/// widget showed literally (stray "**" in the bubble) instead of actually
+/// bolding anything. Deliberately not a full Markdown renderer (no
+/// headings/lists/links) — chat replies are short, inline emphasis is what
+/// actually shows up, and a real renderer would need its own package.
+class _FormattedText extends StatelessWidget {
+  final String text;
+  final TextStyle baseStyle;
+
+  const _FormattedText({required this.text, required this.baseStyle});
+
+  static final RegExp _token = RegExp(
+    r'\*\*(.+?)\*\*|\*(.+?)\*|_(.+?)_|`(.+?)`',
+    dotAll: true,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final spans = <InlineSpan>[];
+    var lastEnd = 0;
+    for (final match in _token.allMatches(text)) {
+      if (match.start > lastEnd) {
+        spans.add(TextSpan(text: text.substring(lastEnd, match.start)));
+      }
+      if (match.group(1) != null) {
+        // **bold**
+        spans.add(TextSpan(
+          text: match.group(1),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ));
+      } else if (match.group(2) != null || match.group(3) != null) {
+        // *italic* or _italic_
+        spans.add(TextSpan(
+          text: match.group(2) ?? match.group(3),
+          style: const TextStyle(fontStyle: FontStyle.italic),
+        ));
+      } else if (match.group(4) != null) {
+        // `code`
+        spans.add(TextSpan(
+          text: match.group(4),
+          style: const TextStyle(fontFamily: 'monospace'),
+        ));
+      }
+      lastEnd = match.end;
+    }
+    if (lastEnd < text.length) {
+      spans.add(TextSpan(text: text.substring(lastEnd)));
+    }
+
+    return RichText(
+      textAlign: TextAlign.left,
+      text: TextSpan(style: baseStyle, children: spans),
+    );
   }
 }
 
