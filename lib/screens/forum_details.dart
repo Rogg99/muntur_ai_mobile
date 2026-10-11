@@ -58,7 +58,7 @@ class ForumDetailsScreen extends ConsumerWidget {
                 detailAsync.when(
                   data: (detail) => Text(
                     detail?.membersCount != null
-                        ? translator.forum_members_count(detail!.membersCount,
+                        ? translator.forum_members_count(detail!.membersCount!,
                             detail.membersCount! > 1 ? 's' : '')
                         : translator.forum_group_label,
                     style: appStyle.H6(color: colorScheme.onSurfaceVariant),
