@@ -163,7 +163,7 @@ class ChatbotRepositoryImpl {
   /// event, not in this response. Returns the real discussion id the message
   /// was filed under (relevant when [discussionId] was null/'auto' and the
   /// backend had to create one).
-  Future<({MessageModel message, String discId})?> askQuestion(
+  Future<({MessageModel message, String discId, String? title})?> askQuestion(
       {String query = '',
       String? discussionId,
       List<MediaRef> media = const [],
@@ -217,7 +217,15 @@ class ChatbotRepositoryImpl {
           await isar.messageModels.put(confirmedMessage);
         });
 
-        return (message: confirmedMessage, discId: discId);
+        // Empty string for a voice-only first message (no text yet to
+        // derive a title from) — backfilled later via the
+        // discussion_message_updated WS push, not something to show yet.
+        final title = data['title']?.toString();
+        return (
+          message: confirmedMessage,
+          discId: discId,
+          title: (title != null && title.isNotEmpty) ? title : null,
+        );
       }
     } catch (e) {
       // Leave tempMessage as pending_sync for Background SyncService

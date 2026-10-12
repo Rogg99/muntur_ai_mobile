@@ -36,6 +36,7 @@ List<DiscussionModel>? _applyIncomingPreview(
   required String contenu,
   required String lastWriter,
   required DateTime dateEnvoi,
+  String? title,
 }) {
   final index = current.indexWhere((d) => d.id == discId);
   if (index == -1) return null;
@@ -47,6 +48,10 @@ List<DiscussionModel>? _applyIncomingPreview(
       last_message: contenu,
       last_date: dateEnvoi.toIso8601String(),
       last_writer: lastWriter,
+      // Only ever a real backfilled title here (voice-only first message,
+      // see RealtimeDispatcher's discussion_message_updated case) — never
+      // overwrite with empty/null.
+      title: (title != null && title.isNotEmpty) ? title : null,
     ),
   );
   return updated;
@@ -83,11 +88,16 @@ class Discussions extends _$Discussions {
     required String contenu,
     required String lastWriter,
     required DateTime dateEnvoi,
+    String? title,
   }) {
     final current = state.value;
     if (current == null) return;
     final updated = _applyIncomingPreview(current,
-        discId: discId, contenu: contenu, lastWriter: lastWriter, dateEnvoi: dateEnvoi);
+        discId: discId,
+        contenu: contenu,
+        lastWriter: lastWriter,
+        dateEnvoi: dateEnvoi,
+        title: title);
     if (updated == null) {
       refresh();
       return;
@@ -203,17 +213,19 @@ class ChatMessages extends _$ChatMessages {
   /// refetches the thread once the reply lands.
   /// Returns the discussion's real backend id once the send completes (which
   /// may differ from [discussionId] when this was 'new' — see the note
-  /// below), or null if the send never completed. The caller needs this to
-  /// re-key onto the discussion that will actually receive the AI's WS-pushed
-  /// reply.
-  Future<String?> askQuestion(
+  /// below) and the server-derived title (null for a voice-only first
+  /// message — backfilled later via a `discussion_message_updated` WS
+  /// push, see RealtimeDispatcher), or (null, null) if the send never
+  /// completed. The caller needs discId to re-key onto the discussion that
+  /// will actually receive the AI's WS-pushed reply.
+  Future<({String? discId, String? title})> askQuestion(
     String query, {
     List<MediaRef> media = const [],
     double? latitude,
     double? longitude,
   }) async {
     final trimmed = query.trim();
-    if (trimmed.isEmpty && media.isEmpty) return null;
+    if (trimmed.isEmpty && media.isEmpty) return (discId: null, title: null);
 
     // Was hardcoded to the literal string 'user' — since rendering decides
     // which side a bubble goes on by comparing this against the real
@@ -259,12 +271,12 @@ class ChatMessages extends _$ChatMessages {
         if (discussionId == 'new' && result.discId != 'new') {
           ref.invalidate(discussionsProvider);
         }
-        return result.discId;
+        return (discId: result.discId, title: result.title);
       }
     } catch (e) {
       // Message stays as pendingSync=true — SyncService will retry
     }
-    return null;
+    return (discId: null, title: null);
   }
 
   /// Sends a message to a forum discussion (no AI response expected).

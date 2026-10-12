@@ -78,11 +78,16 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
           final discId = message.discId != 'none' ? message.discId : null;
           if (discId != null) {
             ref.read(chatMessagesProvider(discId).notifier).applyIncoming(message);
+            // Only ever non-empty here for the voice-only-first-message
+            // backfill (title couldn't be derived at send time, no text
+            // yet) — the normal text-message case already gets its title
+            // from askQuestion's own response, see ChatView._handleSend.
             ref.read(discussionsProvider.notifier).applyIncomingMessage(
                   discId: discId,
                   contenu: message.contenu,
                   lastWriter: message.senderId,
                   dateEnvoi: message.dateEnvoi,
+                  title: data['title']?.toString(),
                 );
           }
         }

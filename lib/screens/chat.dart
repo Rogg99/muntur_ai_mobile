@@ -102,6 +102,15 @@ class _ChatViewState extends ConsumerState<ChatView> {
   // instance instead of appearing here.
   late String _discId = widget.disc?.id ?? 'new';
 
+  // Title is derived server-side once, synchronously, at the FIRST text
+  // message of a brand-new discussion (not after the AI's reply, despite
+  // how that might look from a ChatGPT-style UX) — askQuestion's response
+  // already carries it for that case; null if the first message was
+  // voice-only (no text yet to derive from), backfilled later via a
+  // discussion_message_updated WS push (see RealtimeDispatcher). Null
+  // otherwise means "use widget.disc?.title", not "no title".
+  String? _liveTitle;
+
   // Must be ref.watch, not ref.read: authStateProvider is a plain (autoDispose)
   // provider, so a bare read() drops it the moment this call returns and the
   // next access rebuilds it from scratch — re-fetching the profile and
@@ -298,7 +307,7 @@ class _ChatViewState extends ConsumerState<ChatView> {
         position = await Geolocator.getLastKnownPosition();
       } catch (_) {}
       final sentDiscId = _discId;
-      final realDiscId = await ref
+      final (discId: realDiscId, title: serverTitle) = await ref
           .read(chatMessagesProvider(_discId).notifier)
           .askQuestion(
             text,
@@ -314,7 +323,13 @@ class _ChatViewState extends ConsumerState<ChatView> {
           realDiscId != null &&
           realDiscId != 'new' &&
           _discId == 'new') {
-        setState(() => _discId = realDiscId);
+        setState(() {
+          _discId = realDiscId;
+          // Null only for a voice-only first message — backfilled later
+          // via the discussion_message_updated WS push, see
+          // RealtimeDispatcher/_liveTitle's declaration.
+          if (serverTitle != null) _liveTitle = serverTitle;
+        });
       }
     } finally {
       if (mounted) setState(() => _sending = false);
@@ -479,6 +494,17 @@ class _ChatViewState extends ConsumerState<ChatView> {
     final translator = AppLocalizations.of(context)!;
     final messagesState = ref.watch(chatMessagesProvider(_discId));
 
+    // Covers the rare voice-only-first-message case: its title isn't known
+    // until the transcript backfill lands (RealtimeDispatcher's
+    // discussion_message_updated -> discussionsProvider), which this
+    // screen doesn't otherwise watch. Takes priority over _liveTitle only
+    // because that field is null in exactly this case (see its own
+    // declaration) — never actually conflicts.
+    final matchingDiscussions = (ref.watch(discussionsProvider).valueOrNull ?? const [])
+        .where((d) => d.id == _discId);
+    final backfilledTitle =
+        matchingDiscussions.isEmpty ? null : matchingDiscussions.first.title;
+
     // Clears the typing bubble as soon as the AI's reply actually lands
     // (pushed via WS as a new message from someone other than this user),
     // rather than tying it to the 202 Accepted response — see
@@ -560,7 +586,10 @@ class _ChatViewState extends ConsumerState<ChatView> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(
-        titleTxt: widget.disc?.title ?? translator.newDiscussion,
+        titleTxt: _liveTitle ??
+            backfilledTitle ??
+            widget.disc?.title ??
+            translator.newDiscussion,
         actions: [
           IconButton(
             icon: const Icon(Icons.map_outlined),
