@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/marketplace/data/models/marketplace_models.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
+import 'package:munturai/screens/map_point_picker.dart';
 import 'package:munturai/screens/marketplace_order_tracking.dart';
 import 'package:munturai/screens/payment_screen.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
@@ -35,6 +37,11 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
   // buyer taps "Payer" (e.g. after a failed MoMo attempt they retry).
   MarketplaceOrder? _order;
 
+  // Delivery point chosen on the map (Doc/17 §2.1) — optional during the
+  // transition; without it the delivery is still tracked, just with no
+  // route/ETA for the dropoff leg.
+  LatLng? _deliveryPoint;
+
   double get _total => widget.part.price * _quantity;
 
   Future<MarketplaceOrder> _ensureOrder() async {
@@ -44,9 +51,33 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
     final order = await repo.createOrder(
       partId: widget.part.id,
       quantity: _quantity,
+      deliveryAddress: _deliveryPoint == null
+          ? const {}
+          : {
+              'latitude': double.parse(_deliveryPoint!.latitude.toStringAsFixed(6)),
+              'longitude': double.parse(_deliveryPoint!.longitude.toStringAsFixed(6)),
+            },
     );
     _order = order;
     return order;
+  }
+
+  Future<void> _pickDeliveryPoint() async {
+    final l10n = AppLocalizations.of(context)!;
+    final point = await Navigator.push<LatLng>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MapPointPicker(
+          title: l10n.checkout_delivery_point_title,
+          initialPoint: _deliveryPoint,
+        ),
+      ),
+    );
+    if (point == null || !mounted) return;
+    setState(() {
+      _deliveryPoint = point;
+      _order = null; // address changed → the order must carry the new one
+    });
   }
 
   Future<void> _proceedToPayment() async {
@@ -151,6 +182,20 @@ class _MarketplaceCheckoutState extends ConsumerState<MarketplaceCheckout> {
                 ],
               ),
             ],
+          ),
+          const Divider(height: 32),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.location_on_outlined, color: colorScheme.primary),
+            title: Text(l10n.checkout_delivery_point_label, style: appStyle.H5()),
+            subtitle: Text(
+              _deliveryPoint == null
+                  ? l10n.checkout_delivery_point_none
+                  : l10n.checkout_delivery_point_set,
+              style: appStyle.H6(color: Colors.grey),
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: _pickDeliveryPoint,
           ),
           const Divider(height: 32),
           Row(

@@ -8,6 +8,8 @@ import 'package:munturai/features/marketplace/presentation/providers/marketplace
 import 'package:munturai/screens/courier_vendor_delivery.dart';
 import 'package:munturai/screens/marketplace_kyc.dart';
 import 'package:munturai/screens/marketplace_part_form.dart';
+import 'package:munturai/core/services/tracking_location_service.dart';
+import 'package:munturai/screens/tracking_live_screen.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
 Map<String, String> _statusLabels(AppLocalizations l10n) => {
@@ -305,6 +307,50 @@ class _ReceivedOrderTile extends ConsumerWidget {
     }
   }
 
+  /// Vendor delivers it themselves (Doc/17 `vendor_self`): their own
+  /// position is shared with the buyer until the delivery ends.
+  Future<void> _startSelfDelivery(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.self_delivery_confirm_title),
+        content: Text(l10n.self_delivery_confirm_body),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l10n.cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(l10n.self_delivery_start)),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    try {
+      await ref.read(courierRepositoryProvider).startSelfDelivery(order.id);
+      // Started right away from the foreground (required for background
+      // location); tracking_started would also trigger it via the dispatcher.
+      final sharing = await TrackingLocationService().resumeActiveMission(
+        notificationTitle: l10n.tracking_notification_title,
+        notificationText: l10n.tracking_notification_text,
+      );
+      ref.invalidate(marketplaceVendorDashboardProvider);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(sharing
+            ? l10n.self_delivery_started
+            : l10n.tracking_location_unavailable),
+      ));
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
@@ -348,6 +394,38 @@ class _ReceivedOrderTile extends ConsumerWidget {
                   ),
                 ),
               ],
+            ),
+            if (order.trackingMissionId == null) ...[
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.two_wheeler),
+                  onPressed: () => _startSelfDelivery(context, ref),
+                  label: Text(l10n.self_delivery_button),
+                ),
+              ),
+            ],
+          ],
+          // Courier coming to the shop (pickup leg), or the vendor's own
+          // vendor_self run — Doc/17 §7.
+          if (order.trackingMissionId != null) ...[
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.map_outlined),
+                label: Text(l10n.tracking_follow_live),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TrackingLiveScreen(
+                      missionId: order.trackingMissionId!,
+                      viewerIsVendor: true,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ],

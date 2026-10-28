@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/repair/presentation/providers/repair_provider.dart';
+import 'package:munturai/screens/tracking_live_screen.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
 Map<String, String> _repairStatusLabels(AppLocalizations l10n) => {
@@ -150,6 +151,23 @@ class _RepairBookingTrackingState extends ConsumerState<RepairBookingTracking> {
                 if (booking.description.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   Text(booking.description, style: appStyle.H6()),
+                ],
+                // on_site visit: the mechanic's trip to the client (Doc/17).
+                if (booking.trackingMissionId != null) ...[
+                  const SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.map_outlined),
+                    label: Text(l10n.tracking_follow_live),
+                    style: OutlinedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(48)),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TrackingLiveScreen(
+                            missionId: booking.trackingMissionId!),
+                      ),
+                    ),
+                  ),
                 ],
                 if (booking.completionPinReveal != null) ...[
                   const SizedBox(height: 20),

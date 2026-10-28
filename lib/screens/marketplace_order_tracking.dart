@@ -8,6 +8,7 @@ import 'package:munturai/features/courier/presentation/providers/courier_provide
 import 'package:munturai/features/marketplace/data/models/marketplace_models.dart';
 import 'package:munturai/features/marketplace/presentation/providers/marketplace_provider.dart';
 import 'package:munturai/screens/courier_qr_scan.dart';
+import 'package:munturai/screens/tracking_live_screen.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
 Map<String, String> _deliveryStatusLabels(AppLocalizations l10n) => {
@@ -283,6 +284,27 @@ class _MarketplaceOrderTrackingState extends ConsumerState<MarketplaceOrderTrack
                       ),
                     ),
                   ],
+                ],
+                // Live map while a tracking mission is active (Doc/17) —
+                // courier or vendor_self delivery alike.
+                if ((order.trackingMissionId ?? delivery?.trackingMissionId) != null) ...[
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.map_outlined),
+                      label: Text(l10n.tracking_follow_live),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => TrackingLiveScreen(
+                            missionId: (order.trackingMissionId ??
+                                delivery!.trackingMissionId)!,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
                 if (order.status == 'pending_payment') ...[
                   const SizedBox(height: 16),

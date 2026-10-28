@@ -7,6 +7,7 @@ import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/garages/domain/entities/garage_entity.dart';
 import 'package:munturai/features/garages/presentation/providers/garage_provider.dart';
 import 'package:munturai/screens/garage.dart';
+import 'package:munturai/widgets/osm_tile_layer.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
@@ -200,10 +201,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             ),
             children: [
               // ─── OpenStreetMap tiles ───
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'dev.munturai.stepsindustries.com.munturai',
-              ),
+              osmTileLayer(),
 
               // ─── User position marker ───
               if (_currentPosition != null)

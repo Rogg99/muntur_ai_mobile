@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/services/app_lock_guard.dart';
 import 'package:munturai/features/repair/presentation/providers/repair_provider.dart';
+import 'package:munturai/screens/map_point_picker.dart';
 import 'package:munturai/screens/repair_booking_tracking.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 import 'package:munturai/widgets/primary_button.dart';
@@ -40,6 +42,29 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
   bool _submitting = false;
   String? _error;
 
+  // Doc/17 §2.1: at_garage (default) or on_site — on_site requires the
+  // intervention point, chosen on the map (never the raw GPS fix).
+  String _serviceMode = 'at_garage';
+  LatLng? _clientPoint;
+
+  Future<void> _pickClientPoint() async {
+    final l10n = AppLocalizations.of(context)!;
+    final point = await Navigator.push<LatLng>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MapPointPicker(
+          title: l10n.repair_on_site_point_title,
+          initialPoint: _clientPoint,
+        ),
+      ),
+    );
+    if (point == null || !mounted) return;
+    setState(() {
+      _clientPoint = point;
+      _error = null;
+    });
+  }
+
   @override
   void dispose() {
     _descriptionController.dispose();
@@ -53,6 +78,10 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
 
     final l10n = AppLocalizations.of(context)!;
     final phone = _phoneController.text.trim();
+    if (_serviceMode == 'on_site' && _clientPoint == null) {
+      setState(() => _error = l10n.repair_on_site_point_required);
+      return;
+    }
     if (phone.isEmpty) {
       setState(() => _error = l10n.marketplace_enter_momo_number);
       return;
@@ -67,6 +96,9 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
       final booking = await repo.createBooking(
         garageId: widget.garageId,
         description: _descriptionController.text.trim(),
+        serviceMode: _serviceMode,
+        clientLatitude: _clientPoint?.latitude,
+        clientLongitude: _clientPoint?.longitude,
       );
       await repo.payBooking(booking.id, phone);
       if (!mounted) return;
@@ -101,6 +133,39 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
           Text(widget.garageName, style: appStyle.H4(weight: 'bold')),
           const SizedBox(height: 8),
           Text(l10n.repair_create_intro, style: appStyle.H6(color: Colors.grey)),
+          const SizedBox(height: 20),
+          Text(l10n.repair_service_mode_label, style: appStyle.H5()),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ChoiceChip(
+                label: Text(l10n.repair_mode_at_garage),
+                selected: _serviceMode == 'at_garage',
+                onSelected: (_) => setState(() => _serviceMode = 'at_garage'),
+              ),
+              ChoiceChip(
+                label: Text(l10n.repair_mode_on_site),
+                selected: _serviceMode == 'on_site',
+                onSelected: (_) => setState(() => _serviceMode = 'on_site'),
+              ),
+            ],
+          ),
+          if (_serviceMode == 'on_site')
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.location_on_outlined, color: colorScheme.primary),
+              title: Text(l10n.repair_on_site_point_title, style: appStyle.H5()),
+              subtitle: Text(
+                _clientPoint == null
+                    ? l10n.repair_on_site_point_none
+                    : l10n.checkout_delivery_point_set,
+                style: appStyle.H6(color: Colors.grey),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _pickClientPoint,
+            ),
           const SizedBox(height: 20),
           TextField(
             controller: _descriptionController,
