@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/utils/eta_format.dart';
 import 'package:munturai/features/tracking/data/models/tracking_models.dart';
 import 'package:munturai/features/tracking/presentation/providers/tracking_provider.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
@@ -85,17 +86,11 @@ class _TrackingLiveScreenState extends ConsumerState<TrackingLiveScreen>
 
   String? _etaLabel(TrackingEta? eta) {
     if (eta == null) return null;
-    final parts = <String>[];
-    if (eta.remainingS != null) {
-      final minutes = (eta.remainingS! / 60).ceil().clamp(1, 24 * 60);
-      parts.add('≈ $minutes min');
-    }
-    if (eta.remainingM != null) {
-      parts.add(eta.remainingM! >= 1000
-          ? '${(eta.remainingM! / 1000).toStringAsFixed(1)} km'
-          : '${eta.remainingM!.round()} m');
-    }
-    return parts.isEmpty ? null : parts.join(' · ');
+    return formatEta(
+      remainingS: eta.remainingS,
+      remainingM: eta.remainingM,
+      arrivalAt: eta.arrivalAt,
+    );
   }
 
   @override

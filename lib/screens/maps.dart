@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/services/garage_route_request.dart';
+import 'package:munturai/core/utils/eta_format.dart';
 import 'package:munturai/features/garages/domain/entities/garage_entity.dart';
 import 'package:munturai/features/garages/presentation/providers/garage_provider.dart';
 import 'package:munturai/screens/garage.dart';
@@ -301,16 +302,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   String? _routeSummary() {
     final remainingM = _progress?.remainingM ?? _route?.distanceM;
     final remainingS = _progress?.remainingS ?? _route?.durationS;
-    final parts = <String>[];
-    if (remainingS != null) {
-      parts.add('≈ ${(remainingS / 60).ceil().clamp(1, 24 * 60)} min');
-    }
-    if (remainingM != null) {
-      parts.add(remainingM >= 1000
-          ? '${(remainingM / 1000).toStringAsFixed(1)} km'
-          : '${remainingM.round()} m');
-    }
-    return parts.isEmpty ? null : parts.join(' · ');
+    return formatEta(remainingS: remainingS, remainingM: remainingM);
   }
 
   void _onSearchChanged(String value) {
