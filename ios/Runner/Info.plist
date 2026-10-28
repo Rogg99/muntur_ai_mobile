@@ -53,6 +53,14 @@
 	<string>Autosynx needs access to your photos to let you attach one to a chat message.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Autosynx uses Face ID to confirm it's really you before sensitive actions like payments.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Autosynx uses your location to show nearby garages and parts, and to share your position with your customer during an active delivery or repair visit.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Autosynx keeps sharing your position with your customer while a delivery or repair visit is in progress, even if the app is in the background. Sharing stops automatically when the mission ends.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>GIDClientID</key>
 	<string>413253006066-dsfvem1lq9p0rb7bd0mn9dcofim1ts55.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
