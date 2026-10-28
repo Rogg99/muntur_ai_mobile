@@ -516,7 +516,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 ),
 
               // ─── Garage markers — search matches while searching, nearby
-              // garages otherwise ───
+              // garages otherwise; hidden in route mode, where only the
+              // destination garage (its own marker above) is shown ───
+              if (_routeGarage == null)
               (_searching ? searchAsync : garagesAsync).maybeWhen(
                 data: (garages) => MarkerLayer(
                   markers: [
