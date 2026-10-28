@@ -887,5 +887,9 @@
   "self_delivery_start": "Démarrer la livraison",
   "self_delivery_started": "Livraison démarrée — votre position est partagée avec l'acheteur.",
   "route_load_error": "Impossible de calculer l'itinéraire.",
-  "route_open_external": "Ouvrir dans Google Maps"
+  "route_open_external": "Ouvrir dans Google Maps",
+  "route_start": "Démarrer",
+  "route_stop": "Arrêter",
+  "route_arrived": "Vous êtes arrivé.",
+  "route_close": "Fermer l'itinéraire"
 }

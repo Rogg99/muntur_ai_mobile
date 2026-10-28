@@ -5431,6 +5431,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open in Google Maps'**
   String get route_open_external;
+
+  /// No description provided for @route_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get route_start;
+
+  /// No description provided for @route_stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get route_stop;
+
+  /// No description provided for @route_arrived.
+  ///
+  /// In en, this message translates to:
+  /// **'You have arrived.'**
+  String get route_arrived;
+
+  /// No description provided for @route_close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the route'**
+  String get route_close;
 }
 
 class _AppLocalizationsDelegate

@@ -2695,7 +2695,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get kyc_dashboard_action_button => 'Verify my identity';
 
   @override
-  String get map_picker_hint => 'Move the map to place the pin on the exact spot';
+  String get map_picker_hint =>
+      'Move the map to place the pin on the exact spot';
 
   @override
   String get map_picker_confirm => 'Use this point';
@@ -2707,10 +2708,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkout_delivery_point_label => 'Delivery point';
 
   @override
-  String get checkout_delivery_point_none => 'Not set (optional) — tap to choose on the map';
+  String get checkout_delivery_point_none =>
+      'Not set (optional) — tap to choose on the map';
 
   @override
-  String get checkout_delivery_point_set => 'Point chosen on the map — tap to change';
+  String get checkout_delivery_point_set =>
+      'Point chosen on the map — tap to change';
 
   @override
   String get repair_service_mode_label => 'Where will the repair take place?';
@@ -2728,7 +2731,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repair_on_site_point_none => 'Required — tap to choose on the map';
 
   @override
-  String get repair_on_site_point_required => 'Choose the intervention location on the map.';
+  String get repair_on_site_point_required =>
+      'Choose the intervention location on the map.';
 
   @override
   String get tracking_title => 'Live tracking';
@@ -2743,7 +2747,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tracking_leg_pickup => 'The courier is picking up your part';
 
   @override
-  String get tracking_leg_pickup_vendor => 'The courier is on the way to your shop';
+  String get tracking_leg_pickup_vendor =>
+      'The courier is on the way to your shop';
 
   @override
   String get tracking_leg_dropoff => 'On the way to you';
@@ -2767,10 +2772,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tracking_notification_title => 'Delivery in progress';
 
   @override
-  String get tracking_notification_text => 'Your position is shared with your customer until the end of the mission.';
+  String get tracking_notification_text =>
+      'Your position is shared with your customer until the end of the mission.';
 
   @override
-  String get tracking_location_unavailable => 'Location unavailable: enable location to share your position.';
+  String get tracking_location_unavailable =>
+      'Location unavailable: enable location to share your position.';
 
   @override
   String get self_delivery_button => 'I deliver it myself';
@@ -2779,17 +2786,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get self_delivery_confirm_title => 'Deliver it yourself?';
 
   @override
-  String get self_delivery_confirm_body => 'Your position will be shared live with the buyer until the delivery is completed.';
+  String get self_delivery_confirm_body =>
+      'Your position will be shared live with the buyer until the delivery is completed.';
 
   @override
   String get self_delivery_start => 'Start delivery';
 
   @override
-  String get self_delivery_started => 'Delivery started — your position is shared with the buyer.';
+  String get self_delivery_started =>
+      'Delivery started — your position is shared with the buyer.';
 
   @override
   String get route_load_error => 'Unable to compute the route.';
 
   @override
   String get route_open_external => 'Open in Google Maps';
+
+  @override
+  String get route_start => 'Start';
+
+  @override
+  String get route_stop => 'Stop';
+
+  @override
+  String get route_arrived => 'You have arrived.';
+
+  @override
+  String get route_close => 'Close the route';
 }

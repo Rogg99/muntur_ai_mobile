@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/garages/domain/entities/garage_entity.dart';
 import 'package:munturai/features/garages/presentation/providers/garage_provider.dart';
-import 'package:munturai/screens/garage_route_screen.dart';
+import 'package:munturai/core/services/garage_route_request.dart';
 import 'package:munturai/screens/repair_booking_create.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -267,7 +267,7 @@ class GarageDetails extends StatelessWidget {
 /// ([GarageDetails]) or directly inside a bottom sheet's own scrollable
 /// (the map's search-result details drawer), sharing one implementation
 /// instead of the two drifting apart.
-class GarageDetailView extends StatelessWidget {
+class GarageDetailView extends ConsumerWidget {
   final GarageEntity garage;
   final ScrollController? scrollController;
   final IconData leadingIcon;
@@ -283,7 +283,7 @@ class GarageDetailView extends StatelessWidget {
   Future<void> _launch(String url) => launchExternalUrl(url);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appStyle = AppStyle.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final translator = AppLocalizations.of(context)!;
@@ -435,7 +435,7 @@ class GarageDetailView extends StatelessWidget {
                       _ActionButton(
                         icon: Icons.directions_outlined,
                         label: translator.action_directions,
-                        onTap: () => openGarageRoute(context, garage),
+                        onTap: () => openGarageRoute(context, ref, garage),
                       ),
                     ],
                     const SizedBox(width: 10),

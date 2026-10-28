@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/services/garage_route_request.dart';
 import 'package:munturai/features/garages/domain/entities/garage_entity.dart';
 import 'package:munturai/features/garages/presentation/providers/garage_provider.dart';
 import 'package:munturai/screens/garage.dart';
-import 'package:munturai/screens/garage_route_screen.dart';
+import 'package:munturai/features/tracking/data/models/tracking_models.dart';
+import 'package:munturai/features/tracking/presentation/providers/tracking_provider.dart';
+import 'package:munturai/features/tracking/route_progress.dart';
 import 'package:munturai/widgets/osm_tile_layer.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
@@ -30,20 +35,231 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   // search starts or it's dismissed.
   GarageEntity? _detailsGarage;
 
+  // ─── Inline route ("Itinéraire") — drawn on this same map, no separate
+  // page. Route computed server-side (route-preview, Doc/17 §4.4). Following
+  // it ("Démarrer") is purely local: the position never leaves the device,
+  // only the occasional recompute sends it to route-preview (not stored).
+  GarageEntity? _routeGarage;
+  TrackingRoute? _route;
+  bool _routeLoading = false;
+  String? _routeError;
+  bool _navigating = false;
+  bool _arrived = false;
+  RouteProgress? _progress;
+  StreamSubscription<Position>? _navSub;
+  int _offRouteStreak = 0;
+  DateTime? _lastRouteFetch;
+
+  static const double _offRouteThresholdM = 150;
+  static const double _arrivalRadiusM = 40;
+  // route-preview is throttled at 20/h per user — never recompute faster.
+  static const Duration _minRecomputeInterval = Duration(seconds: 90);
+
   @override
   void initState() {
     super.initState();
     _locateUser();
+    // A route may have been requested before this tab was first built.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _consumePendingRoute());
   }
 
   @override
   void dispose() {
+    _navSub?.cancel();
     _searchController.dispose();
     _sheetController.dispose();
     super.dispose();
   }
 
+  void _consumePendingRoute() {
+    if (!mounted) return;
+    final garage = ref.read(pendingGarageRouteProvider);
+    if (garage == null) return;
+    ref.read(pendingGarageRouteProvider.notifier).state = null;
+    _startRoute(garage);
+  }
+
+  Future<void> _startRoute(GarageEntity garage) async {
+    await _stopNavigation();
+    _searchController.clear();
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      _searching = false;
+      _fittedForQuery = null;
+      _detailsGarage = null;
+      _routeGarage = garage;
+      _route = null;
+      _progress = null;
+      _routeError = null;
+      _arrived = false;
+      _routeLoading = true;
+    });
+    final from = await _locateUser(moveCamera: false);
+    if (!mounted || _routeGarage?.id != garage.id) return;
+    if (from == null) {
+      setState(() {
+        _routeLoading = false;
+        _routeError = AppLocalizations.of(context)!.tracking_location_unavailable;
+      });
+      return;
+    }
+    await _fetchRoute(from, fit: true);
+  }
+
+  Future<void> _fetchRoute(LatLng from, {bool fit = false}) async {
+    final garage = _routeGarage;
+    if (garage == null) return;
+    _lastRouteFetch = DateTime.now();
+    try {
+      final route = await ref.read(trackingRepositoryProvider).routePreview(
+            lat: from.latitude,
+            lng: from.longitude,
+            garageId: garage.id,
+          );
+      if (!mounted || _routeGarage?.id != garage.id) return;
+      setState(() {
+        _route = route;
+        _routeLoading = false;
+        _routeError = null;
+        _offRouteStreak = 0;
+        _progress = route == null
+            ? null
+            : RouteProgress.compute(route.geometry, from, route.durationS);
+      });
+      if (fit) _fitRoute(from);
+    } catch (_) {
+      if (!mounted || _routeGarage?.id != garage.id) return;
+      setState(() {
+        _routeLoading = false;
+        // Keep showing the previous route if a recompute fails.
+        if (_route == null) {
+          _routeError = AppLocalizations.of(context)!.route_load_error;
+        }
+      });
+    }
+  }
+
+  void _fitRoute(LatLng from) {
+    final garage = _routeGarage;
+    if (garage == null) return;
+    final points = [
+      from,
+      LatLng(garage.latitude, garage.longitude),
+      ...?_route?.geometry,
+    ];
+    _mapController.fitCamera(CameraFit.coordinates(
+      coordinates: points,
+      padding: const EdgeInsets.fromLTRB(40, 110, 40, 230),
+    ));
+  }
+
+  Future<void> _toggleNavigation() async {
+    if (_navigating) {
+      await _stopNavigation();
+      if (mounted) setState(() {});
+      return;
+    }
+    setState(() {
+      _navigating = true;
+      _arrived = false;
+    });
+    _navSub = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: 10,
+      ),
+    ).listen(_onNavPosition, onError: (_) {});
+    if (_currentPosition != null) {
+      _mapController.move(_currentPosition!, 17);
+    }
+  }
+
+  Future<void> _stopNavigation() async {
+    await _navSub?.cancel();
+    _navSub = null;
+    _navigating = false;
+    _offRouteStreak = 0;
+  }
+
+  void _onNavPosition(Position p) {
+    final garage = _routeGarage;
+    if (!mounted || garage == null) return;
+    final pos = LatLng(p.latitude, p.longitude);
+    final route = _route;
+    final progress = route == null
+        ? null
+        : RouteProgress.compute(route.geometry, pos, route.durationS);
+
+    final toGarage = Geolocator.distanceBetween(
+        p.latitude, p.longitude, garage.latitude, garage.longitude);
+    if (toGarage <= _arrivalRadiusM) {
+      _stopNavigation();
+      setState(() {
+        _currentPosition = pos;
+        _progress = progress;
+        _arrived = true;
+      });
+      return;
+    }
+
+    setState(() {
+      _currentPosition = pos;
+      _progress = progress;
+    });
+    _mapController.move(pos, _mapController.camera.zoom < 16 ? 17 : _mapController.camera.zoom);
+
+    // Off route on 2 consecutive accurate points -> recompute (same rule as
+    // the server's tracking missions, Doc/17 §6), within the throttle.
+    if (progress != null && p.accuracy <= 100 && progress.offRouteM > _offRouteThresholdM) {
+      _offRouteStreak++;
+    } else {
+      _offRouteStreak = 0;
+    }
+    final last = _lastRouteFetch;
+    if (_offRouteStreak >= 2 &&
+        (last == null || DateTime.now().difference(last) >= _minRecomputeInterval)) {
+      _offRouteStreak = 0;
+      _fetchRoute(pos);
+    }
+  }
+
+  Future<void> _closeRoute() async {
+    await _stopNavigation();
+    if (!mounted) return;
+    setState(() {
+      _routeGarage = null;
+      _route = null;
+      _progress = null;
+      _routeError = null;
+      _routeLoading = false;
+      _arrived = false;
+    });
+  }
+
+  Future<void> _openRouteExternally() async {
+    final g = _routeGarage;
+    if (g == null) return;
+    await launchExternalUrl(
+        'https://www.google.com/maps/dir/?api=1&destination=${g.latitude},${g.longitude}');
+  }
+
+  String? _routeSummary() {
+    final remainingM = _progress?.remainingM ?? _route?.distanceM;
+    final remainingS = _progress?.remainingS ?? _route?.durationS;
+    final parts = <String>[];
+    if (remainingS != null) {
+      parts.add('≈ ${(remainingS / 60).ceil().clamp(1, 24 * 60)} min');
+    }
+    if (remainingM != null) {
+      parts.add(remainingM >= 1000
+          ? '${(remainingM / 1000).toStringAsFixed(1)} km'
+          : '${remainingM.round()} m');
+    }
+    return parts.isEmpty ? null : parts.join(' · ');
+  }
+
   void _onSearchChanged(String value) {
+    if (value.isNotEmpty && _routeGarage != null) _closeRoute();
     setState(() {
       _searching = value.isNotEmpty;
       // A new search replaces whatever single-garage preview was open and
@@ -141,24 +357,29 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     }
   }
 
-  Future<void> _locateUser() async {
+  Future<LatLng?> _locateUser({bool moveCamera = true}) async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) return;
+      if (!serviceEnabled) return null;
       LocationPermission perm = await Geolocator.checkPermission();
       if (perm == LocationPermission.denied) {
         perm = await Geolocator.requestPermission();
       }
       if (perm == LocationPermission.denied ||
-          perm == LocationPermission.deniedForever) return;
+          perm == LocationPermission.deniedForever) {
+        return null;
+      }
 
       final pos = await Geolocator.getCurrentPosition();
-      if (!mounted) return;
+      if (!mounted) return null;
       setState(() {
         _currentPosition = LatLng(pos.latitude, pos.longitude);
       });
-      _mapController.move(_currentPosition!, 13.0);
-    } catch (_) {}
+      if (moveCamera) _mapController.move(_currentPosition!, 13.0);
+      return _currentPosition;
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
@@ -168,6 +389,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final translator = AppLocalizations.of(context)!;
     final garagesAsync = ref.watch(garagesAroundProvider());
     final searchAsync = ref.watch(garageSearchProvider);
+
+    // An "Itinéraire" button anywhere in the app lands here (Search tab).
+    ref.listen<GarageEntity?>(pendingGarageRouteProvider, (_, next) {
+      if (next != null) _consumePendingRoute();
+    });
 
     // Fits the camera to the results once per new result set — not on every
     // rebuild the same data causes, which would fight any panning/zooming
@@ -203,6 +429,27 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             children: [
               // ─── OpenStreetMap tiles ───
               osmTileLayer(),
+
+              // ─── Inline route to the selected garage ───
+              if (_route != null && _route!.geometry.length >= 2)
+                PolylineLayer(polylines: [
+                  Polyline(
+                    points: _route!.geometry,
+                    strokeWidth: 6,
+                    color: colorScheme.primary,
+                  ),
+                ]),
+              if (_routeGarage != null)
+                MarkerLayer(markers: [
+                  Marker(
+                    point: LatLng(_routeGarage!.latitude, _routeGarage!.longitude),
+                    width: 48,
+                    height: 48,
+                    alignment: Alignment.topCenter,
+                    child: Icon(Icons.location_on,
+                        size: 44, color: colorScheme.primary),
+                  ),
+                ]),
 
               // ─── User position marker ───
               if (_currentPosition != null)
@@ -293,7 +540,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           if (!_searching && _detailsGarage == null)
             Positioned(
               right: 16,
-              bottom: 16,
+              // Sits above the route card while a route is shown.
+              bottom: _routeGarage != null ? 190 : 16,
               child: SafeArea(
                 child: FloatingActionButton.small(
                   heroTag: 'recenter',
@@ -302,6 +550,18 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   onPressed: _centerUser,
                   child: const Icon(Icons.my_location),
                 ),
+              ),
+            ),
+
+          // ─── Route card: ETA + start/stop following + external nav ───
+          if (_routeGarage != null)
+            Positioned(
+              left: 12,
+              right: 12,
+              bottom: 12,
+              child: SafeArea(
+                top: false,
+                child: _buildRouteCard(context, appStyle, colorScheme, translator),
               ),
             ),
 
@@ -417,7 +677,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                   garage: g,
                                   distanceKm: _distanceKm(g),
                                   onTap: () => _selectGarage(g),
-                                  onDirections: () => openGarageRoute(context, g),
+                                  onDirections: () => openGarageRoute(context, ref, g),
                                 );
                               },
                             ),
@@ -462,6 +722,84 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               },
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRouteCard(BuildContext context, AppStyle appStyle,
+      ColorScheme colorScheme, AppLocalizations translator) {
+    final summary = _routeSummary();
+    final String status;
+    if (_arrived) {
+      status = translator.route_arrived;
+    } else if (_routeLoading) {
+      status = translator.garage_loading;
+    } else if (_routeError != null) {
+      status = _routeError!;
+    } else {
+      status = summary != null
+          ? '${translator.tracking_eta_label} : $summary'
+          : translator.tracking_no_eta;
+    }
+
+    return Card(
+      elevation: 6,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(_routeGarage!.nom,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: appStyle.H5(weight: 'bold')),
+                ),
+                IconButton(
+                  tooltip: translator.route_close,
+                  icon: const Icon(Icons.close),
+                  onPressed: _closeRoute,
+                ),
+              ],
+            ),
+            if (_routeLoading) const LinearProgressIndicator(),
+            Text(
+              status,
+              style: appStyle.H6(
+                  color: _routeError != null && !_arrived ? Colors.redAccent : null),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _routeError != null && _route == null
+                      ? OutlinedButton.icon(
+                          onPressed: () => _startRoute(_routeGarage!),
+                          icon: const Icon(Icons.refresh),
+                          label: Text(translator.retry),
+                        )
+                      : ElevatedButton.icon(
+                          onPressed: _route == null || _arrived
+                              ? null
+                              : _toggleNavigation,
+                          icon: Icon(_navigating ? Icons.stop : Icons.navigation),
+                          label: Text(_navigating
+                              ? translator.route_stop
+                              : translator.route_start),
+                        ),
+                ),
+                IconButton(
+                  tooltip: translator.route_open_external,
+                  icon: const Icon(Icons.open_in_new),
+                  onPressed: _openRouteExternally,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -615,7 +953,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             if (garage.latitude != 0.0 || garage.longitude != 0.0)
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => openGarageRoute(context, garage),
+                  onPressed: () => openGarageRoute(context, ref, garage),
                   icon: const Icon(Icons.directions_outlined, size: 18),
                   label: Text(translator.action_directions),
                 ),
