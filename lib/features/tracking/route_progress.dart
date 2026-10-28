@@ -13,8 +13,17 @@ class RouteProgress {
   /// route (> 150 m on 2 consecutive points triggers a recompute).
   final double offRouteM;
 
-  const RouteProgress(
-      {required this.remainingM, this.remainingS, required this.offRouteM});
+  /// The route still ahead: the position's projection on the polyline, then
+  /// every following vertex — drawn instead of the full route while
+  /// following, so the travelled part disappears.
+  final List<LatLng> remainingPath;
+
+  const RouteProgress({
+    required this.remainingM,
+    this.remainingS,
+    required this.offRouteM,
+    this.remainingPath = const [],
+  });
 
   static const Distance _distance = Distance();
 
@@ -34,6 +43,8 @@ class RouteProgress {
     // (plenty accurate over a few hundred metres).
     var bestOff = double.infinity;
     var bestAlong = 0.0;
+    var bestSegment = 0;
+    LatLng? bestProj;
     for (var i = 0; i < route.length - 1; i++) {
       final a = route[i];
       final b = route[i + 1];
@@ -50,6 +61,8 @@ class RouteProgress {
       if (off < bestOff) {
         bestOff = off;
         bestAlong = cumulative[i] + t * (cumulative[i + 1] - cumulative[i]);
+        bestSegment = i;
+        bestProj = proj;
       }
     }
 
@@ -59,6 +72,10 @@ class RouteProgress {
       remainingS:
           totalDurationS == null ? null : totalDurationS * remaining / total,
       offRouteM: bestOff,
+      remainingPath: [
+        if (bestProj != null) bestProj,
+        ...route.sublist(bestSegment + 1),
+      ],
     );
   }
 

@@ -24,7 +24,8 @@ class MapScreen extends ConsumerStatefulWidget {
   ConsumerState<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends ConsumerState<MapScreen> {
+class _MapScreenState extends ConsumerState<MapScreen>
+    with SingleTickerProviderStateMixin {
   final MapController _mapController = MapController();
   final TextEditingController _searchController = TextEditingController();
   final DraggableScrollableController _sheetController =
@@ -59,6 +60,49 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   // current route stays on screen with a discreet notice.
   bool _recomputeUnavailable = false;
 
+  // ─── Follow mode rendering ───
+  // Camera follows the user until they pan the map by hand; the recenter
+  // button brings it back.
+  bool _navFollow = true;
+  // Heading in degrees (0 = north) for the arrow marker — GPS course when
+  // moving, else the bearing between the last two fixes.
+  double _heading = 0;
+  // Marker glides from the previous fix to the new one instead of jumping.
+  late final AnimationController _markerAnim = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..addListener(_onMarkerTick);
+  LatLng? _animFrom;
+  LatLng? _animTo;
+
+  LatLng? get _displayPosition {
+    final from = _animFrom, to = _animTo;
+    if (!_navigating || from == null || to == null) return _currentPosition;
+    final t = Curves.easeInOut.transform(_markerAnim.value);
+    return LatLng(
+      from.latitude + (to.latitude - from.latitude) * t,
+      from.longitude + (to.longitude - from.longitude) * t,
+    );
+  }
+
+  void _onMarkerTick() {
+    if (!mounted) return;
+    setState(() {});
+    final pos = _displayPosition;
+    if (_navigating && _navFollow && pos != null) {
+      _mapController.move(pos, _mapController.camera.zoom);
+    }
+  }
+
+  void _recenterNavigation() {
+    setState(() => _navFollow = true);
+    final pos = _displayPosition;
+    if (pos != null) {
+      _mapController.move(
+          pos, _mapController.camera.zoom < 16 ? 17 : _mapController.camera.zoom);
+    }
+  }
+
   static const double _offRouteThresholdM = 150;
   static const double _arrivalRadiusM = 40;
   static const Duration _minRecomputeInterval = Duration(seconds: 90);
@@ -87,6 +131,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   void dispose() {
     _navSub?.cancel();
+    _markerAnim.dispose();
     _searchController.dispose();
     _sheetController.dispose();
     super.dispose();
@@ -216,7 +261,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     }
     setState(() {
       _navigating = true;
+      _navFollow = true;
       _arrived = false;
+      _animFrom = _currentPosition;
+      _animTo = _currentPosition;
     });
     _navSub = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
@@ -257,11 +305,25 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       return;
     }
 
+    // Heading: GPS course when it's meaningful (moving), else the bearing
+    // from the previous fix; unchanged when standing still.
+    final previous = _animTo ?? _currentPosition;
+    if (p.heading >= 0 && p.speed > 1) {
+      _heading = p.heading;
+    } else if (previous != null &&
+        Geolocator.distanceBetween(previous.latitude, previous.longitude,
+                p.latitude, p.longitude) >
+            3) {
+      _heading = (const Distance().bearing(previous, pos) + 360) % 360;
+    }
+
     setState(() {
+      _animFrom = _displayPosition ?? pos;
+      _animTo = pos;
       _currentPosition = pos;
       _progress = progress;
     });
-    _mapController.move(pos, _mapController.camera.zoom < 16 ? 17 : _mapController.camera.zoom);
+    _markerAnim.forward(from: 0);
 
     // Off route on 2 consecutive accurate points -> recompute (same rule as
     // the server's tracking missions, Doc/17 §6), within the throttle.
@@ -472,16 +534,26 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             options: MapOptions(
               initialCenter: center,
               initialZoom: 12.0,
+              // Panning by hand while following stops the auto-recentre.
+              onPositionChanged: (_, hasGesture) {
+                if (hasGesture && _navigating && _navFollow) {
+                  setState(() => _navFollow = false);
+                }
+              },
             ),
             children: [
               // ─── OpenStreetMap tiles ───
               osmTileLayer(),
 
               // ─── Inline route to the selected garage ───
+              // While following, only the part still ahead is drawn.
               if (_route != null && _route!.geometry.length >= 2)
                 PolylineLayer(polylines: [
                   Polyline(
-                    points: _route!.geometry,
+                    points: _navigating &&
+                            (_progress?.remainingPath.length ?? 0) >= 2
+                        ? _progress!.remainingPath
+                        : _route!.geometry,
                     strokeWidth: 6,
                     color: colorScheme.primary,
                   ),
@@ -498,19 +570,36 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   ),
                 ]),
 
-              // ─── User position marker ───
-              if (_currentPosition != null)
+              // ─── User position marker — an arrow pointing the way while
+              // following a route (map stays north-up, so heading = angle) ───
+              if (_displayPosition != null)
                 MarkerLayer(
                   markers: [
                     Marker(
-                      point: _currentPosition!,
-                      width: 40,
-                      height: 40,
-                      child: Icon(
-                        Icons.my_location,
-                        color: colorScheme.primary,
-                        size: 36,
-                      ),
+                      point: _displayPosition!,
+                      width: 44,
+                      height: 44,
+                      child: _navigating
+                          ? Transform.rotate(
+                              angle: _heading * 3.141592653589793 / 180,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        color: Colors.black26, blurRadius: 4)
+                                  ],
+                                ),
+                                child: Icon(Icons.navigation,
+                                    color: colorScheme.primary, size: 30),
+                              ),
+                            )
+                          : Icon(
+                              Icons.my_location,
+                              color: colorScheme.primary,
+                              size: 36,
+                            ),
                     ),
                   ],
                 ),
@@ -600,8 +689,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   heroTag: 'recenter',
                   backgroundColor: colorScheme.surface,
                   foregroundColor: colorScheme.primary,
-                  onPressed: _centerUser,
-                  child: const Icon(Icons.my_location),
+                  onPressed: _navigating ? _recenterNavigation : _centerUser,
+                  child: Icon(_navigating && !_navFollow
+                      ? Icons.navigation
+                      : Icons.my_location),
                 ),
               ),
             ),
