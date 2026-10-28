@@ -36,6 +36,10 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   // search starts or it's dismissed.
   GarageEntity? _detailsGarage;
 
+  // Garage shown in the marker-tap preview sheet — its marker is drawn
+  // larger so the swipe target is obvious on the map behind the sheet.
+  String? _previewGarageId;
+
   // ─── Inline route ("Itinéraire") — drawn on this same map, no separate
   // page. Route computed server-side (route-preview, Doc/17 §4.4). Following
   // it ("Démarrer") is purely local: the position never leaves the device,
@@ -528,19 +532,23 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       if (g.latitude != 0.0 || g.longitude != 0.0)
                         Marker(
                           point: LatLng(g.latitude, g.longitude),
-                          width: 44,
-                          height: 44,
+                          width: g.id == _previewGarageId ? 58 : 44,
+                          height: g.id == _previewGarageId ? 58 : 44,
                           child: GestureDetector(
-                            onTap: () => _showGarageSheet(context, g),
+                            onTap: () => _showGarageSheet(context, g, garages),
                             child: Container(
                               decoration: BoxDecoration(
-                                color: colorScheme.primary,
+                                color: g.id == _previewGarageId
+                                    ? colorScheme.secondary
+                                    : colorScheme.primary,
                                 shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.white, width: 2),
+                                border: Border.all(
+                                    color: Colors.white,
+                                    width: g.id == _previewGarageId ? 3 : 2),
                               ),
-                              child: const Icon(Icons.build,
-                                  color: Colors.white, size: 22),
+                              child: Icon(Icons.build,
+                                  color: Colors.white,
+                                  size: g.id == _previewGarageId ? 28 : 22),
                             ),
                           ),
                         ),
@@ -861,47 +869,134 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
-  void _showGarageSheet(BuildContext context, GarageEntity garage) {
+  /// Marker-tap preview. Swiping left/right switches to the neighbouring
+  /// garage among those currently on the map — ordered west→east, so the
+  /// swipe direction matches where the next garage actually is — and each
+  /// switch recentres the map on it.
+  void _showGarageSheet(
+      BuildContext context, GarageEntity garage, List<GarageEntity> onMap) {
     final colorScheme = Theme.of(context).colorScheme;
+    final garages = onMap
+        .where((g) => g.latitude != 0.0 || g.longitude != 0.0)
+        .toList()
+      ..sort((a, b) => a.longitude.compareTo(b.longitude));
+    var index = garages.indexWhere((g) => g.id == garage.id);
+    if (index < 0) {
+      garages.insert(0, garage);
+      index = 0;
+    }
+
+    void focus(GarageEntity g) {
+      setState(() => _previewGarageId = g.id);
+      _mapController.move(LatLng(g.latitude, g.longitude),
+          _mapController.camera.zoom < 14 ? 15 : _mapController.camera.zoom);
+    }
+
+    focus(garages[index]);
+    // Kept outside the sheet builder so it survives the rebuild it triggers.
+    var slideFromRight = true;
 
     showModalBottomSheet(
       context: context,
       backgroundColor: colorScheme.surface,
+      // Light barrier: the map (and the recentring) stays visible behind.
+      barrierColor: Colors.black12,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (sheetContext) => SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Drag handle
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: colorScheme.outlineVariant,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setSheetState) {
+          final current = garages[index];
+
+          void go(int delta) {
+            final next = index + delta;
+            if (next < 0 || next >= garages.length) return;
+            slideFromRight = delta > 0;
+            setSheetState(() => index = next);
+            focus(garages[next]);
+          }
+
+          return SafeArea(
+            top: false,
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onHorizontalDragEnd: (details) {
+                final v = details.primaryVelocity ?? 0;
+                if (v < -200) go(1); // swipe left → next (east)
+                if (v > 200) go(-1); // swipe right → previous (west)
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Drag handle + position among the map's garages
+                    Row(
+                      children: [
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: const Icon(Icons.chevron_left),
+                          onPressed: index > 0 ? () => go(-1) : null,
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Container(
+                                width: 36,
+                                height: 4,
+                                margin: const EdgeInsets.only(bottom: 6),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.outlineVariant,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                              if (garages.length > 1)
+                                Text('${index + 1} / ${garages.length}',
+                                    style: AppStyle.of(context)
+                                        .H6(color: Colors.grey)),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: const Icon(Icons.chevron_right),
+                          onPressed:
+                              index < garages.length - 1 ? () => go(1) : null,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      transitionBuilder: (child, animation) => SlideTransition(
+                        position: Tween<Offset>(
+                          begin: Offset(slideFromRight ? 0.25 : -0.25, 0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: FadeTransition(opacity: animation, child: child),
+                      ),
+                      child: KeyedSubtree(
+                        key: ValueKey(current.id),
+                        child: _garagePreviewContent(
+                          context,
+                          current,
+                          onSeeDetails: () {
+                            Navigator.pop(sheetContext);
+                            _goToGarageDetails(current);
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              _garagePreviewContent(
-                context,
-                garage,
-                onSeeDetails: () {
-                  Navigator.pop(sheetContext);
-                  _goToGarageDetails(garage);
-                },
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
-    );
+    ).whenComplete(() {
+      if (mounted) setState(() => _previewGarageId = null);
+    });
   }
 
   /// Photo/name/rating/status + call/directions + "voir la fiche complète" —
