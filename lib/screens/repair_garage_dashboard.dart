@@ -14,6 +14,12 @@ Map<String, String> _repairStatusLabels(AppLocalizations l10n) => {
       'refused': l10n.repair_status_refused,
     };
 
+/// Bookings with an action request in flight — their buttons are disabled
+/// so a double tap can't fire refuse/complete twice (the backend now answers
+/// 409 "payout or refund already in progress" to the second one anyway).
+final _repairActionsInFlightProvider =
+    StateProvider.autoDispose<Set<String>>((ref) => const {});
+
 /// Garage staff-side booking list with the accept/refuse/start/complete
 /// actions, per c7's contract. `completed` is backend-gated on a correct
 /// PIN and only confirmed once the withdraw webhook lands (never
@@ -22,16 +28,24 @@ class RepairGarageDashboard extends ConsumerWidget {
   const RepairGarageDashboard({super.key});
 
   Future<void> _accept(BuildContext context, WidgetRef ref, RepairBooking booking) =>
-      _runAction(context, ref, () => ref.read(repairRepositoryProvider).acceptBooking(booking.id));
+      _runAction(context, ref, booking.id,
+          () => ref.read(repairRepositoryProvider).acceptBooking(booking.id));
 
   Future<void> _refuse(BuildContext context, WidgetRef ref, RepairBooking booking) =>
-      _runAction(context, ref, () => ref.read(repairRepositoryProvider).refuseBooking(booking.id));
+      _runAction(context, ref, booking.id,
+          () => ref.read(repairRepositoryProvider).refuseBooking(booking.id));
 
   Future<void> _start(BuildContext context, WidgetRef ref, RepairBooking booking) =>
-      _runAction(context, ref, () => ref.read(repairRepositoryProvider).startBooking(booking.id));
+      _runAction(context, ref, booking.id,
+          () => ref.read(repairRepositoryProvider).startBooking(booking.id));
 
-  Future<void> _runAction(
-      BuildContext context, WidgetRef ref, Future<void> Function() action) async {
+  /// Errors (Campay 502 {detail, retryable}, 409 payout/refund already in
+  /// progress, wrong PIN...) surface as the backend's `detail` in a snackbar.
+  Future<void> _runAction(BuildContext context, WidgetRef ref, String bookingId,
+      Future<void> Function() action) async {
+    final inFlight = ref.read(_repairActionsInFlightProvider.notifier);
+    if (inFlight.state.contains(bookingId)) return;
+    inFlight.state = {...inFlight.state, bookingId};
     try {
       await action();
       ref.invalidate(garageRepairDashboardProvider);
@@ -40,6 +54,10 @@ class RepairGarageDashboard extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
         );
+      }
+    } finally {
+      if (context.mounted) {
+        inFlight.state = {...inFlight.state}..remove(bookingId);
       }
     }
   }
@@ -69,8 +87,8 @@ class RepairGarageDashboard extends ConsumerWidget {
     );
     pinController.dispose();
     if (pin == null || pin.isEmpty) return;
-    await _runAction(
-        context, ref, () => ref.read(repairRepositoryProvider).completeBooking(booking.id, pin));
+    await _runAction(context, ref, booking.id,
+        () => ref.read(repairRepositoryProvider).completeBooking(booking.id, pin));
   }
 
   @override
@@ -79,6 +97,7 @@ class RepairGarageDashboard extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     final bookingsAsync = ref.watch(garageRepairDashboardProvider);
+    final inFlight = ref.watch(_repairActionsInFlightProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -101,6 +120,7 @@ class RepairGarageDashboard extends ConsumerWidget {
               separatorBuilder: (_, __) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final booking = bookings[index];
+                final busy = inFlight.contains(booking.id);
                 return Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -131,14 +151,14 @@ class RepairGarageDashboard extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: OutlinedButton(
-                                onPressed: () => _refuse(context, ref, booking),
+                                onPressed: busy ? null : () => _refuse(context, ref, booking),
                                 child: Text(l10n.repair_refuse_action),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: ElevatedButton(
-                                onPressed: () => _accept(context, ref, booking),
+                                onPressed: busy ? null : () => _accept(context, ref, booking),
                                 child: Text(l10n.repair_accept_action),
                               ),
                             ),
@@ -151,14 +171,14 @@ class RepairGarageDashboard extends ConsumerWidget {
                           children: [
                             Expanded(
                               child: OutlinedButton(
-                                onPressed: () => _start(context, ref, booking),
+                                onPressed: busy ? null : () => _start(context, ref, booking),
                                 child: Text(l10n.repair_start_action),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: ElevatedButton(
-                                onPressed: () => _completeDialog(context, ref, booking),
+                                onPressed: busy ? null : () => _completeDialog(context, ref, booking),
                                 child: Text(l10n.repair_complete_action),
                               ),
                             ),
@@ -170,7 +190,7 @@ class RepairGarageDashboard extends ConsumerWidget {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () => _completeDialog(context, ref, booking),
+                            onPressed: busy ? null : () => _completeDialog(context, ref, booking),
                             child: Text(l10n.repair_complete_action),
                           ),
                         ),
