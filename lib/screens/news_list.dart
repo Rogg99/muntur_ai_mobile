@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:munturai/core/utils/news_date.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/news/domain/entities/news_entity.dart';
@@ -151,7 +152,7 @@ class _NewsCard extends ConsumerWidget {
                       Text('${news.comments}', style: appStyle.H6()),
                       const Spacer(),
                       Text(
-                        _formatDate(news.time),
+                        formatNewsDate(context, news.time),
                         style: appStyle.H6(
                             color:
                                 colorScheme.onSurface.withValues(alpha: 0.5)),
@@ -167,9 +168,4 @@ class _NewsCard extends ConsumerWidget {
     );
   }
 
-  String _formatDate(int timestamp) {
-    if (timestamp == 0) return '';
-    final dt = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    return '${dt.day}/${dt.month}/${dt.year}';
-  }
 }
