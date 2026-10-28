@@ -46,6 +46,9 @@ class Delivery {
   final String? dropoffConfirmedAt;
   final String dateCreation;
 
+  /// Doc/17 §4.3 shortcut — non-null only while a live mission is active.
+  final String? trackingMissionId;
+
   const Delivery({
     required this.id,
     required this.orderId,
@@ -59,6 +62,7 @@ class Delivery {
     this.pickupConfirmedAt,
     this.dropoffConfirmedAt,
     this.dateCreation = '',
+    this.trackingMissionId,
   });
 
   factory Delivery.fromJson(Map<String, dynamic> json) => Delivery(
@@ -76,5 +80,6 @@ class Delivery {
         pickupConfirmedAt: json['pickup_confirmed_at']?.toString(),
         dropoffConfirmedAt: json['dropoff_confirmed_at']?.toString(),
         dateCreation: json['date_creation']?.toString() ?? '',
+        trackingMissionId: json['tracking_mission_id']?.toString(),
       );
 }

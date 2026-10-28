@@ -175,6 +175,9 @@ class MarketplaceOrder {
   final String? deliveryPinReveal;
   final String? returnWindowExpiresAt;
 
+  /// Doc/17 §4.3 shortcut — non-null only while a live mission is active.
+  final String? trackingMissionId;
+
   const MarketplaceOrder({
     required this.id,
     this.buyer = const BuyerInfo(),
@@ -187,6 +190,7 @@ class MarketplaceOrder {
     this.dateCreation = '',
     this.deliveryPinReveal,
     this.returnWindowExpiresAt,
+    this.trackingMissionId,
   });
 
   factory MarketplaceOrder.fromJson(Map<String, dynamic> json) =>
@@ -206,6 +210,7 @@ class MarketplaceOrder {
         dateCreation: json['date_creation']?.toString() ?? '',
         deliveryPinReveal: json['delivery_pin_reveal']?.toString(),
         returnWindowExpiresAt: json['return_window_expires_at']?.toString(),
+        trackingMissionId: json['tracking_mission_id']?.toString(),
       );
 }
 

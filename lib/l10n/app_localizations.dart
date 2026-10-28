@@ -3039,249 +3039,495 @@ abstract class AppLocalizations {
   String get message_action_not_useful;
 
   /// No description provided for @repair_book_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop off my car'**
   String get repair_book_action;
 
   /// No description provided for @repair_create_intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the issue (optional), then pay the deposit to send your request to the garage.'**
   String get repair_create_intro;
 
   /// No description provided for @repair_description_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
   String get repair_description_label;
 
   /// No description provided for @repair_description_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. strange noise when braking'**
   String get repair_description_hint;
 
   /// No description provided for @repair_deposit_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit'**
   String get repair_deposit_label;
 
   /// No description provided for @repair_deposit_notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded in full if the garage declines, if you cancel before they respond, or if they never showed up.'**
   String get repair_deposit_notice;
 
   /// No description provided for @repair_pay_deposit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the deposit'**
   String get repair_pay_deposit_button;
 
   /// No description provided for @repair_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting garage response'**
   String get repair_status_pending;
 
   /// No description provided for @repair_status_accepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
   String get repair_status_accepted;
 
   /// No description provided for @repair_status_in_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
   String get repair_status_in_progress;
 
   /// No description provided for @repair_status_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
   String get repair_status_completed;
 
   /// No description provided for @repair_status_cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
   String get repair_status_cancelled;
 
   /// No description provided for @repair_status_refused.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
   String get repair_status_refused;
 
   /// No description provided for @repair_tracking_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair booking'**
   String get repair_tracking_title;
 
   /// No description provided for @repair_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load this booking'**
   String get repair_load_error;
 
   /// No description provided for @repair_completion_code_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion code'**
   String get repair_completion_code_title;
 
   /// No description provided for @repair_completion_code_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Only give this code to the garage once your car is actually picked up, fixed and ready.'**
   String get repair_completion_code_warning;
 
   /// No description provided for @repair_cancel_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this booking?'**
   String get repair_cancel_confirm_title;
 
   /// No description provided for @repair_cancel_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel booking'**
   String get repair_cancel_action;
 
   /// No description provided for @repair_no_show_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Garage never showed up?'**
   String get repair_no_show_confirm_title;
 
   /// No description provided for @repair_no_show_confirm_body.
+  ///
+  /// In en, this message translates to:
+  /// **'This cancels the booking and refunds your deposit in full.'**
   String get repair_no_show_confirm_body;
 
   /// No description provided for @repair_no_show_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Report no-show'**
   String get repair_no_show_action;
 
   /// No description provided for @repair_my_bookings_title.
+  ///
+  /// In en, this message translates to:
+  /// **'My repair bookings'**
   String get repair_my_bookings_title;
 
   /// No description provided for @repair_my_bookings_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No repair bookings yet'**
   String get repair_my_bookings_empty;
 
   /// No description provided for @repair_staff_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Garage staff'**
   String get repair_staff_title;
 
   /// No description provided for @repair_staff_pitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Register as staff for a garage to receive and manage repair bookings.'**
   String get repair_staff_pitch;
 
   /// No description provided for @repair_staff_pick_garage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your garage'**
   String get repair_staff_pick_garage;
 
   /// No description provided for @repair_staff_payout_phone_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Payout Mobile Money number'**
   String get repair_staff_payout_phone_label;
 
   /// No description provided for @repair_staff_missing_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a garage and enter a payout number'**
   String get repair_staff_missing_fields;
 
   /// No description provided for @repair_staff_register_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
   String get repair_staff_register_button;
 
   /// No description provided for @repair_staff_dashboard_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings dashboard'**
   String get repair_staff_dashboard_button;
 
   /// No description provided for @repair_staff_search_garage_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a garage'**
   String get repair_staff_search_garage_hint;
 
   /// No description provided for @repair_dashboard_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings yet'**
   String get repair_dashboard_empty;
 
   /// No description provided for @repair_no_description.
+  ///
+  /// In en, this message translates to:
+  /// **'No description provided'**
   String get repair_no_description;
 
   /// No description provided for @repair_refuse_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
   String get repair_refuse_action;
 
   /// No description provided for @repair_accept_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
   String get repair_accept_action;
 
   /// No description provided for @repair_start_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Start repair'**
   String get repair_start_action;
 
   /// No description provided for @repair_complete_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete (PIN)'**
   String get repair_complete_action;
 
   /// No description provided for @repair_complete_dialog_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the client\'s completion code'**
   String get repair_complete_dialog_title;
 
   /// No description provided for @repair_client_pin_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion code'**
   String get repair_client_pin_label;
 
   /// No description provided for @collect_agent_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Field collect agent'**
   String get collect_agent_title;
 
   /// No description provided for @collect_agent_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load'**
   String get collect_agent_load_error;
 
   /// No description provided for @collect_agent_pitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Become a field collect agent: report breakdowns and garages you encounter in the field, after an identity check.'**
   String get collect_agent_pitch;
 
   /// No description provided for @collect_agent_apply_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
   String get collect_agent_apply_button;
 
   /// No description provided for @collect_agent_reapply_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-apply'**
   String get collect_agent_reapply_button;
 
   /// No description provided for @collect_agent_pending_notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your application is being reviewed.'**
   String get collect_agent_pending_notice;
 
   /// No description provided for @collect_agent_rejected_notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your application was declined.'**
   String get collect_agent_rejected_notice;
 
   /// No description provided for @collect_agent_approved_notice.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re an approved collect agent.'**
   String get collect_agent_approved_notice;
 
   /// No description provided for @collect_agent_apply_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent application'**
   String get collect_agent_apply_title;
 
   /// No description provided for @collect_agent_apply_intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo of your ID (front and back) and 3 selfies (face, left profile, right profile) for identity verification.'**
   String get collect_agent_apply_intro;
 
   /// No description provided for @collect_agent_apply_submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit application'**
   String get collect_agent_apply_submit;
 
   /// No description provided for @collect_agent_cni_front.
+  ///
+  /// In en, this message translates to:
+  /// **'ID card — front'**
   String get collect_agent_cni_front;
 
   /// No description provided for @collect_agent_cni_back.
+  ///
+  /// In en, this message translates to:
+  /// **'ID card — back'**
   String get collect_agent_cni_back;
 
   /// No description provided for @collect_agent_selfie_face.
+  ///
+  /// In en, this message translates to:
+  /// **'Selfie — face'**
   String get collect_agent_selfie_face;
 
   /// No description provided for @collect_agent_selfie_left.
+  ///
+  /// In en, this message translates to:
+  /// **'Selfie — left profile'**
   String get collect_agent_selfie_left;
 
   /// No description provided for @collect_agent_selfie_right.
+  ///
+  /// In en, this message translates to:
+  /// **'Selfie — right profile'**
   String get collect_agent_selfie_right;
 
   /// No description provided for @collect_agent_submit_panne_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a breakdown'**
   String get collect_agent_submit_panne_button;
 
   /// No description provided for @collect_agent_submit_garage_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Report a garage'**
   String get collect_agent_submit_garage_button;
 
   /// No description provided for @collect_agent_my_submissions_title.
+  ///
+  /// In en, this message translates to:
+  /// **'My submissions'**
   String get collect_agent_my_submissions_title;
 
   /// No description provided for @collect_agent_my_submissions_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No submissions yet'**
   String get collect_agent_my_submissions_empty;
 
   /// No description provided for @collect_agent_panne_cases_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdowns reported'**
   String get collect_agent_panne_cases_section;
 
   /// No description provided for @collect_agent_garages_section.
+  ///
+  /// In en, this message translates to:
+  /// **'Garages reported'**
   String get collect_agent_garages_section;
 
   /// No description provided for @collect_agent_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
   String get collect_agent_status_pending;
 
   /// No description provided for @collect_agent_status_approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
   String get collect_agent_status_approved;
 
   /// No description provided for @collect_agent_status_rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
   String get collect_agent_status_rejected;
 
   /// No description provided for @collect_agent_vehicle_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle'**
   String get collect_agent_vehicle_label;
 
   /// No description provided for @collect_agent_type_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdown type'**
   String get collect_agent_type_label;
 
   /// No description provided for @collect_agent_reparation_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair needed'**
   String get collect_agent_reparation_label;
 
   /// No description provided for @collect_agent_ville_label.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
   String get collect_agent_ville_label;
 
   /// No description provided for @collect_agent_submission_submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
   String get collect_agent_submission_submit;
 
   /// No description provided for @collect_agent_submission_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission sent, thank you'**
   String get collect_agent_submission_sent;
 
   /// No description provided for @collect_agent_locating.
+  ///
+  /// In en, this message translates to:
+  /// **'Locating…'**
   String get collect_agent_locating;
 
   /// No description provided for @collect_agent_location_captured.
+  ///
+  /// In en, this message translates to:
+  /// **'Location captured'**
   String get collect_agent_location_captured;
 
   /// No description provided for @collect_agent_location_missing.
+  ///
+  /// In en, this message translates to:
+  /// **'Location unavailable'**
   String get collect_agent_location_missing;
 
   /// No description provided for @collect_agent_garage_missing_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Name, phone and location are required'**
   String get collect_agent_garage_missing_fields;
 
   /// No description provided for @collect_agent_garage_name_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Garage name'**
   String get collect_agent_garage_name_label;
 
   /// No description provided for @collect_agent_garage_phone1_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone 1'**
   String get collect_agent_garage_phone1_label;
 
   /// No description provided for @collect_agent_garage_phone2_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone 2 (optional)'**
   String get collect_agent_garage_phone2_label;
 
   /// No description provided for @collect_agent_garage_email_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Email (optional)'**
   String get collect_agent_garage_email_label;
 
   /// No description provided for @google_sign_in_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
   String get google_sign_in_button;
 
   /// No description provided for @google_sign_in_complete_profile_notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome! Take a moment to complete your profile.'**
   String get google_sign_in_complete_profile_notice;
 
   /// No description provided for @google_sign_in_complete_profile_action.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
   String get google_sign_in_complete_profile_action;
 
   /// No description provided for @applock_toggle_label.
@@ -4755,121 +5001,424 @@ abstract class AppLocalizations {
   String get garage_see_full_details;
 
   /// No description provided for @subscriptions_screen_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions'**
   String get subscriptions_screen_title;
 
   /// No description provided for @coins_balance_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins Balance'**
   String get coins_balance_label;
 
   /// No description provided for @coins_unit_label.
+  ///
+  /// In en, this message translates to:
+  /// **'coins'**
   String get coins_unit_label;
 
   /// No description provided for @my_subscription_label.
+  ///
+  /// In en, this message translates to:
+  /// **'My subscription'**
   String get my_subscription_label;
 
   /// No description provided for @available_plans_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Available plans'**
   String get available_plans_label;
 
   /// No description provided for @no_plan_available_label.
+  ///
+  /// In en, this message translates to:
+  /// **'No plan available'**
   String get no_plan_available_label;
 
   /// No description provided for @free_plan_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan'**
   String get free_plan_label;
 
   /// No description provided for @subscription_plan_prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
   String get subscription_plan_prefix;
 
   /// No description provided for @subscription_status_active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
   String get subscription_status_active;
 
   /// No description provided for @subscription_status_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
   String get subscription_status_expired;
 
   /// No description provided for @subscription_expires_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires on:'**
   String get subscription_expires_label;
 
   /// No description provided for @coins_included_suffix.
+  ///
+  /// In en, this message translates to:
+  /// **'coins included'**
   String get coins_included_suffix;
 
   /// No description provided for @subscribe_button_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
   String get subscribe_button_label;
 
   /// No description provided for @subscription_activated_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription activated!'**
   String get subscription_activated_message;
 
   /// No description provided for @coins_credited_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins credited successfully!'**
   String get coins_credited_message;
 
   /// No description provided for @no_pack_available_label.
+  ///
+  /// In en, this message translates to:
+  /// **'No pack available'**
   String get no_pack_available_label;
 
   /// No description provided for @account_suspended_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been suspended.'**
   String get account_suspended_message;
 
   /// No description provided for @recommended_part_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended part'**
   String get recommended_part_label;
 
   /// No description provided for @news_title_label.
+  ///
+  /// In en, this message translates to:
+  /// **'News'**
   String get news_title_label;
 
   /// No description provided for @no_news_available_label.
+  ///
+  /// In en, this message translates to:
+  /// **'No news available'**
   String get no_news_available_label;
 
   /// No description provided for @no_news_label.
+  ///
+  /// In en, this message translates to:
+  /// **'No news'**
   String get no_news_label;
 
   /// No description provided for @refresh_button_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
   String get refresh_button_label;
 
   /// No description provided for @article_not_found_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Article not found'**
   String get article_not_found_label;
 
   /// No description provided for @profile_marketplace_section_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Marketplace'**
   String get profile_marketplace_section_label;
 
   /// No description provided for @kyc_screen_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity verification'**
   String get kyc_screen_title;
 
   /// No description provided for @kyc_missing_documents_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Add both sides of your ID document.'**
   String get kyc_missing_documents_error;
 
   /// No description provided for @kyc_upload_failed_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload documents. Please try again.'**
   String get kyc_upload_failed_error;
 
   /// No description provided for @kyc_id_front_label.
+  ///
+  /// In en, this message translates to:
+  /// **'ID document (front)'**
   String get kyc_id_front_label;
 
   /// No description provided for @kyc_id_back_label.
+  ///
+  /// In en, this message translates to:
+  /// **'ID document (back)'**
   String get kyc_id_back_label;
 
   /// No description provided for @kyc_business_registration_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Business registration'**
   String get kyc_business_registration_label;
 
   /// No description provided for @kyc_optional_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
   String get kyc_optional_hint;
 
   /// No description provided for @kyc_submit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
   String get kyc_submit_button;
 
   /// No description provided for @kyc_resubmit_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Resubmit'**
   String get kyc_resubmit_button;
 
   /// No description provided for @kyc_status_approved.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity verified'**
   String get kyc_status_approved;
 
   /// No description provided for @kyc_status_rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification rejected'**
   String get kyc_status_rejected;
 
   /// No description provided for @kyc_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification pending'**
   String get kyc_status_pending;
 
   /// No description provided for @kyc_dashboard_banner_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Your identity is being verified. Selling will be enabled once approved.'**
   String get kyc_dashboard_banner_pending;
 
   /// No description provided for @kyc_dashboard_banner_rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Your identity verification was rejected. Submit new documents to be able to sell.'**
   String get kyc_dashboard_banner_rejected;
 
   /// No description provided for @kyc_dashboard_action_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify my identity'**
   String get kyc_dashboard_action_button;
+
+  /// No description provided for @map_picker_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Move the map to place the pin on the exact spot'**
+  String get map_picker_hint;
+
+  /// No description provided for @map_picker_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this point'**
+  String get map_picker_confirm;
+
+  /// No description provided for @checkout_delivery_point_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery point'**
+  String get checkout_delivery_point_title;
+
+  /// No description provided for @checkout_delivery_point_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery point'**
+  String get checkout_delivery_point_label;
+
+  /// No description provided for @checkout_delivery_point_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set (optional) — tap to choose on the map'**
+  String get checkout_delivery_point_none;
+
+  /// No description provided for @checkout_delivery_point_set.
+  ///
+  /// In en, this message translates to:
+  /// **'Point chosen on the map — tap to change'**
+  String get checkout_delivery_point_set;
+
+  /// No description provided for @repair_service_mode_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Where will the repair take place?'**
+  String get repair_service_mode_label;
+
+  /// No description provided for @repair_mode_at_garage.
+  ///
+  /// In en, this message translates to:
+  /// **'I bring my car to the garage'**
+  String get repair_mode_at_garage;
+
+  /// No description provided for @repair_mode_on_site.
+  ///
+  /// In en, this message translates to:
+  /// **'The mechanic comes to me'**
+  String get repair_mode_on_site;
+
+  /// No description provided for @repair_on_site_point_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Intervention location'**
+  String get repair_on_site_point_title;
+
+  /// No description provided for @repair_on_site_point_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Required — tap to choose on the map'**
+  String get repair_on_site_point_none;
+
+  /// No description provided for @repair_on_site_point_required.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the intervention location on the map.'**
+  String get repair_on_site_point_required;
+
+  /// No description provided for @tracking_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Live tracking'**
+  String get tracking_title;
+
+  /// No description provided for @tracking_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load the tracking.'**
+  String get tracking_load_error;
+
+  /// No description provided for @tracking_ended.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking has ended.'**
+  String get tracking_ended;
+
+  /// No description provided for @tracking_leg_pickup.
+  ///
+  /// In en, this message translates to:
+  /// **'The courier is picking up your part'**
+  String get tracking_leg_pickup;
+
+  /// No description provided for @tracking_leg_pickup_vendor.
+  ///
+  /// In en, this message translates to:
+  /// **'The courier is on the way to your shop'**
+  String get tracking_leg_pickup_vendor;
+
+  /// No description provided for @tracking_leg_dropoff.
+  ///
+  /// In en, this message translates to:
+  /// **'On the way to you'**
+  String get tracking_leg_dropoff;
+
+  /// No description provided for @tracking_leg_to_client.
+  ///
+  /// In en, this message translates to:
+  /// **'The mechanic is on the way'**
+  String get tracking_leg_to_client;
+
+  /// No description provided for @tracking_waiting_position.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the first position…'**
+  String get tracking_waiting_position;
+
+  /// No description provided for @tracking_eta_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated arrival'**
+  String get tracking_eta_label;
+
+  /// No description provided for @tracking_no_eta.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival time not available'**
+  String get tracking_no_eta;
+
+  /// No description provided for @tracking_follow_live.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow live'**
+  String get tracking_follow_live;
+
+  /// No description provided for @tracking_notification_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery in progress'**
+  String get tracking_notification_title;
+
+  /// No description provided for @tracking_notification_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Your position is shared with your customer until the end of the mission.'**
+  String get tracking_notification_text;
+
+  /// No description provided for @tracking_location_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Location unavailable: enable location to share your position.'**
+  String get tracking_location_unavailable;
+
+  /// No description provided for @self_delivery_button.
+  ///
+  /// In en, this message translates to:
+  /// **'I deliver it myself'**
+  String get self_delivery_button;
+
+  /// No description provided for @self_delivery_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Deliver it yourself?'**
+  String get self_delivery_confirm_title;
+
+  /// No description provided for @self_delivery_confirm_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Your position will be shared live with the buyer until the delivery is completed.'**
+  String get self_delivery_confirm_body;
+
+  /// No description provided for @self_delivery_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start delivery'**
+  String get self_delivery_start;
+
+  /// No description provided for @self_delivery_started.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery started — your position is shared with the buyer.'**
+  String get self_delivery_started;
 }
 
 class _AppLocalizationsDelegate

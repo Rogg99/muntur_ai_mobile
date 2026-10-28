@@ -58,6 +58,18 @@ class CourierRepositoryImpl {
     });
   }
 
+  /// Vendor-side, Doc/17 §2: the vendor delivers the order themselves —
+  /// creates/updates the Delivery as `vendor_self` / `in_transit`, which opens
+  /// the tracking mission server-side (the vendor is then the tracked actor).
+  Future<Delivery> startSelfDelivery(String orderId) {
+    return _withCleanError(() async {
+      final response = await _apiClient
+          .post('/marketplace/orders/$orderId/start-self-delivery/');
+      final raw = response.data['data'] ?? response.data;
+      return Delivery.fromJson((raw as Map).cast<String, dynamic>());
+    });
+  }
+
   /// 403 if this account has no verified+active courier profile.
   Future<List<Delivery>> getAvailableDeliveries() {
     return _withCleanError(() async {

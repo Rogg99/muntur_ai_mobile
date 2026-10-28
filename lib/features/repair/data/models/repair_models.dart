@@ -58,6 +58,13 @@ class RepairBooking {
   final String? completionPinReveal;
   final String dateCreation;
 
+  /// Doc/17 §2.1: `at_garage` (default, client drops the car off) or
+  /// `on_site` (the mechanic travels to the client — tracked live).
+  final String serviceMode;
+
+  /// Doc/17 §4.3 shortcut — non-null only while a live mission is active.
+  final String? trackingMissionId;
+
   const RepairBooking({
     required this.id,
     this.relatedGarageId = '',
@@ -69,6 +76,8 @@ class RepairBooking {
     this.completedAt,
     this.completionPinReveal,
     this.dateCreation = '',
+    this.serviceMode = 'at_garage',
+    this.trackingMissionId,
   });
 
   factory RepairBooking.fromJson(Map<String, dynamic> json) => RepairBooking(
@@ -82,5 +91,7 @@ class RepairBooking {
         completedAt: json['completed_at']?.toString(),
         completionPinReveal: json['completion_pin_reveal']?.toString(),
         dateCreation: json['date_creation']?.toString() ?? '',
+        serviceMode: json['service_mode']?.toString() ?? 'at_garage',
+        trackingMissionId: json['tracking_mission_id']?.toString(),
       );
 }

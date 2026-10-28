@@ -1553,7 +1553,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get repair_create_intro =>
-      "Décrivez le problème (optionnel), puis payez l'acompte pour envoyer votre demande au garage.";
+      'Décrivez le problème (optionnel), puis payez l\'acompte pour envoyer votre demande au garage.';
 
   @override
   String get repair_description_label => 'Description';
@@ -1566,10 +1566,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get repair_deposit_notice =>
-      "Remboursé intégralement si le garage refuse, si vous annulez avant sa réponse, ou s'il ne se présente pas.";
+      'Remboursé intégralement si le garage refuse, si vous annulez avant sa réponse, ou s\'il ne se présente pas.';
 
   @override
-  String get repair_pay_deposit_button => "Payer l'acompte";
+  String get repair_pay_deposit_button => 'Payer l\'acompte';
 
   @override
   String get repair_status_pending => 'En attente de réponse du garage';
@@ -1609,7 +1609,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get repair_cancel_action => 'Annuler le dépôt';
 
   @override
-  String get repair_no_show_confirm_title => "Le garage ne s'est pas présenté ?";
+  String get repair_no_show_confirm_title =>
+      'Le garage ne s\'est pas présenté ?';
 
   @override
   String get repair_no_show_confirm_body =>
@@ -1622,14 +1623,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get repair_my_bookings_title => 'Mes dépôts réparation';
 
   @override
-  String get repair_my_bookings_empty => "Aucun dépôt réparation pour l'instant";
+  String get repair_my_bookings_empty =>
+      'Aucun dépôt réparation pour l\'instant';
 
   @override
   String get repair_staff_title => 'Personnel garage';
 
   @override
   String get repair_staff_pitch =>
-      "Inscrivez-vous comme personnel d'un garage pour recevoir et gérer les dépôts réparation.";
+      'Inscrivez-vous comme personnel d\'un garage pour recevoir et gérer les dépôts réparation.';
 
   @override
   String get repair_staff_pick_garage => 'Choisir votre garage';
@@ -1643,7 +1645,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Choisissez un garage et renseignez un numéro de versement';
 
   @override
-  String get repair_staff_register_button => "S'inscrire";
+  String get repair_staff_register_button => 'S\'inscrire';
 
   @override
   String get repair_staff_dashboard_button => 'Tableau de bord des dépôts';
@@ -1652,7 +1654,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get repair_staff_search_garage_hint => 'Rechercher un garage';
 
   @override
-  String get repair_dashboard_empty => "Aucun dépôt pour l'instant";
+  String get repair_dashboard_empty => 'Aucun dépôt pour l\'instant';
 
   @override
   String get repair_no_description => 'Aucune description fournie';
@@ -1684,7 +1686,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get collect_agent_pitch =>
-      "Devenez agent collecteur terrain : signalez les pannes et garages que vous rencontrez sur le terrain, après vérification d'identité.";
+      'Devenez agent collecteur terrain : signalez les pannes et garages que vous rencontrez sur le terrain, après vérification d\'identité.';
 
   @override
   String get collect_agent_apply_button => 'Postuler';
@@ -1694,20 +1696,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get collect_agent_pending_notice =>
-      "Votre candidature est en cours d'examen.";
+      'Votre candidature est en cours d\'examen.';
 
   @override
-  String get collect_agent_rejected_notice => 'Votre candidature a été refusée.';
+  String get collect_agent_rejected_notice =>
+      'Votre candidature a été refusée.';
 
   @override
-  String get collect_agent_approved_notice => 'Vous êtes agent collecteur approuvé.';
+  String get collect_agent_approved_notice =>
+      'Vous êtes agent collecteur approuvé.';
 
   @override
   String get collect_agent_apply_title => 'Candidature agent';
 
   @override
   String get collect_agent_apply_intro =>
-      "Prenez une photo de votre CNI (recto et verso) et 3 selfies (face, profil gauche, profil droit) pour la vérification d'identité.";
+      'Prenez une photo de votre CNI (recto et verso) et 3 selfies (face, profil gauche, profil droit) pour la vérification d\'identité.';
 
   @override
   String get collect_agent_apply_submit => 'Envoyer la candidature';
@@ -1737,7 +1741,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get collect_agent_my_submissions_title => 'Mes soumissions';
 
   @override
-  String get collect_agent_my_submissions_empty => "Aucune soumission pour l'instant";
+  String get collect_agent_my_submissions_empty =>
+      'Aucune soumission pour l\'instant';
 
   @override
   String get collect_agent_panne_cases_section => 'Pannes signalées';
@@ -1829,10 +1834,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get applock_wrong_pin => 'Code PIN incorrect';
 
   @override
-  String get applock_pin_mismatch => 'Les codes PIN ne correspondent pas, réessayez';
+  String get applock_pin_mismatch =>
+      'Les codes PIN ne correspondent pas, réessayez';
 
   @override
-  String get applock_biometric_reason => 'Confirmez que c\'est bien vous pour continuer';
+  String get applock_biometric_reason =>
+      'Confirmez que c\'est bien vous pour continuer';
 
   @override
   String get error_prefix => 'Erreur';
@@ -2647,8 +2654,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get no_pack_available_label => 'Aucun pack disponible';
 
   @override
-  String get account_suspended_message =>
-      'Votre compte a été suspendu.';
+  String get account_suspended_message => 'Votre compte a été suspendu.';
 
   @override
   String get recommended_part_label => 'Pièce recommandée';
@@ -2719,4 +2725,97 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get kyc_dashboard_action_button => 'Vérifier mon identité';
+
+  @override
+  String get map_picker_hint => 'Déplacez la carte pour placer le repère au bon endroit';
+
+  @override
+  String get map_picker_confirm => 'Valider ce point';
+
+  @override
+  String get checkout_delivery_point_title => 'Point de livraison';
+
+  @override
+  String get checkout_delivery_point_label => 'Point de livraison';
+
+  @override
+  String get checkout_delivery_point_none => 'Non défini (facultatif) — touchez pour le choisir sur la carte';
+
+  @override
+  String get checkout_delivery_point_set => 'Point choisi sur la carte — touchez pour modifier';
+
+  @override
+  String get repair_service_mode_label => 'Où se fait la réparation ?';
+
+  @override
+  String get repair_mode_at_garage => 'J\'amène ma voiture au garage';
+
+  @override
+  String get repair_mode_on_site => 'Le mécanicien vient à moi';
+
+  @override
+  String get repair_on_site_point_title => 'Lieu d\'intervention';
+
+  @override
+  String get repair_on_site_point_none => 'Obligatoire — touchez pour le choisir sur la carte';
+
+  @override
+  String get repair_on_site_point_required => 'Choisissez le lieu d\'intervention sur la carte.';
+
+  @override
+  String get tracking_title => 'Suivi en direct';
+
+  @override
+  String get tracking_load_error => 'Impossible de charger le suivi.';
+
+  @override
+  String get tracking_ended => 'Le suivi est terminé.';
+
+  @override
+  String get tracking_leg_pickup => 'Le livreur récupère votre pièce';
+
+  @override
+  String get tracking_leg_pickup_vendor => 'Le livreur arrive à votre boutique';
+
+  @override
+  String get tracking_leg_dropoff => 'En route vers vous';
+
+  @override
+  String get tracking_leg_to_client => 'Le mécanicien est en route';
+
+  @override
+  String get tracking_waiting_position => 'En attente de la première position…';
+
+  @override
+  String get tracking_eta_label => 'Arrivée estimée';
+
+  @override
+  String get tracking_no_eta => 'Heure d\'arrivée indisponible';
+
+  @override
+  String get tracking_follow_live => 'Suivre en direct';
+
+  @override
+  String get tracking_notification_title => 'Mission en cours';
+
+  @override
+  String get tracking_notification_text => 'Votre position est partagée avec votre client jusqu\'à la fin de la mission.';
+
+  @override
+  String get tracking_location_unavailable => 'Localisation indisponible : activez la localisation pour partager votre position.';
+
+  @override
+  String get self_delivery_button => 'Je livre moi-même';
+
+  @override
+  String get self_delivery_confirm_title => 'Livrer vous-même ?';
+
+  @override
+  String get self_delivery_confirm_body => 'Votre position sera partagée en direct avec l\'acheteur jusqu\'à la fin de la livraison.';
+
+  @override
+  String get self_delivery_start => 'Démarrer la livraison';
+
+  @override
+  String get self_delivery_started => 'Livraison démarrée — votre position est partagée avec l\'acheteur.';
 }

@@ -70,12 +70,22 @@ class RepairRepositoryImpl {
   Future<RepairBooking> createBooking({
     required String garageId,
     String? description,
+    String serviceMode = 'at_garage',
+    double? clientLatitude,
+    double? clientLongitude,
   }) {
     return _withCleanError(() async {
       final response = await _apiClient.post('/repair-bookings/', data: {
         'garage_id': garageId,
         if (description != null && description.isNotEmpty)
           'description': description,
+        // Doc/17 §2.1 — only sent for on_site, so at_garage bookings keep
+        // working against a backend that doesn't know the field yet.
+        if (serviceMode == 'on_site') ...{
+          'service_mode': serviceMode,
+          'client_latitude': double.parse(clientLatitude!.toStringAsFixed(6)),
+          'client_longitude': double.parse(clientLongitude!.toStringAsFixed(6)),
+        },
       });
       final raw = response.data['data'] ?? response.data;
       return RepairBooking.fromJson((raw as Map).cast<String, dynamic>());

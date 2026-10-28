@@ -1656,7 +1656,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repair_complete_action => 'Complete (PIN)';
 
   @override
-  String get repair_complete_dialog_title => "Enter the client's completion code";
+  String get repair_complete_dialog_title =>
+      'Enter the client\'s completion code';
 
   @override
   String get repair_client_pin_label => 'Completion code';
@@ -1678,13 +1679,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get collect_agent_reapply_button => 'Re-apply';
 
   @override
-  String get collect_agent_pending_notice => 'Your application is being reviewed.';
+  String get collect_agent_pending_notice =>
+      'Your application is being reviewed.';
 
   @override
   String get collect_agent_rejected_notice => 'Your application was declined.';
 
   @override
-  String get collect_agent_approved_notice => "You're an approved collect agent.";
+  String get collect_agent_approved_notice =>
+      'You\'re an approved collect agent.';
 
   @override
   String get collect_agent_apply_title => 'Agent application';
@@ -2619,8 +2622,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get no_pack_available_label => 'No pack available';
 
   @override
-  String get account_suspended_message =>
-      'Your account has been suspended.';
+  String get account_suspended_message => 'Your account has been suspended.';
 
   @override
   String get recommended_part_label => 'Recommended part';
@@ -2691,4 +2693,97 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get kyc_dashboard_action_button => 'Verify my identity';
+
+  @override
+  String get map_picker_hint => 'Move the map to place the pin on the exact spot';
+
+  @override
+  String get map_picker_confirm => 'Use this point';
+
+  @override
+  String get checkout_delivery_point_title => 'Delivery point';
+
+  @override
+  String get checkout_delivery_point_label => 'Delivery point';
+
+  @override
+  String get checkout_delivery_point_none => 'Not set (optional) — tap to choose on the map';
+
+  @override
+  String get checkout_delivery_point_set => 'Point chosen on the map — tap to change';
+
+  @override
+  String get repair_service_mode_label => 'Where will the repair take place?';
+
+  @override
+  String get repair_mode_at_garage => 'I bring my car to the garage';
+
+  @override
+  String get repair_mode_on_site => 'The mechanic comes to me';
+
+  @override
+  String get repair_on_site_point_title => 'Intervention location';
+
+  @override
+  String get repair_on_site_point_none => 'Required — tap to choose on the map';
+
+  @override
+  String get repair_on_site_point_required => 'Choose the intervention location on the map.';
+
+  @override
+  String get tracking_title => 'Live tracking';
+
+  @override
+  String get tracking_load_error => 'Unable to load the tracking.';
+
+  @override
+  String get tracking_ended => 'Tracking has ended.';
+
+  @override
+  String get tracking_leg_pickup => 'The courier is picking up your part';
+
+  @override
+  String get tracking_leg_pickup_vendor => 'The courier is on the way to your shop';
+
+  @override
+  String get tracking_leg_dropoff => 'On the way to you';
+
+  @override
+  String get tracking_leg_to_client => 'The mechanic is on the way';
+
+  @override
+  String get tracking_waiting_position => 'Waiting for the first position…';
+
+  @override
+  String get tracking_eta_label => 'Estimated arrival';
+
+  @override
+  String get tracking_no_eta => 'Arrival time not available';
+
+  @override
+  String get tracking_follow_live => 'Follow live';
+
+  @override
+  String get tracking_notification_title => 'Delivery in progress';
+
+  @override
+  String get tracking_notification_text => 'Your position is shared with your customer until the end of the mission.';
+
+  @override
+  String get tracking_location_unavailable => 'Location unavailable: enable location to share your position.';
+
+  @override
+  String get self_delivery_button => 'I deliver it myself';
+
+  @override
+  String get self_delivery_confirm_title => 'Deliver it yourself?';
+
+  @override
+  String get self_delivery_confirm_body => 'Your position will be shared live with the buyer until the delivery is completed.';
+
+  @override
+  String get self_delivery_start => 'Start delivery';
+
+  @override
+  String get self_delivery_started => 'Delivery started — your position is shared with the buyer.';
 }

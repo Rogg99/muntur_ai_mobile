@@ -15,6 +15,9 @@ import '../../features/chatbot/presentation/providers/chatbot_provider.dart';
 import '../../features/notifications/presentation/providers/notification_provider.dart';
 import '../../features/subscriptions/presentation/providers/subscription_provider.dart';
 import '../../features/support/presentation/providers/support_provider.dart';
+import '../../features/tracking/presentation/providers/tracking_provider.dart'
+    show TrackingEvents;
+import 'tracking_location_service.dart';
 
 part 'realtime_dispatcher.g.dart';
 
@@ -39,6 +42,25 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
     ref.onDispose(() {
       _subscription?.cancel();
     });
+    // Session start: resume sending if a mission where this account is the
+    // tracked actor is still active (app killed/restarted mid-delivery).
+    _resumeActorMission();
+  }
+
+  /// The mobile never starts a mission on its own — it only resumes the one
+  /// the server reports as active with role `actor` (Doc/17 §4.3).
+  Future<void> _resumeActorMission() async {
+    try {
+      final context = MyApp.navigatorKey.currentContext;
+      final l10n = context != null ? AppLocalizations.of(context) : null;
+      await TrackingLocationService().resumeActiveMission(
+        notificationTitle: l10n?.tracking_notification_title ?? 'Autosynx',
+        notificationText: l10n?.tracking_notification_text ??
+            'Position shared with your customer',
+      );
+    } catch (_) {
+      // Best effort: retried on the next tracking_started / app start.
+    }
   }
 
   void _handleEvent(Map<String, dynamic> event) {
@@ -156,6 +178,26 @@ class RealtimeDispatcher extends _$RealtimeDispatcher {
       // approach as the transaction/subscription case above.
       case 'coins_balance_updated':
         ref.invalidate(coinsBalanceProvider);
+        break;
+
+      // Live GPS tracking (Doc/17 §5). Mounted mission screens merge these;
+      // the actor side starts/stops its location service on them. A missed
+      // tracking_ended is covered by the next position POST's 409/410.
+      case 'tracking_started':
+        TrackingEvents.add(event);
+        _resumeActorMission();
+        break;
+      case 'tracking_position':
+      case 'tracking_route':
+      case 'tracking_leg_changed':
+        TrackingEvents.add(event);
+        break;
+      case 'tracking_ended':
+        TrackingEvents.add(event);
+        final missionId = data is Map ? data['mission_id']?.toString() : null;
+        if (missionId != null) {
+          TrackingLocationService().stopIfMission(missionId);
+        }
         break;
 
       case 'account_status':
