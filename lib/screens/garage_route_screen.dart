@@ -38,7 +38,11 @@ class _GarageRouteScreenState extends ConsumerState<GarageRouteScreen> {
   @override
   void initState() {
     super.initState();
-    _load();
+    // _load reads AppLocalizations (an inherited widget), which isn't
+    // allowed before initState completes.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _load();
+    });
   }
 
   Future<void> _load() async {
