@@ -2847,8 +2847,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get route_close => 'Fermer l\'itinéraire';
 
   @override
-  String get route_quota_reached => 'Trop de calculs d\'itinéraire pour le moment. Réessayez dans quelques minutes.';
+  String get route_quota_reached =>
+      'Trop de calculs d\'itinéraire pour le moment. Réessayez dans quelques minutes.';
 
   @override
-  String get route_recompute_unavailable => 'Mise à jour du trajet indisponible pour le moment — le tracé actuel est conservé.';
+  String get route_recompute_unavailable =>
+      'Mise à jour du trajet indisponible pour le moment — le tracé actuel est conservé.';
+
+  @override
+  String get payment_checked_phone_retry => 'J\'ai vérifié mon téléphone, réessayer';
 }

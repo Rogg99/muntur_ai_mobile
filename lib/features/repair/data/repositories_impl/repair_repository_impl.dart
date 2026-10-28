@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_client.dart';
+import '../../../../core/models/payment_models.dart';
 import '../models/repair_models.dart';
 
 /// Rethrows a DioException carrying the backend's `{"detail": "..."}` body
@@ -10,8 +11,8 @@ Future<T> _withCleanError<T>(Future<T> Function() call) async {
   try {
     return await call();
   } on DioException catch (e) {
-    final detail = e.response?.data is Map ? e.response?.data['detail'] : null;
-    throw Exception(detail?.toString() ?? 'La requête a échoué.');
+    // 503 {detail, retryable} from Campay outages -> PaymentUnavailableException.
+    throw paymentCallError(e.response?.statusCode, e.response?.data);
   }
 }
 

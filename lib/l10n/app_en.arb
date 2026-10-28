@@ -893,5 +893,6 @@
   "route_arrived": "You have arrived.",
   "route_close": "Close the route",
   "route_quota_reached": "Too many route requests for now. Try again in a few minutes.",
-  "route_recompute_unavailable": "Route update unavailable for now — the current route is kept."
+  "route_recompute_unavailable": "Route update unavailable for now — the current route is kept.",
+  "payment_checked_phone_retry": "I checked my phone, try again"
 }

@@ -86,6 +86,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
   bool _submitting = false;
   String? _error;
 
+  // Campay may have received the last request (503, retryable: false): the
+  // pay button is swapped for an explicit "I checked my phone" retry.
+  bool _mustCheckPhone = false;
+
   @override
   void dispose() {
     _phoneController.dispose();
@@ -131,6 +135,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ));
     } catch (e) {
       if (!mounted) return;
+      if (e is PaymentUnavailableException) _mustCheckPhone = !e.retryable;
       setState(() {
         _submitting = false;
         _error = e.toString().replaceFirst('Exception: ', '');
@@ -163,6 +168,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ));
     } catch (e) {
       if (!mounted) return;
+      if (e is PaymentUnavailableException) _mustCheckPhone = !e.retryable;
       setState(() {
         _submitting = false;
         _error = e.toString().replaceFirst('Exception: ', '');
@@ -238,12 +244,25 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Text(_error!, style: appStyle.H6(color: Colors.redAccent)),
           ],
           const SizedBox(height: 24),
-          PrimaryButton(
-            text:
-                '${l10n.marketplace_pay_button} ${widget.amount.toStringAsFixed(0)} ${widget.currency}',
-            loading: _submitting,
-            onPressed: _submit,
-          ),
+          if (_mustCheckPhone)
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48)),
+              onPressed: _submitting
+                  ? null
+                  : () => setState(() {
+                        _mustCheckPhone = false;
+                        _error = null;
+                      }),
+              child: Text(l10n.payment_checked_phone_retry),
+            )
+          else
+            PrimaryButton(
+              text:
+                  '${l10n.marketplace_pay_button} ${widget.amount.toStringAsFixed(0)} ${widget.currency}',
+              loading: _submitting,
+              onPressed: _submit,
+            ),
         ],
       ),
     );

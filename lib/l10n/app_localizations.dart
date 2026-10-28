@@ -5467,6 +5467,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Route update unavailable for now — the current route is kept.'**
   String get route_recompute_unavailable;
+
+  /// No description provided for @payment_checked_phone_retry.
+  ///
+  /// In en, this message translates to:
+  /// **'I checked my phone, try again'**
+  String get payment_checked_phone_retry;
 }
 
 class _AppLocalizationsDelegate

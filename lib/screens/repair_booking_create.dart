@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/models/payment_models.dart';
 import 'package:munturai/core/services/app_lock_guard.dart';
 import 'package:munturai/features/repair/presentation/providers/repair_provider.dart';
 import 'package:munturai/screens/map_point_picker.dart';
@@ -46,6 +47,9 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
   // retries — otherwise every retry would leave an orphan booking with the
   // garage. Reset when the booking's own inputs change.
   String? _createdBookingId;
+
+  // 503 retryable:false — Campay may have the request; see PaymentScreen.
+  bool _mustCheckPhone = false;
 
   // Doc/17 §2.1: at_garage (default) or on_site — on_site requires the
   // intervention point, chosen on the map (never the raw GPS fix).
@@ -117,6 +121,7 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
       );
     } catch (e) {
       if (!mounted) return;
+      if (e is PaymentUnavailableException) _mustCheckPhone = !e.retryable;
       setState(() {
         _submitting = false;
         _error = e.toString().replaceFirst('Exception: ', '');
@@ -219,11 +224,22 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
             Text(_error!, style: appStyle.H6(color: Colors.redAccent)),
           ],
           const SizedBox(height: 24),
-          PrimaryButton(
-            text: l10n.repair_pay_deposit_button,
-            loading: _submitting,
-            onPressed: _submit,
-          ),
+          if (_mustCheckPhone)
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48)),
+              onPressed: () => setState(() {
+                _mustCheckPhone = false;
+                _error = null;
+              }),
+              child: Text(l10n.payment_checked_phone_retry),
+            )
+          else
+            PrimaryButton(
+              text: l10n.repair_pay_deposit_button,
+              loading: _submitting,
+              onPressed: _submit,
+            ),
         ],
       ),
     );
