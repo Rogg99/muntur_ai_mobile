@@ -202,7 +202,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               // ─── OpenStreetMap tiles ───
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.munturai.app',
+                userAgentPackageName: 'dev.munturai.stepsindustries.com.munturai',
               ),
 
               // ─── User position marker ───
