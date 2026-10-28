@@ -42,6 +42,11 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
   bool _submitting = false;
   String? _error;
 
+  // Created once and reused if the deposit payment fails and the user
+  // retries — otherwise every retry would leave an orphan booking with the
+  // garage. Reset when the booking's own inputs change.
+  String? _createdBookingId;
+
   // Doc/17 §2.1: at_garage (default) or on_site — on_site requires the
   // intervention point, chosen on the map (never the raw GPS fix).
   String _serviceMode = 'at_garage';
@@ -62,6 +67,7 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
     setState(() {
       _clientPoint = point;
       _error = null;
+      _createdBookingId = null;
     });
   }
 
@@ -93,19 +99,20 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
     });
     final repo = ref.read(repairRepositoryProvider);
     try {
-      final booking = await repo.createBooking(
+      final bookingId = _createdBookingId ??= (await repo.createBooking(
         garageId: widget.garageId,
         description: _descriptionController.text.trim(),
         serviceMode: _serviceMode,
         clientLatitude: _clientPoint?.latitude,
         clientLongitude: _clientPoint?.longitude,
-      );
-      await repo.payBooking(booking.id, phone);
+      ))
+          .id;
+      await repo.payBooking(bookingId, phone);
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => RepairBookingTracking(bookingId: booking.id),
+          builder: (_) => RepairBookingTracking(bookingId: bookingId),
         ),
       );
     } catch (e) {
@@ -143,12 +150,18 @@ class _RepairBookingCreateState extends ConsumerState<RepairBookingCreate> {
               ChoiceChip(
                 label: Text(l10n.repair_mode_at_garage),
                 selected: _serviceMode == 'at_garage',
-                onSelected: (_) => setState(() => _serviceMode = 'at_garage'),
+                onSelected: (_) => setState(() {
+                  _serviceMode = 'at_garage';
+                  _createdBookingId = null;
+                }),
               ),
               ChoiceChip(
                 label: Text(l10n.repair_mode_on_site),
                 selected: _serviceMode == 'on_site',
-                onSelected: (_) => setState(() => _serviceMode = 'on_site'),
+                onSelected: (_) => setState(() {
+                  _serviceMode = 'on_site';
+                  _createdBookingId = null;
+                }),
               ),
             ],
           ),
