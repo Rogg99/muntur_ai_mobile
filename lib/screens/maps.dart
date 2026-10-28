@@ -7,6 +7,7 @@ import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/garages/domain/entities/garage_entity.dart';
 import 'package:munturai/features/garages/presentation/providers/garage_provider.dart';
 import 'package:munturai/screens/garage.dart';
+import 'package:munturai/screens/garage_route_screen.dart';
 import 'package:munturai/widgets/osm_tile_layer.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
@@ -416,8 +417,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                                   garage: g,
                                   distanceKm: _distanceKm(g),
                                   onTap: () => _selectGarage(g),
-                                  onDirections: () => launchExternalUrl(
-                                      'https://www.google.com/maps/search/?api=1&query=${g.latitude},${g.longitude}'),
+                                  onDirections: () => openGarageRoute(context, g),
                                 );
                               },
                             ),
@@ -615,8 +615,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             if (garage.latitude != 0.0 || garage.longitude != 0.0)
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => launchExternalUrl(
-                      'https://www.google.com/maps/search/?api=1&query=${garage.latitude},${garage.longitude}'),
+                  onPressed: () => openGarageRoute(context, garage),
                   icon: const Icon(Icons.directions_outlined, size: 18),
                   label: Text(translator.action_directions),
                 ),

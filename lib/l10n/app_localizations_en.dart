@@ -2786,4 +2786,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get self_delivery_started => 'Delivery started — your position is shared with the buyer.';
+
+  @override
+  String get route_load_error => 'Unable to compute the route.';
+
+  @override
+  String get route_open_external => 'Open in Google Maps';
 }

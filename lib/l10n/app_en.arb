@@ -885,5 +885,7 @@
   "self_delivery_confirm_title": "Deliver it yourself?",
   "self_delivery_confirm_body": "Your position will be shared live with the buyer until the delivery is completed.",
   "self_delivery_start": "Start delivery",
-  "self_delivery_started": "Delivery started — your position is shared with the buyer."
+  "self_delivery_started": "Delivery started — your position is shared with the buyer.",
+  "route_load_error": "Unable to compute the route.",
+  "route_open_external": "Open in Google Maps"
 }

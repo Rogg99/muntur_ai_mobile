@@ -15,13 +15,16 @@ class TrackingRepositoryImpl {
   }
 
   /// §4.2. A 410 (mission ended) comes back as an ended mission with no
-  /// coordinates rather than an error, so screens can show "terminé".
+  /// coordinates rather than an error, so screens can show "terminé". So
+  /// does a 404: a vendor loses access once the courier's pickup leg is over
+  /// (tracking_mission_id stays set for the buyer), confirmed by a4.
   Future<TrackingMission> getMission(String missionId) async {
     try {
       final response = await _apiClient.get('/tracking/missions/$missionId/');
       return TrackingMission.fromJson(_unwrap(response.data));
     } on DioException catch (e) {
-      if (e.response?.statusCode == 410) {
+      final code = e.response?.statusCode;
+      if (code == 410 || code == 404) {
         final body = e.response?.data;
         return TrackingMission(id: missionId)
             .asEnded(body is Map ? body['end_reason']?.toString() : null);

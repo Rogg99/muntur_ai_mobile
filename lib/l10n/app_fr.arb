@@ -885,5 +885,7 @@
   "self_delivery_confirm_title": "Livrer vous-même ?",
   "self_delivery_confirm_body": "Votre position sera partagée en direct avec l'acheteur jusqu'à la fin de la livraison.",
   "self_delivery_start": "Démarrer la livraison",
-  "self_delivery_started": "Livraison démarrée — votre position est partagée avec l'acheteur."
+  "self_delivery_started": "Livraison démarrée — votre position est partagée avec l'acheteur.",
+  "route_load_error": "Impossible de calculer l'itinéraire.",
+  "route_open_external": "Ouvrir dans Google Maps"
 }

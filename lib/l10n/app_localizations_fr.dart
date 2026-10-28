@@ -2818,4 +2818,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get self_delivery_started => 'Livraison démarrée — votre position est partagée avec l\'acheteur.';
+
+  @override
+  String get route_load_error => 'Impossible de calculer l\'itinéraire.';
+
+  @override
+  String get route_open_external => 'Ouvrir dans Google Maps';
 }

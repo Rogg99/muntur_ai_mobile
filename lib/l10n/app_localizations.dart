@@ -5419,6 +5419,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delivery started — your position is shared with the buyer.'**
   String get self_delivery_started;
+
+  /// No description provided for @route_load_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to compute the route.'**
+  String get route_load_error;
+
+  /// No description provided for @route_open_external.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Google Maps'**
+  String get route_open_external;
 }
 
 class _AppLocalizationsDelegate

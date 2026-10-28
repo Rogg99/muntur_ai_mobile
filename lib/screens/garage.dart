@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/garages/domain/entities/garage_entity.dart';
 import 'package:munturai/features/garages/presentation/providers/garage_provider.dart';
+import 'package:munturai/screens/garage_route_screen.dart';
 import 'package:munturai/screens/repair_booking_create.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -434,8 +435,7 @@ class GarageDetailView extends StatelessWidget {
                       _ActionButton(
                         icon: Icons.directions_outlined,
                         label: translator.action_directions,
-                        onTap: () => _launch(
-                            'https://www.google.com/maps/search/?api=1&query=${garage.latitude},${garage.longitude}'),
+                        onTap: () => openGarageRoute(context, garage),
                       ),
                     ],
                     const SizedBox(width: 10),

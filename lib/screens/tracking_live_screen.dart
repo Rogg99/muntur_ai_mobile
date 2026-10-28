@@ -177,7 +177,7 @@ class _TrackingLiveScreenState extends ConsumerState<TrackingLiveScreen>
                 Polyline(
                     points: mission.trail,
                     strokeWidth: 4,
-                    color: Colors.grey.withOpacity(0.7)),
+                    color: Colors.grey.withValues(alpha: 0.7)),
               ]),
             if (mission.route != null && mission.route!.geometry.length >= 2)
               PolylineLayer(polylines: [
