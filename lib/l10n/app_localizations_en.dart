@@ -2813,4 +2813,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get route_close => 'Close the route';
+
+  @override
+  String get route_quota_reached => 'Too many route requests for now. Try again in a few minutes.';
+
+  @override
+  String get route_recompute_unavailable => 'Route update unavailable for now — the current route is kept.';
 }

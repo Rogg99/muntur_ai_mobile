@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,11 +50,26 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   StreamSubscription<Position>? _navSub;
   int _offRouteStreak = 0;
   DateTime? _lastRouteFetch;
+  // Set when a recompute was skipped (local quota) or refused (429): the
+  // current route stays on screen with a discreet notice.
+  bool _recomputeUnavailable = false;
 
   static const double _offRouteThresholdM = 150;
   static const double _arrivalRadiusM = 40;
-  // route-preview is throttled at 20/h per user — never recompute faster.
   static const Duration _minRecomputeInterval = Duration(seconds: 90);
+
+  // route-preview is throttled at 20/h per user server-side (Doc/17 §4.4).
+  // Every call counts — the first route of each "Itinéraire" included — so
+  // they're all recorded here, app-wide (static: survives closing a route),
+  // and capped a bit under the server limit over a sliding hour.
+  static const int _routeQuotaPerHour = 18;
+  static final List<DateTime> _routeFetchLog = [];
+
+  static bool _routeQuotaAvailable() {
+    final cutoff = DateTime.now().subtract(const Duration(hours: 1));
+    _routeFetchLog.removeWhere((t) => t.isBefore(cutoff));
+    return _routeFetchLog.length < _routeQuotaPerHour;
+  }
 
   @override
   void initState() {
@@ -92,6 +108,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       _progress = null;
       _routeError = null;
       _arrived = false;
+      _recomputeUnavailable = false;
       _routeLoading = true;
     });
     final from = await _locateUser(moveCamera: false);
@@ -109,7 +126,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   Future<void> _fetchRoute(LatLng from, {bool fit = false}) async {
     final garage = _routeGarage;
     if (garage == null) return;
+    if (!_routeQuotaAvailable()) {
+      _onRouteQuotaHit();
+      return;
+    }
     _lastRouteFetch = DateTime.now();
+    _routeFetchLog.add(_lastRouteFetch!);
     try {
       final route = await ref.read(trackingRepositoryProvider).routePreview(
             lat: from.latitude,
@@ -121,12 +143,25 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         _route = route;
         _routeLoading = false;
         _routeError = null;
+        _recomputeUnavailable = false;
         _offRouteStreak = 0;
         _progress = route == null
             ? null
             : RouteProgress.compute(route.geometry, from, route.durationS);
       });
       if (fit) _fitRoute(from);
+    } on DioException catch (e) {
+      if (!mounted || _routeGarage?.id != garage.id) return;
+      if (e.response?.statusCode == 429) {
+        _onRouteQuotaHit();
+        return;
+      }
+      setState(() {
+        _routeLoading = false;
+        if (_route == null) {
+          _routeError = AppLocalizations.of(context)!.route_load_error;
+        }
+      });
     } catch (_) {
       if (!mounted || _routeGarage?.id != garage.id) return;
       setState(() {
@@ -137,6 +172,21 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         }
       });
     }
+  }
+
+  /// Local quota reached or server 429: keep the current route (ETA keeps
+  /// updating locally); with no route yet, it's an error with retry.
+  void _onRouteQuotaHit() {
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    setState(() {
+      _routeLoading = false;
+      if (_route == null) {
+        _routeError = l10n.route_quota_reached;
+      } else {
+        _recomputeUnavailable = true;
+      }
+    });
   }
 
   void _fitRoute(LatLng from) {
@@ -233,6 +283,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       _routeError = null;
       _routeLoading = false;
       _arrived = false;
+      _recomputeUnavailable = false;
     });
   }
 
@@ -771,6 +822,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               style: appStyle.H6(
                   color: _routeError != null && !_arrived ? Colors.redAccent : null),
             ),
+            if (_recomputeUnavailable && !_arrived)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(translator.route_recompute_unavailable,
+                    style: appStyle.H6(color: Colors.grey)),
+              ),
             const SizedBox(height: 10),
             Row(
               children: [

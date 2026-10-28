@@ -5455,6 +5455,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Close the route'**
   String get route_close;
+
+  /// No description provided for @route_quota_reached.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many route requests for now. Try again in a few minutes.'**
+  String get route_quota_reached;
+
+  /// No description provided for @route_recompute_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Route update unavailable for now — the current route is kept.'**
+  String get route_recompute_unavailable;
 }
 
 class _AppLocalizationsDelegate
