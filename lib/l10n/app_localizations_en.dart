@@ -1638,6 +1638,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repair_staff_search_garage_hint => 'Search for a garage';
 
   @override
+  String get garage_kyc_intro =>
+      'To receive repair requests, verify your identity and your link with this garage.';
+
+  @override
+  String get garage_kyc_storefront_label =>
+      'Photo of you in front of the garage';
+
+  @override
+  String get garage_kyc_patente_label =>
+      'Business licence (patente)';
+
+  @override
+  String get garage_kyc_missing_documents_error =>
+      'Add both sides of your ID and a photo of you in front of the garage.';
+
+  @override
+  String get garage_kyc_waiting =>
+      "Your documents are being reviewed. You'll get a message as soon as your account is validated.";
+
+  @override
+  String get garage_pro_required_title =>
+      'Last step: your Pro subscription';
+
+  @override
+  String get garage_pro_required_text =>
+      'Your account is validated. Pay your Pro subscription (patente) to receive repair requests.';
+
+  @override
+  String get garage_pro_required_button =>
+      'Choose my Pro subscription';
+
+  @override
   String get repair_dashboard_empty => 'No bookings yet';
 
   @override
@@ -2619,7 +2651,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscribe_button_label => 'Subscribe';
 
   @override
-  String get plan_features_label => "What's included";
+  String get plan_features_label => 'What\'s included';
 
   @override
   String get plan_duration_label => 'Duration';

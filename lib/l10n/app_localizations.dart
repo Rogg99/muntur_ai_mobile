@@ -3230,6 +3230,54 @@ abstract class AppLocalizations {
   /// **'Search for a garage'**
   String get repair_staff_search_garage_hint;
 
+  /// No description provided for @garage_kyc_intro.
+  ///
+  /// In en, this message translates to:
+  /// **'To receive repair requests, verify your identity and your link with this garage.'**
+  String get garage_kyc_intro;
+
+  /// No description provided for @garage_kyc_storefront_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo of you in front of the garage'**
+  String get garage_kyc_storefront_label;
+
+  /// No description provided for @garage_kyc_patente_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Business licence (patente)'**
+  String get garage_kyc_patente_label;
+
+  /// No description provided for @garage_kyc_missing_documents_error.
+  ///
+  /// In en, this message translates to:
+  /// **'Add both sides of your ID and a photo of you in front of the garage.'**
+  String get garage_kyc_missing_documents_error;
+
+  /// No description provided for @garage_kyc_waiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents are being reviewed. You'll get a message as soon as your account is validated.'**
+  String get garage_kyc_waiting;
+
+  /// No description provided for @garage_pro_required_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Last step: your Pro subscription'**
+  String get garage_pro_required_title;
+
+  /// No description provided for @garage_pro_required_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is validated. Pay your Pro subscription (patente) to receive repair requests.'**
+  String get garage_pro_required_text;
+
+  /// No description provided for @garage_pro_required_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose my Pro subscription'**
+  String get garage_pro_required_button;
+
   /// No description provided for @repair_dashboard_empty.
   ///
   /// In en, this message translates to:
@@ -5093,7 +5141,7 @@ abstract class AppLocalizations {
   /// No description provided for @plan_features_label.
   ///
   /// In en, this message translates to:
-  /// **'What's included'**
+  /// **'What\'s included'**
   String get plan_features_label;
 
   /// No description provided for @plan_duration_label.

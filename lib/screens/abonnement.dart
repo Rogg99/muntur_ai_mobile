@@ -7,7 +7,10 @@ import 'package:munturai/features/subscriptions/presentation/providers/subscript
 import 'package:munturai/screens/payment_screen.dart';
 
 class SubscriptionsScreen extends ConsumerWidget {
-  const SubscriptionsScreen({super.key});
+  const SubscriptionsScreen({super.key, this.planType});
+
+  /// Only show plans of this type (e.g. 'Pro' for garage owners).
+  final String? planType;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -95,11 +98,16 @@ class SubscriptionsScreen extends ConsumerWidget {
               loading: () => Center(
                   child: CircularProgressIndicator(color: colorScheme.primary)),
               error: (e, _) => Text('${l10n.error_prefix} : $e'),
-              data: (plans) => plans.isEmpty
-                  ? Text(l10n.no_plan_available_label, style: appStyle.H5())
-                  : Column(
-                      children: plans.map((p) => _PlanCard(plan: p)).toList(),
-                    ),
+              data: (all) {
+                final plans = planType == null
+                    ? all
+                    : all.where((p) => p.type == planType).toList();
+                return plans.isEmpty
+                    ? Text(l10n.no_plan_available_label, style: appStyle.H5())
+                    : Column(
+                        children: plans.map((p) => _PlanCard(plan: p)).toList(),
+                      );
+              },
             ),
           ],
         ),

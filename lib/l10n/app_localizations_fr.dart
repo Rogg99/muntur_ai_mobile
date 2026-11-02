@@ -1654,6 +1654,38 @@ class AppLocalizationsFr extends AppLocalizations {
   String get repair_staff_search_garage_hint => 'Rechercher un garage';
 
   @override
+  String get garage_kyc_intro =>
+      'Pour recevoir des demandes de réparation, vérifiez votre identité et votre lien avec ce garage.';
+
+  @override
+  String get garage_kyc_storefront_label =>
+      'Photo de vous devant le garage';
+
+  @override
+  String get garage_kyc_patente_label =>
+      'Patente / registre de commerce';
+
+  @override
+  String get garage_kyc_missing_documents_error =>
+      "Ajoutez les deux faces de votre pièce d'identité et une photo de vous devant le garage.";
+
+  @override
+  String get garage_kyc_waiting =>
+      'Vos documents sont en cours de vérification. Vous recevrez un message dès que votre compte sera validé.';
+
+  @override
+  String get garage_pro_required_title =>
+      'Dernière étape : votre abonnement Pro';
+
+  @override
+  String get garage_pro_required_text =>
+      'Votre compte est validé. Payez votre abonnement Pro (patente) pour recevoir des demandes de réparation.';
+
+  @override
+  String get garage_pro_required_button =>
+      'Choisir mon abonnement Pro';
+
+  @override
   String get repair_dashboard_empty => 'Aucun dépôt pour l\'instant';
 
   @override

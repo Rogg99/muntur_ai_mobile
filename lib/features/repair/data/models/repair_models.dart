@@ -21,6 +21,19 @@ class GarageStaffProfile {
   final bool active;
   final String dateCreation;
 
+  /// pending | approved | rejected — staff review of the documents.
+  final String kycStatus;
+  final String kycRejectionReason;
+
+  /// Null until the documents were sent (submit-kyc/).
+  final String? kycSubmittedAt;
+
+  /// Paid Pro plan (the garage "patente") still running.
+  final bool subscriptionActive;
+
+  /// KYC approved + Pro plan paid: receives and accepts repair requests.
+  final bool canTakeRequests;
+
   const GarageStaffProfile({
     required this.id,
     this.relatedGarageId = '',
@@ -28,6 +41,11 @@ class GarageStaffProfile {
     this.payoutPhoneNumber = '',
     this.active = true,
     this.dateCreation = '',
+    this.kycStatus = 'pending',
+    this.kycRejectionReason = '',
+    this.kycSubmittedAt,
+    this.subscriptionActive = false,
+    this.canTakeRequests = false,
   });
 
   factory GarageStaffProfile.fromJson(Map<String, dynamic> json) =>
@@ -40,6 +58,11 @@ class GarageStaffProfile {
         payoutPhoneNumber: json['payout_phone_number']?.toString() ?? '',
         active: json['active'] == true,
         dateCreation: json['date_creation']?.toString() ?? '',
+        kycStatus: json['kyc_status']?.toString() ?? 'pending',
+        kycRejectionReason: json['kyc_rejection_reason']?.toString() ?? '',
+        kycSubmittedAt: json['kyc_submitted_at']?.toString(),
+        subscriptionActive: json['subscription_active'] == true,
+        canTakeRequests: json['can_take_requests'] == true,
       );
 }
 

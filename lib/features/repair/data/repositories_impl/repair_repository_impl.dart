@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 import '../../../../core/network/api_client.dart';
@@ -48,6 +50,42 @@ class RepairRepositoryImpl {
       final response = await _apiClient.post('/repair-garages/', data: {
         'related_garage': relatedGarageId,
         'payout_phone_number': payoutPhoneNumber,
+      });
+      final raw = response.data['data'] ?? response.data;
+      return GarageStaffProfile.fromJson((raw as Map).cast<String, dynamic>());
+    });
+  }
+
+  /// Uploads one KYC photo to the shared /medias/ endpoint, returns its id.
+  Future<String> uploadKycDocument(File file) {
+    return _withCleanError(() async {
+      final form = FormData.fromMap({
+        'file': await MultipartFile.fromFile(file.path,
+            filename: file.uri.pathSegments.last),
+      });
+      final response = await _apiClient.postMultipart('/medias/', form);
+      final data = response.data['data'] ?? response.data;
+      final id = data is Map ? data['id']?.toString() : null;
+      if (id == null) throw Exception('no media id in response');
+      return id;
+    });
+  }
+
+  /// Sends the KYC documents (media ids) for staff review; back to 'pending'.
+  Future<GarageStaffProfile> submitGarageKyc({
+    required String idFrontMediaId,
+    required String idBackMediaId,
+    required String storefrontMediaId,
+    String? businessRegistrationMediaId,
+  }) {
+    return _withCleanError(() async {
+      final response =
+          await _apiClient.post('/repair-garages/submit-kyc/', data: {
+        'id_front': idFrontMediaId,
+        'id_back': idBackMediaId,
+        'storefront': storefrontMediaId,
+        if (businessRegistrationMediaId != null)
+          'business_registration': businessRegistrationMediaId,
       });
       final raw = response.data['data'] ?? response.data;
       return GarageStaffProfile.fromJson((raw as Map).cast<String, dynamic>());
