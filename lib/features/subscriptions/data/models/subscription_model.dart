@@ -28,7 +28,7 @@ class SubscriptionModel {
     m.code = json['code'] ?? 'none';
     m.type = json['type'] ?? 'Free';
     m.currency = json['currency'] ?? 'XAF';
-    m.price = (json['price'] as num?)?.toDouble() ?? 0;
+    m.price = _toDouble(json['price']);
     m.days = (json['days'] as num?)?.toInt() ?? 0;
     m.expiresAt = (json['time'] ?? json['expires_at'] as num?)?.toInt() ?? 0;
     m.coins = (json['coins'] as num?)?.toInt() ?? 0;
@@ -56,10 +56,15 @@ class SubscriptionPlanModel {
     final m = SubscriptionPlanModel();
     m.code = json['code'] ?? '';
     m.type = json['type'] ?? 'Free';
-    m.price = (json['price'] as num?)?.toDouble() ?? 0;
+    m.price = _toDouble(json['price']);
     m.currency = json['currency'] ?? 'XAF';
     m.days = (json['days'] as num?)?.toInt() ?? 0;
     m.description = json['description'] ?? '';
     return m;
   }
 }
+
+// DRF serialises DecimalField as a string ("1000.00"): a bare `as num?` cast
+// threw, and the repository's catch fell back to an empty Isar cache.
+double _toDouble(dynamic v) =>
+    v is num ? v.toDouble() : double.tryParse(v?.toString() ?? '') ?? 0;
