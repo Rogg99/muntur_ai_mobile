@@ -4,6 +4,7 @@ import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/subscriptions/domain/entities/subscription_entity.dart';
 import 'package:munturai/features/subscriptions/presentation/providers/subscription_provider.dart';
 import 'package:munturai/screens/payment_screen.dart';
+import 'package:munturai/widgets/primary_button.dart';
 import 'package:munturai/widgets/widget_coinsPack.dart';
 
 /// Écran d'achat de packs de coins.
@@ -42,13 +43,12 @@ class _CoinsState extends ConsumerState<Coins> {
               .read(subscriptionRepositoryProvider)
               .buyCoinsPack(pack.code, phone);
         },
-        onCardPay: () => ref
-            .read(subscriptionRepositoryProvider)
-            .buyCoinsPackByLink(
-              pack.code,
-              redirectUrl: coinsPaymentSuccessUrl,
-              failureRedirectUrl: coinsPaymentFailureUrl,
-            ),
+        onCardPay: () =>
+            ref.read(subscriptionRepositoryProvider).buyCoinsPackByLink(
+                  pack.code,
+                  redirectUrl: coinsPaymentSuccessUrl,
+                  failureRedirectUrl: coinsPaymentFailureUrl,
+                ),
         checkDone: () async {
           ref.invalidate(coinsBalanceProvider);
           final balance = await ref.read(coinsBalanceProvider.future);
@@ -105,61 +105,136 @@ class _CoinsState extends ConsumerState<Coins> {
           if (_selectedIndex >= packs.length) _selectedIndex = 0;
           final selectedPack = packs[_selectedIndex];
 
-          return Stack(
+          // Saving per coin vs the smallest pack's rate, shown as a badge.
+          final base = packs.first.coins > 0
+              ? packs.first.price / packs.first.coins
+              : 0.0;
+          int saving(CoinsPackEntity p) => base <= 0 || p.coins <= 0
+              ? 0
+              : ((1 - (p.price / p.coins) / base) * 100).round().clamp(0, 99);
+
+          return Column(
             children: [
-              ListView(
-                padding: const EdgeInsets.only(
-                    top: 10, left: 10, right: 10, bottom: 180),
-                children: [
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: 280 / 300,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 10,
-                    crossAxisCount: 2,
-                    children: [
-                      for (int i = 0; i < packs.length; i++)
-                        CoinsPackWidget(
-                          name: packs[i].name,
-                          coins: packs[i].coins,
-                          price: packs[i].price,
-                          currency: packs[i].currency,
-                          isSelected: _selectedIndex == i,
-                          isPopular: i == 1,
-                          onPressed: () =>
-                              setState(() => _selectedIndex = i),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: GestureDetector(
-                    onTap: () => _buy(selectedPack),
-                    child: Container(
-                      padding: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: colorScheme.secondary,
-                        borderRadius: BorderRadius.circular(50),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  children: [
+                    const _BalanceCard(),
+                    const SizedBox(height: 20),
+                    for (int i = 0; i < packs.length; i++) ...[
+                      CoinsPackWidget(
+                        name: packs[i].name,
+                        coins: packs[i].coins,
+                        price: packs[i].price,
+                        currency: packs[i].currency,
+                        isSelected: _selectedIndex == i,
+                        isPopular: packs.length > 2 && i == 1,
+                        tier: (i * 4 / packs.length).floor(),
+                        savingPercent: saving(packs[i]),
+                        onPressed: () => setState(() => _selectedIndex = i),
                       ),
-                      width: BodyWidth() - 70,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      const SizedBox(height: 12),
+                    ],
+                  ],
+                ),
+              ),
+              // Sticky checkout bar: what's selected + the single CTA.
+              Container(
+                padding: EdgeInsets.fromLTRB(
+                    20, 14, 20, 14 + MediaQuery.of(context).padding.bottom),
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, -4)),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    const CoinIcon(size: 26),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(translator.continue__, style: appStyle.H4()),
+                          Text(
+                              '${selectedPack.coins} ${translator.coins_unit_label}',
+                              style: appStyle.H5(weight: 'bold')),
+                          Text(
+                              '${selectedPack.price.toStringAsFixed(0)} ${selectedPack.currency}',
+                              style: appStyle.H6(color: Colors.grey)),
                         ],
                       ),
                     ),
-                  ),
+                    SizedBox(
+                      width: 170,
+                      child: PrimaryButton(
+                        text: translator.continue__,
+                        padding: 14,
+                        onPressed: () => _buy(selectedPack),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _BalanceCard extends ConsumerWidget {
+  const _BalanceCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appStyle = AppStyle.of(context);
+    final translator = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final balance = ref.watch(coinsBalanceProvider).valueOrNull;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colorScheme.primary,
+            Color.lerp(colorScheme.primary, Colors.black, 0.45)!
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+              color: colorScheme.primary.withValues(alpha: 0.35),
+              blurRadius: 20,
+              offset: const Offset(0, 8)),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(translator.coins_balance_label,
+                    style: appStyle.H6(color: Colors.white70)),
+                const SizedBox(height: 6),
+                Text(balance?.toString() ?? '—',
+                    style: appStyle
+                        .H1(weight: 'bold')
+                        .copyWith(color: Colors.white)),
+              ],
+            ),
+          ),
+          const CoinIcon(size: 56),
+        ],
       ),
     );
   }
