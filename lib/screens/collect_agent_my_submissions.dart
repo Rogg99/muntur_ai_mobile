@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/collect_agent/presentation/providers/collect_agent_provider.dart';
+import 'package:munturai/screens/collect_agent_submit_garage.dart';
 import 'package:munturai/widgets/CustomAppBar.dart';
 
 Map<String, String> _statusLabels(AppLocalizations l10n) => {
@@ -38,8 +39,8 @@ class CollectAgentMySubmissions extends ConsumerWidget {
       appBar: CustomAppBar(titleTxt: l10n.collect_agent_my_submissions_title),
       body: submissionsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) =>
-            Center(child: Text(l10n.collect_agent_load_error, style: appStyle.H5())),
+        error: (err, _) => Center(
+            child: Text(l10n.collect_agent_load_error, style: appStyle.H5())),
         data: (submissions) {
           if (submissions == null ||
               (submissions.panneCases.isEmpty && submissions.garages.isEmpty)) {
@@ -54,7 +55,8 @@ class CollectAgentMySubmissions extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 if (submissions.panneCases.isNotEmpty) ...[
-                  Text(l10n.collect_agent_panne_cases_section, style: appStyle.H5(weight: 'bold')),
+                  Text(l10n.collect_agent_panne_cases_section,
+                      style: appStyle.H5(weight: 'bold')),
                   const SizedBox(height: 8),
                   for (final panne in submissions.panneCases) ...[
                     _SubmissionCard(
@@ -67,13 +69,28 @@ class CollectAgentMySubmissions extends ConsumerWidget {
                   const SizedBox(height: 16),
                 ],
                 if (submissions.garages.isNotEmpty) ...[
-                  Text(l10n.collect_agent_garages_section, style: appStyle.H5(weight: 'bold')),
+                  Text(l10n.collect_agent_garages_section,
+                      style: appStyle.H5(weight: 'bold')),
                   const SizedBox(height: 8),
                   for (final garage in submissions.garages) ...[
                     _SubmissionCard(
                       title: garage.nom,
                       status: garage.status,
                       rejectionReason: garage.rejectionReason,
+                      // Editable until staff reviews it (API answers 409 after).
+                      onTap: garage.status == 'pending'
+                          ? () async {
+                              final saved = await Navigator.push<bool>(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => CollectAgentSubmitGarage(
+                                        existing: garage)),
+                              );
+                              if (saved == true) {
+                                ref.invalidate(mySubmissionsProvider);
+                              }
+                            }
+                          : null,
                     ),
                     const SizedBox(height: 8),
                   ],
@@ -92,11 +109,13 @@ class _SubmissionCard extends StatelessWidget {
     required this.title,
     required this.status,
     this.rejectionReason,
+    this.onTap,
   });
 
   final String title;
   final String status;
   final String? rejectionReason;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -104,45 +123,51 @@ class _SubmissionCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  title.isNotEmpty ? title : l10n.repair_no_description,
-                  style: appStyle.H6(weight: 'bold'),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    title.isNotEmpty ? title : l10n.repair_no_description,
+                    style: appStyle.H6(weight: 'bold'),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: _statusColor(status).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _statusColor(status).withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _statusLabels(l10n)[status] ?? status,
+                    style: TextStyle(
+                        color: _statusColor(status),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12),
+                  ),
                 ),
-                child: Text(
-                  _statusLabels(l10n)[status] ?? status,
-                  style: TextStyle(
-                      color: _statusColor(status), fontWeight: FontWeight.w600, fontSize: 12),
-                ),
-              ),
+              ],
+            ),
+            if (status == 'rejected' && (rejectionReason ?? '').isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(rejectionReason!, style: appStyle.H6(color: Colors.grey)),
             ],
-          ),
-          if (status == 'rejected' && (rejectionReason ?? '').isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(rejectionReason!, style: appStyle.H6(color: Colors.grey)),
           ],
-        ],
+        ),
       ),
     );
   }

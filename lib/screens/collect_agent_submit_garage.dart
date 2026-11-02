@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/core/network/api_client.dart';
+import 'package:munturai/features/collect_agent/data/models/collect_agent_models.dart';
 import 'package:munturai/features/collect_agent/presentation/providers/collect_agent_provider.dart';
 import 'package:munturai/screens/collect_agent_submit_panne.dart' show getBestEffortPosition;
 import 'package:munturai/widgets/CustomAppBar.dart';
@@ -14,8 +15,11 @@ import 'package:munturai/widgets/primary_button.dart';
 /// Field-agent submission of a new garage found in the field — same shape
 /// as the existing GarageEntity fields (nom/description/contact/hours),
 /// reviewed by staff, optionally promoted into a real Garage.
+/// [existing] set = edit that still-pending submission instead.
 class CollectAgentSubmitGarage extends ConsumerStatefulWidget {
-  const CollectAgentSubmitGarage({super.key});
+  const CollectAgentSubmitGarage({super.key, this.existing});
+
+  final GarageSubmission? existing;
 
   @override
   ConsumerState<CollectAgentSubmitGarage> createState() =>
@@ -23,12 +27,12 @@ class CollectAgentSubmitGarage extends ConsumerStatefulWidget {
 }
 
 class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGarage> {
-  final _nomController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _telephone1Controller = TextEditingController();
-  final _telephone2Controller = TextEditingController();
-  final _villeController = TextEditingController();
+  late final _nomController = TextEditingController(text: widget.existing?.nom);
+  late final _descriptionController = TextEditingController(text: widget.existing?.description);
+  late final _emailController = TextEditingController(text: widget.existing?.email);
+  late final _telephone1Controller = TextEditingController(text: widget.existing?.telephone1);
+  late final _telephone2Controller = TextEditingController(text: widget.existing?.telephone2);
+  late final _villeController = TextEditingController(text: widget.existing?.ville);
   bool _submitting = false;
   String? _error;
   double? _latitude;
@@ -38,8 +42,21 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
   // same cap as the API (GarageSubmissionSerializer.medias).
   static const _maxPhotos = 10;
   final List<XFile> _photos = [];
-  TimeOfDay? _opening;
-  TimeOfDay? _closing;
+  // Edit mode: already-uploaded photos, kept unless removed (medias is replaced as a whole).
+  late final List<MediaRef> _existingMedia = List.of(widget.existing?.medias ?? []);
+  late TimeOfDay? _opening =
+      _parseTime(widget.existing?.heureOuverture) ?? const TimeOfDay(hour: 8, minute: 0);
+  late TimeOfDay? _closing =
+      _parseTime(widget.existing?.heureFermeture) ?? const TimeOfDay(hour: 18, minute: 0);
+
+  static TimeOfDay? _parseTime(String? value) {
+    final parts = value?.split(':');
+    if (parts == null || parts.length < 2) return null;
+    final h = int.tryParse(parts[0]), m = int.tryParse(parts[1]);
+    return h == null || m == null ? null : TimeOfDay(hour: h, minute: m);
+  }
+
+  int get _photoCount => _existingMedia.length + _photos.length;
 
   // API expects HH:MM (GarageSubmissionSerializer.heure_ouverture/fermeture).
   String? _hhmm(TimeOfDay? t) => t == null
@@ -79,7 +96,14 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
   @override
   void initState() {
     super.initState();
-    _captureLocation();
+    final existing = widget.existing;
+    if (existing != null) {
+      // Keep the declared position; the agent can still re-capture it.
+      _latitude = existing.latitude;
+      _longitude = existing.longitude;
+    } else {
+      _captureLocation();
+    }
   }
 
   Future<void> _captureLocation() async {
@@ -94,7 +118,7 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
   }
 
   Future<void> _pickPhotos(ImageSource source) async {
-    final left = _maxPhotos - _photos.length;
+    final left = _maxPhotos - _photoCount;
     if (left <= 0) return;
     final picker = ImagePicker();
     final picked = source == ImageSource.camera
@@ -144,6 +168,26 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
     });
     try {
       final mediaIds = await _uploadPhotos();
+      final existing = widget.existing;
+      if (existing != null) {
+        await ref.read(collectAgentRepositoryProvider).updateGarageSubmission(
+              id: existing.id,
+              nom: nom,
+              telephone1: telephone1,
+              latitude: _latitude!,
+              longitude: _longitude!,
+              description: _descriptionController.text.trim(),
+              email: _emailController.text.trim(),
+              telephone2: _telephone2Controller.text.trim(),
+              ville: _villeController.text.trim(),
+              heureOuverture: _hhmm(_opening),
+              heureFermeture: _hhmm(_closing),
+              mediaIds: [..._existingMedia.map((m) => m.id), ...mediaIds],
+            );
+        if (!mounted) return;
+        Navigator.pop(context, true);
+        return;
+      }
       await ref.read(collectAgentRepositoryProvider).submitGarage(
             nom: nom,
             telephone1: telephone1,
@@ -184,7 +228,8 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
     return Scaffold(
       backgroundColor: colorScheme.surface,
       resizeToAvoidBottomInset: true,
-      appBar: CustomAppBar(titleTxt: l10n.collect_agent_submit_garage_button),
+      appBar: CustomAppBar(
+          titleTxt: widget.existing != null ? l10n.edit : l10n.collect_agent_submit_garage_button),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -275,35 +320,25 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
             ),
           ),
           const SizedBox(height: 16),
-          Text('${l10n.marketplace_photos_label} (${_photos.length}/$_maxPhotos)',
+          Text('${l10n.marketplace_photos_label} ($_photoCount/$_maxPhotos)',
               style: appStyle.H5(weight: 'bold')),
           const SizedBox(height: 6),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final photo in _photos)
-                Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.file(File(photo.path), width: 72, height: 72, fit: BoxFit.cover),
-                    ),
-                    Positioned(
-                      top: 2,
-                      right: 2,
-                      child: GestureDetector(
-                        onTap: () => setState(() => _photos.remove(photo)),
-                        child: const CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.black54,
-                          child: Icon(Icons.close, size: 14, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
+              for (final media in _existingMedia)
+                _PhotoThumb(
+                  image: Image.network(ApiClient.resolveMediaUrl(media.file),
+                      width: 72, height: 72, fit: BoxFit.cover),
+                  onRemove: () => setState(() => _existingMedia.remove(media)),
                 ),
-              if (_photos.length < _maxPhotos) ...[
+              for (final photo in _photos)
+                _PhotoThumb(
+                  image: Image.file(File(photo.path), width: 72, height: 72, fit: BoxFit.cover),
+                  onRemove: () => setState(() => _photos.remove(photo)),
+                ),
+              if (_photoCount < _maxPhotos) ...[
                 _AddPhotoTile(icon: Icons.photo_camera_outlined, onTap: () => _pickPhotos(ImageSource.camera)),
                 _AddPhotoTile(icon: Icons.add_photo_alternate_outlined, onTap: () => _pickPhotos(ImageSource.gallery)),
               ],
@@ -315,7 +350,7 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
           ],
           const SizedBox(height: 20),
           PrimaryButton(
-            text: l10n.collect_agent_submission_submit,
+            text: widget.existing != null ? l10n.save : l10n.collect_agent_submission_submit,
             loading: _submitting,
             onPressed: _submit,
           ),
@@ -344,6 +379,34 @@ class _AddPhotoTile extends StatelessWidget {
         ),
         child: Icon(icon),
       ),
+    );
+  }
+}
+
+class _PhotoThumb extends StatelessWidget {
+  const _PhotoThumb({required this.image, required this.onRemove});
+
+  final Widget image;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ClipRRect(borderRadius: BorderRadius.circular(8), child: image),
+        Positioned(
+          top: 2,
+          right: 2,
+          child: GestureDetector(
+            onTap: onRemove,
+            child: const CircleAvatar(
+              radius: 10,
+              backgroundColor: Colors.black54,
+              child: Icon(Icons.close, size: 14, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

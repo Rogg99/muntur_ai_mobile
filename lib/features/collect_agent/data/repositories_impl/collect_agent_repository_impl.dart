@@ -125,6 +125,41 @@ class CollectAgentRepositoryImpl {
     });
   }
 
+  /// Edit a still-pending submission (409 once staff reviewed it).
+  /// [mediaIds] replaces the whole photo list; null hours clear them.
+  Future<GarageSubmission> updateGarageSubmission({
+    required String id,
+    required String nom,
+    required String telephone1,
+    required double latitude,
+    required double longitude,
+    required String description,
+    required String email,
+    required String telephone2,
+    required String ville,
+    String? heureOuverture,
+    String? heureFermeture,
+    required List<String> mediaIds,
+  }) {
+    return _withCleanError(() async {
+      final response = await _apiClient.patch('/collect-agents/garage-submissions/$id/', data: {
+        'nom': nom,
+        'telephone1': telephone1,
+        'latitude': latitude,
+        'longitude': longitude,
+        'description': description,
+        'email': email,
+        'telephone2': telephone2,
+        'ville': ville,
+        'heure_ouverture': heureOuverture,
+        'heure_fermeture': heureFermeture,
+        'medias': mediaIds,
+      });
+      final raw = response.data['data'] ?? response.data;
+      return GarageSubmission.fromJson((raw as Map).cast<String, dynamic>());
+    });
+  }
+
   /// Null if this account has no agent profile yet (404) — same gate as
   /// the submit-* endpoints, so a non-agent never sees this UI anyway.
   Future<MySubmissions?> getMySubmissions() async {
