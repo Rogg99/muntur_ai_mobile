@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:munturai/core/app_export.dart';
+import 'package:munturai/core/network/api_client.dart';
 import 'package:munturai/features/collect_agent/presentation/providers/collect_agent_provider.dart';
 import 'package:munturai/screens/collect_agent_submit_panne.dart' show getBestEffortPosition;
 import 'package:munturai/widgets/CustomAppBar.dart';
@@ -29,6 +34,10 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
   double? _latitude;
   double? _longitude;
   bool _locating = false;
+  // Picked locally, uploaded to the shared /medias/ endpoint on submit;
+  // same cap as the API (GarageSubmissionSerializer.medias).
+  static const _maxPhotos = 10;
+  final List<XFile> _photos = [];
 
   @override
   void initState() {
@@ -45,6 +54,32 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
       _longitude = position?.longitude;
       _locating = false;
     });
+  }
+
+  Future<void> _pickPhotos(ImageSource source) async {
+    final left = _maxPhotos - _photos.length;
+    if (left <= 0) return;
+    final picker = ImagePicker();
+    final picked = source == ImageSource.camera
+        ? [if (await picker.pickImage(source: source, imageQuality: 85) case final f?) f]
+        : await picker.pickMultiImage(imageQuality: 85);
+    if (picked.isEmpty || !mounted) return;
+    setState(() => _photos.addAll(picked.take(left)));
+  }
+
+  Future<List<String>> _uploadPhotos() async {
+    final ids = <String>[];
+    for (final photo in _photos) {
+      final form = FormData.fromMap({
+        'file': await MultipartFile.fromFile(photo.path, filename: photo.name),
+      });
+      final response = await ApiClient().postMultipart('/medias/', form);
+      final data = response.data['data'] ?? response.data;
+      final id = data is Map ? data['id']?.toString() : null;
+      if (id == null) throw Exception('no media id in response');
+      ids.add(id);
+    }
+    return ids;
   }
 
   @override
@@ -71,6 +106,7 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
       _error = null;
     });
     try {
+      final mediaIds = await _uploadPhotos();
       await ref.read(collectAgentRepositoryProvider).submitGarage(
             nom: nom,
             telephone1: telephone1,
@@ -85,6 +121,7 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
             // latitude/longitude on the backend model.
             submissionLatitude: _latitude,
             submissionLongitude: _longitude,
+            mediaIds: mediaIds,
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context)
@@ -190,6 +227,41 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             ),
           ),
+          const SizedBox(height: 16),
+          Text('${l10n.marketplace_photos_label} (${_photos.length}/$_maxPhotos)',
+              style: appStyle.H5(weight: 'bold')),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final photo in _photos)
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(File(photo.path), width: 72, height: 72, fit: BoxFit.cover),
+                    ),
+                    Positioned(
+                      top: 2,
+                      right: 2,
+                      child: GestureDetector(
+                        onTap: () => setState(() => _photos.remove(photo)),
+                        child: const CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.black54,
+                          child: Icon(Icons.close, size: 14, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              if (_photos.length < _maxPhotos) ...[
+                _AddPhotoTile(icon: Icons.photo_camera_outlined, onTap: () => _pickPhotos(ImageSource.camera)),
+                _AddPhotoTile(icon: Icons.add_photo_alternate_outlined, onTap: () => _pickPhotos(ImageSource.gallery)),
+              ],
+            ],
+          ),
           if (_error != null) ...[
             const SizedBox(height: 12),
             Text(_error!, style: appStyle.H6(color: Colors.redAccent)),
@@ -201,6 +273,29 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
             onPressed: _submit,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AddPhotoTile extends StatelessWidget {
+  const _AddPhotoTile({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 72,
+        height: 72,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon),
       ),
     );
   }
