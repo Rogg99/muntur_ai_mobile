@@ -66,7 +66,12 @@ class SubscriptionRepositoryImpl {
             await isar.subscriptionPlanModels.put(p);
           }
         });
-        return plans.map(_toPlanEntity).toList();
+        // Built from the raw json, not the Isar model: coins bonus, commission
+        // and features aren't cached (offline fallback shows plans without them).
+        return [
+          for (var i = 0; i < plans.length; i++)
+            _toPlanEntity(plans[i], json: rawList[i]),
+        ];
       }
     } catch (_) {}
     final isar = IsarDb.instance;
@@ -204,7 +209,8 @@ class SubscriptionRepositoryImpl {
         active: m.active,
       );
 
-  SubscriptionPlanEntity _toPlanEntity(SubscriptionPlanModel m) =>
+  SubscriptionPlanEntity _toPlanEntity(SubscriptionPlanModel m,
+          {Map<String, dynamic>? json}) =>
       SubscriptionPlanEntity(
         code: m.code,
         type: m.type,
@@ -212,5 +218,11 @@ class SubscriptionRepositoryImpl {
         currency: m.currency,
         days: m.days,
         description: m.description,
+        coinsBonus: (json?['coins_bonus'] as num?)?.toInt() ?? 0,
+        commissionRate: _parseDecimal(json?['commission_rate']),
+        features: [
+          for (final f in (json?['features'] as List? ?? const []))
+            if (f.toString().trim().isNotEmpty) f.toString().trim(),
+        ],
       );
 }

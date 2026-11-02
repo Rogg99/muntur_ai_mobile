@@ -36,6 +36,9 @@ class SubscriptionPlanEntity {
   final String currency;
   final int days;
   final String description;
+  final int coinsBonus;
+  final double commissionRate; // fraction: 0.10 = 10 %
+  final List<String> features;
 
   const SubscriptionPlanEntity({
     required this.code,
@@ -44,6 +47,9 @@ class SubscriptionPlanEntity {
     this.currency = 'XAF',
     this.days = 0,
     this.description = '',
+    this.coinsBonus = 0,
+    this.commissionRate = 0,
+    this.features = const [],
   });
 }
 

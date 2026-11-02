@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:munturai/widgets/primary_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:munturai/core/app_export.dart';
 import 'package:munturai/features/subscriptions/domain/entities/subscription_entity.dart';
@@ -72,7 +73,8 @@ class SubscriptionsScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // ─── Abonnement actif ───
-            Text(l10n.my_subscription_label, style: appStyle.H4(weight: 'bold')),
+            Text(l10n.my_subscription_label,
+                style: appStyle.H4(weight: 'bold')),
             const SizedBox(height: 12),
             currentSubAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
@@ -86,7 +88,8 @@ class SubscriptionsScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // ─── Plans ───
-            Text(l10n.available_plans_label, style: appStyle.H4(weight: 'bold')),
+            Text(l10n.available_plans_label,
+                style: appStyle.H4(weight: 'bold')),
             const SizedBox(height: 12),
             plansAsync.when(
               loading: () => Center(
@@ -208,50 +211,74 @@ class _PlanCard extends ConsumerWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       elevation: 0,
       color: colorScheme.surfaceContainerLow,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            const Icon(Icons.star, color: Colors.amber),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => _showDetails(context, ref),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const Icon(Icons.star, color: Colors.amber),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(plan.type, style: appStyle.H5(weight: 'bold')),
+                    if (plan.description.isNotEmpty)
+                      Text(plan.description, style: appStyle.H6()),
+                    Text(AppLocalizations.of(context)!.days(plan.days),
+                        style: appStyle.H6(
+                            color:
+                                colorScheme.onSurface.withValues(alpha: 0.6))),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(plan.type, style: appStyle.H5(weight: 'bold')),
-                  if (plan.description.isNotEmpty)
-                    Text(plan.description, style: appStyle.H6()),
-                  Text(AppLocalizations.of(context)!.days(plan.days),
-                      style: appStyle.H6(
-                          color: colorScheme.onSurface.withValues(alpha: 0.6))),
+                  Text(
+                    '${plan.price.toStringAsFixed(0)} ${plan.currency}',
+                    style:
+                        appStyle.H5(weight: 'bold', color: colorScheme.primary),
+                  ),
+                  const SizedBox(height: 6),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                    ),
+                    onPressed: () => _goToPayment(context, ref, plan),
+                    child: Text(
+                        AppLocalizations.of(context)!.subscribe_button_label),
+                  ),
                 ],
               ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${plan.price.toStringAsFixed(0)} ${plan.currency}',
-                  style:
-                      appStyle.H5(weight: 'bold', color: colorScheme.primary),
-                ),
-                const SizedBox(height: 6),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: Colors.white,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                  ),
-                  onPressed: () => _goToPayment(context, ref, plan),
-                  child: Text(AppLocalizations.of(context)!.subscribe_button_label),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  void _showDetails(BuildContext context, WidgetRef ref) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (sheetContext) => _PlanDetailsSheet(
+        plan: plan,
+        onSubscribe: () {
+          Navigator.pop(sheetContext);
+          _goToPayment(context, ref, plan);
+        },
       ),
     );
   }
@@ -291,5 +318,146 @@ class _PlanCard extends ConsumerWidget {
         },
       ),
     ));
+  }
+}
+
+/// Plan details (price, duration, coins bonus, commission, perks) with the
+/// subscribe action; opened by tapping a plan card.
+class _PlanDetailsSheet extends StatelessWidget {
+  final SubscriptionPlanEntity plan;
+  final VoidCallback onSubscribe;
+  const _PlanDetailsSheet({required this.plan, required this.onSubscribe});
+
+  @override
+  Widget build(BuildContext context) {
+    final appStyle = AppStyle.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+    final commission = (plan.commissionRate * 100);
+
+    Widget fact(IconData icon, String label, String value) => Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Column(
+              children: [
+                Icon(icon, color: colorScheme.primary, size: 20),
+                const SizedBox(height: 6),
+                Text(value,
+                    style: appStyle.H5(weight: 'bold'),
+                    textAlign: TextAlign.center),
+                Text(label,
+                    style: appStyle.H6(
+                        color: colorScheme.onSurface.withValues(alpha: 0.6)),
+                    textAlign: TextAlign.center),
+              ],
+            ),
+          ),
+        );
+
+    return ConstrainedBox(
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.85),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+            20, 0, 20, 20 + MediaQuery.of(context).padding.bottom),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ─── Header: name + price ───
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colorScheme.primary,
+                    Color.lerp(colorScheme.primary, Colors.black, 0.45)!,
+                  ],
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('${l10n.subscription_plan_prefix} ${plan.type}',
+                      style: appStyle.H6(color: Colors.white70)),
+                  const SizedBox(height: 4),
+                  if (plan.description.isNotEmpty)
+                    Text(plan.description,
+                        style: appStyle
+                            .H4(weight: 'bold')
+                            .copyWith(color: Colors.white)),
+                  const SizedBox(height: 12),
+                  Text.rich(TextSpan(children: [
+                    TextSpan(
+                      text: plan.price.toStringAsFixed(0),
+                      style: appStyle
+                          .H1(weight: 'bold')
+                          .copyWith(color: Colors.white),
+                    ),
+                    TextSpan(
+                      text: ' ${plan.currency}',
+                      style: appStyle.H5(color: Colors.white70),
+                    ),
+                  ])),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // ─── Key facts ───
+            Row(
+              children: [
+                fact(Icons.calendar_month_outlined, l10n.plan_duration_label,
+                    l10n.days(plan.days)),
+                if (plan.coinsBonus > 0) ...[
+                  const SizedBox(width: 10),
+                  fact(Icons.toll_outlined, l10n.coins_included_suffix,
+                      '${plan.coinsBonus}'),
+                ],
+                if (plan.commissionRate > 0) ...[
+                  const SizedBox(width: 10),
+                  fact(Icons.percent, l10n.plan_commission_label,
+                      '${commission.toStringAsFixed(commission % 1 == 0 ? 0 : 1)} %'),
+                ],
+              ],
+            ),
+            // ─── Perks ───
+            if (plan.features.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              Text(l10n.plan_features_label,
+                  style: appStyle.H5(weight: 'bold')),
+              const SizedBox(height: 10),
+              for (final feature in plan.features)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.check_circle_rounded,
+                          color: colorScheme.primary, size: 20),
+                      const SizedBox(width: 10),
+                      Expanded(child: Text(feature, style: appStyle.H5())),
+                    ],
+                  ),
+                ),
+            ],
+            const SizedBox(height: 16),
+            if (plan.price > 0)
+              PrimaryButton(
+                text: l10n.subscribe_button_label,
+                padding: 14,
+                onPressed: onSubscribe,
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -2586,7 +2586,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get garage_info_hours => 'Horaires';
 
   @override
-  String get collect_agent_garage_opening_label => "Heure d'ouverture";
+  String get collect_agent_garage_opening_label => 'Heure d\'ouverture';
 
   @override
   String get collect_agent_garage_closing_label => 'Heure de fermeture';
@@ -2649,6 +2649,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get subscribe_button_label => 'Souscrire';
+
+  @override
+  String get plan_features_label => 'Ce qui est inclus';
+
+  @override
+  String get plan_duration_label => 'Durée';
+
+  @override
+  String get plan_commission_label => 'Commission';
 
   @override
   String get subscription_activated_message => 'Souscription activée !';

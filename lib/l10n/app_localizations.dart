@@ -5090,6 +5090,24 @@ abstract class AppLocalizations {
   /// **'Subscribe'**
   String get subscribe_button_label;
 
+  /// No description provided for @plan_features_label.
+  ///
+  /// In en, this message translates to:
+  /// **'What's included'**
+  String get plan_features_label;
+
+  /// No description provided for @plan_duration_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get plan_duration_label;
+
+  /// No description provided for @plan_commission_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Commission'**
+  String get plan_commission_label;
+
   /// No description provided for @subscription_activated_message.
   ///
   /// In en, this message translates to:

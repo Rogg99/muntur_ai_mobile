@@ -2619,6 +2619,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subscribe_button_label => 'Subscribe';
 
   @override
+  String get plan_features_label => "What's included";
+
+  @override
+  String get plan_duration_label => 'Duration';
+
+  @override
+  String get plan_commission_label => 'Commission';
+
+  @override
   String get subscription_activated_message => 'Subscription activated!';
 
   @override
