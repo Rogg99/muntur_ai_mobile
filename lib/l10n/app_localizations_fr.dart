@@ -2586,6 +2586,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get garage_info_hours => 'Horaires';
 
   @override
+  String get collect_agent_garage_opening_label => "Heure d'ouverture";
+
+  @override
+  String get collect_agent_garage_closing_label => 'Heure de fermeture';
+
+  @override
   String get garage_info_phone => 'Téléphone';
 
   @override
@@ -2855,5 +2861,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Mise à jour du trajet indisponible pour le moment — le tracé actuel est conservé.';
 
   @override
-  String get payment_checked_phone_retry => 'J\'ai vérifié mon téléphone, réessayer';
+  String get payment_checked_phone_retry =>
+      'J\'ai vérifié mon téléphone, réessayer';
 }

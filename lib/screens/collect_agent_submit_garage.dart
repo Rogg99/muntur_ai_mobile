@@ -38,6 +38,43 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
   // same cap as the API (GarageSubmissionSerializer.medias).
   static const _maxPhotos = 10;
   final List<XFile> _photos = [];
+  TimeOfDay? _opening;
+  TimeOfDay? _closing;
+
+  // API expects HH:MM (GarageSubmissionSerializer.heure_ouverture/fermeture).
+  String? _hhmm(TimeOfDay? t) => t == null
+      ? null
+      : '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+
+  Future<void> _pickTime(bool opening) async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: (opening ? _opening : _closing) ??
+          TimeOfDay(hour: opening ? 8 : 18, minute: 0),
+    );
+    if (picked == null || !mounted) return;
+    setState(() => opening ? _opening = picked : _closing = picked);
+  }
+
+  Widget _timeField(String label, TimeOfDay? value, bool opening) {
+    final appStyle = AppStyle.of(context);
+    return InkWell(
+      onTap: () => _pickTime(opening),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          suffixIcon: value == null
+              ? const Icon(Icons.schedule)
+              : IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () => setState(() => opening ? _opening = null : _closing = null),
+                ),
+        ),
+        child: Text(value?.format(context) ?? '', style: appStyle.H6()),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -116,6 +153,8 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
             email: _emailController.text.trim(),
             telephone2: _telephone2Controller.text.trim(),
             ville: _villeController.text.trim(),
+            heureOuverture: _hhmm(_opening),
+            heureFermeture: _hhmm(_closing),
             // submission_* records where the agent stood when reporting it
             // — same coordinates, distinct field from the garage's own
             // latitude/longitude on the backend model.
@@ -216,6 +255,14 @@ class _CollectAgentSubmitGarageState extends ConsumerState<CollectAgentSubmitGar
               labelText: l10n.collect_agent_ville_label,
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _timeField(l10n.collect_agent_garage_opening_label, _opening, true)),
+              const SizedBox(width: 12),
+              Expanded(child: _timeField(l10n.collect_agent_garage_closing_label, _closing, false)),
+            ],
           ),
           const SizedBox(height: 12),
           TextField(

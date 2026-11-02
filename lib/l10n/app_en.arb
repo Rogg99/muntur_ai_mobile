@@ -810,6 +810,8 @@
   "action_email": "Email",
   "action_directions": "Directions",
   "garage_info_hours": "Hours",
+  "collect_agent_garage_opening_label": "Opening time",
+  "collect_agent_garage_closing_label": "Closing time",
   "garage_info_phone": "Phone",
   "garage_info_phone_2": "Phone (2)",
   "garage_photos_label": "Photos",

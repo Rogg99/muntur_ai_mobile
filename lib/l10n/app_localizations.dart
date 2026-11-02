@@ -4964,6 +4964,18 @@ abstract class AppLocalizations {
   /// **'Hours'**
   String get garage_info_hours;
 
+  /// No description provided for @collect_agent_garage_opening_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening time'**
+  String get collect_agent_garage_opening_label;
+
+  /// No description provided for @collect_agent_garage_closing_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing time'**
+  String get collect_agent_garage_closing_label;
+
   /// No description provided for @garage_info_phone.
   ///
   /// In en, this message translates to:

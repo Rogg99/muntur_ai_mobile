@@ -2554,6 +2554,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get garage_info_hours => 'Hours';
 
   @override
+  String get collect_agent_garage_opening_label => 'Opening time';
+
+  @override
+  String get collect_agent_garage_closing_label => 'Closing time';
+
+  @override
   String get garage_info_phone => 'Phone';
 
   @override
