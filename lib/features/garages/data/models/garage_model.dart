@@ -43,7 +43,12 @@ class GarageModel {
     g.email = json['email'] ?? '';
     g.telephone1 = json['telephone1'] ?? '';
     g.telephone2 = json['telephone2'] ?? '';
-    g.photo = json['photo'] ?? '';
+    // The first gallery image is the garage's profile photo; the legacy
+    // `photo` string is only a fallback.
+    final firstMedia = (json['medias'] as List? ?? const [])
+        .map((m) => m is Map ? m['file']?.toString() ?? '' : '')
+        .firstWhere((url) => url.startsWith('http'), orElse: () => '');
+    g.photo = firstMedia.isNotEmpty ? firstMedia : (json['photo'] ?? '');
     g.ville = json['ville'] ?? '';
     g.pays = json['pays'] ?? '';
     g.type = json['type'] ?? 'garage';

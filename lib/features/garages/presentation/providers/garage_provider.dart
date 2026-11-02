@@ -37,18 +37,28 @@ Future<GarageEntity?> garageDetail(GarageDetailRef ref, String id) {
 
 // ── Search provider ──────────────────────────────────────────────────────────
 
+/// Searches start at [minGarageSearchLength] characters.
+const minGarageSearchLength = 2;
+
 @riverpod
 class GarageSearch extends _$GarageSearch {
+  // Bumped on every call: a slow response for an older query must never
+  // overwrite the results of a newer one.
+  int _requestId = 0;
+
   @override
   FutureOr<List<GarageEntity>> build() async => [];
 
   Future<void> search(String query) async {
-    if (query.isEmpty) {
+    final q = query.trim();
+    final id = ++_requestId;
+    if (q.length < minGarageSearchLength) {
       state = const AsyncValue.data([]);
       return;
     }
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(
-        () => ref.read(garageRepositoryProvider).searchGarages(query));
+    final result = await AsyncValue.guard(
+        () => ref.read(garageRepositoryProvider).searchGarages(q));
+    if (id == _requestId) state = result;
   }
 }

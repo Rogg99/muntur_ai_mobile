@@ -58,10 +58,11 @@ class _GaragesScreenState extends ConsumerState<GaragesScreen> {
               controller: _searchController,
               style: appStyle.H6(),
               onChanged: (value) {
-                setState(() => _searching = value.isNotEmpty);
-                if (value.isNotEmpty) {
-                  ref.read(garageSearchProvider.notifier).search(value);
-                }
+                setState(() => _searching =
+                    value.trim().length >= minGarageSearchLength);
+                // Always called (even when too short) so in-flight results
+                // for an older query are discarded.
+                ref.read(garageSearchProvider.notifier).search(value);
               },
               decoration: InputDecoration(
                 hintText: translator.garage_search_hint,
@@ -71,6 +72,7 @@ class _GaragesScreenState extends ConsumerState<GaragesScreen> {
                         icon: const Icon(Icons.clear),
                         onPressed: () {
                           _searchController.clear();
+                          ref.read(garageSearchProvider.notifier).search('');
                           setState(() => _searching = false);
                         },
                       )

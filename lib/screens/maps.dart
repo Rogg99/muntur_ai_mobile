@@ -368,22 +368,23 @@ class _MapScreenState extends ConsumerState<MapScreen>
   }
 
   void _onSearchChanged(String value) {
-    if (value.isNotEmpty && _routeGarage != null) _closeRoute();
+    final active = value.trim().length >= minGarageSearchLength;
+    if (active && _routeGarage != null) _closeRoute();
     setState(() {
-      _searching = value.isNotEmpty;
+      _searching = active;
       // A new search replaces whatever single-garage preview was open and
       // brings the full results drawer back.
-      if (value.isNotEmpty) _detailsGarage = null;
+      if (active) _detailsGarage = null;
     });
-    if (value.isEmpty) {
-      _fittedForQuery = null;
-      return;
-    }
+    if (!active) _fittedForQuery = null;
+    // Always called (even when too short) so in-flight results for an older
+    // query are discarded.
     ref.read(garageSearchProvider.notifier).search(value);
   }
 
   void _clearSearch() {
     _searchController.clear();
+    ref.read(garageSearchProvider.notifier).search('');
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
       _searching = false;
